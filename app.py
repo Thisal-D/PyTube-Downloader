@@ -1,6 +1,5 @@
 #third party libs
 import customtkinter as ctk
-import ctkchart as ctkchart
 from widgets import  addedVideo, downloadingVideo, downloadedVideo
 
 
