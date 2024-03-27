@@ -1,6 +1,6 @@
 # PyTube  Downloader
 
-YouTube Downloader is a user-friendly application that allows users to download YouTube videos with ease. It features a simple and intuitive user interface, making the downloading process straightforward for all users.
+PyTube  Downloader is a user-friendly application that allows users to download YouTube videos with ease. It features a simple and intuitive user interface, making the downloading process straightforward for all users.
 
 <img src="https://drive.google.com/thumbnail?id=1ddENZVjY_8D849Z9g4uU92i3w9Ocgcx5&sz=w970" style="width: 50%"><img src="https://drive.google.com/thumbnail?id=1aqxvIz3Tyuh1tssiE0xm4r3NKAjZRsrT&sz=w970" style="width: 50%">
 
