@@ -1,4 +1,4 @@
-from app import app
+ufrom app import app
 from widgets.addedVideo import addedVideo, Video
 import customtkinter as ctk
 import os
@@ -45,5 +45,4 @@ for url in urls:
 app.run()
 
 
-[os.remove("temp\\"+file) for file in os.listdir("temp")]
-[os.remove(file) for file in os.listdir() if file.split(".")[-1] == "mp4" or file.split(".")[-1] == "mp3"]
+[os.remove("temp\\"+file) for file in os.listdir("temp")]
