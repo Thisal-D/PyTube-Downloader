@@ -25,6 +25,7 @@ app.set_widgets_colors()
 app.set_widgets_fonts()
 
 
+"""
 #tests
 urls = ["https://www.youtube.com/shorts/gunhFbIeakA?feature=share",
 "https://www.youtube.com/watch?v=DM2vX8Ks93E",
@@ -39,6 +40,7 @@ for url in urls:
     app.link_entry.delete(0,"end")
     app.link_entry.insert(0, url)
     app.add_video()
+"""
 
 app.run()
 
