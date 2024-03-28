@@ -1,46 +1,88 @@
 from .Video import Video
 import customtkinter as ctk
+import os
+from functions.getConvertedSize import getConvertedSize
 
 class downloadedVideo(Video):
-    def __init__(self, master, 
+    def __init__(self, master,
                  border_width=None,
-                 border_color=None,
-                 bg_color=None, fg_color=None,
-                 height=None, text_color=None, url=None,
-                 resolution=None, file_size=None):
+                 height=None,
+                 
+                 download_quality=None,
+                 download_type=None,
+                 
+                 title=None,
+                 channel=None,
+                 thumbnails=(None,None),
+                 loading_done = True,
+                 url=None,
+                 channel_url=None,
+                 file_size=0,
+                 download_path="",
+                 
+                 bg_color=None,
+                 fg_color=None,
+                 text_color=None,
+                 theme_color=None,
+                 hover_color=None,
+                 ):
         
-        self.resolution = resolution
-        self.file_size = file_size
-        super().__init__(master, border_width, border_color, bg_color, fg_color, height, text_color, url)
-
+        self.download_path = download_path
+        self.file_size=file_size
+        self.download_quality = download_quality
+        self.download_type = download_type
+        super().__init__(master=master, border_width=border_width, theme_color=theme_color,hover_color=hover_color,
+                         channel_url=channel_url,
+                         fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color,
+                         thumbnails=thumbnails, title=title, channel=channel, loading_done=loading_done)
+        self.set_state()
+        
     
     def create_widgets(self):
         super().create_widgets()
-        self.resolution_label = ctk.CTkLabel(master=self, 
-                                              text=self.resolution, fg_color=self.fg_color,
-                                              height=1,
-                                              font=("arial", 10, "normal"),
+        self.download_type_label = ctk.CTkLabel(master=self, 
+                                              text=self.download_type + " : "+ self.download_quality,
+                                              fg_color=self.fg_color,
+                                              height=15,
+                                              font=("arial", 12, "bold"),
                                               text_color=self.text_color, bg_color=self.bg_color)
         self.file_size_label = ctk.CTkLabel(master=self, 
-                                              text="1.32 GB", fg_color=self.fg_color, 
-                                              font=("arial", 10, "normal"),
-                                              height=1,
+                                              text=getConvertedSize(self.file_size,2)  , fg_color=self.fg_color, 
+                                              font=("arial", 12, "normal"),
+                                              height=15,
                                               text_color=self.text_color, bg_color=self.bg_color)
         self.video_len_label = ctk.CTkLabel(master=self, 
                                               text="15 min", fg_color=self.fg_color,
                                               font=("arial", 12, "normal"),
-                                              height=1,
+                                              height=15,
                                               text_color=self.text_color, bg_color=self.bg_color)
+        #📁🗀📂🖿🗁
+        self.download_path_btn = ctk.CTkButton(master=self,
+                                               text="📂",
+                                               font=("arial", 30, "bold"),
+                                               cursor="hand2",
+                                               command=lambda:os.startfile("\\".join(self.download_path.split("\\")[0:-1])),
+                                               hover=False,
+                                               text_color=self.theme_color, bg_color=self.bg_color,
+                                               fg_color=self.fg_color, height=15,width=30)
         
     def place_widgets(self):
         super().place_widgets()
-        self.resolution_label.place(y=7)
+        self.download_type_label.place(y=4)
         self.file_size_label.place(y=28)
         self.video_len_label.place(y=48)
+        self.download_path_btn.place(y=12)
+        
         
     def configure_widget_sizes(self, e):
         super().configure_widget_sizes(e)
-        self.resolution_label.place(x=self.winfo_width()-250)
-        self.file_size_label.place(x=self.winfo_width()-250)  
-        self.video_len_label.place(x=self.winfo_width()-250)    
-          
+        self.download_type_label.place(x=self.winfo_width()-300)
+        self.file_size_label.place(x=self.winfo_width()-300)  
+        self.video_len_label.place(x=self.winfo_width()-300)
+        self.download_path_btn.place(x=self.winfo_width()-150)    
+    
+    
+    def set_state(self):
+        self.thumbnail_btn.configure(state="normal")
+        self.channel_label.configure(state="normal")
+        self.thumbnail_btn.configure(command=lambda:os.startfile(self.download_path))

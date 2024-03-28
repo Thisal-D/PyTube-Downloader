@@ -4,13 +4,29 @@ from widgets import  addedVideo, downloadingVideo, downloadedVideo
 
 
 class app(ctk.CTk):
-    def __init__(self):
+    def __init__(self,
+                 app_fg_color= ("#ffffff", "#101010"),
+                 app_btn_fg_color= ("#eeeeee","#202020"),
+                 app_btn_fg_hover_color= ("#cccccc","#252525"),
+                 app_frame_fg_color = ("#ffffff", "#101010"),
+                 app_widget_fg_color = ("#ffffff", "#101010"),
+                 app_widget_text_color = ("#404040", "#aaaaaa"),
+                 app_theme_color = ("#1f9bfd", "#1f9bfd"),
+                 ):
         super().__init__()
         self.root_w = self.winfo_width()
         self.root_h = self.winfo_height()
+        
+        self.app_fg_color = app_fg_color
+        self.app_btn_fg_color = app_btn_fg_color
+        self.app_btn_fg_hover_color = app_btn_fg_hover_color
+        self.app_frame_fg_color = app_frame_fg_color
+        self.app_widget_fg_color = app_widget_fg_color
+        self.app_widget_text_color = app_widget_text_color
+        self.app_theme_color = app_theme_color
         self.reset_widgets = True
         self.loop_run = False
-    
+
 
     def create_widgets(self):
         self.link_entry = ctk.CTkEntry(master=self, height=40, placeholder_text="Enter Youtube URL")
@@ -93,19 +109,19 @@ class app(ctk.CTk):
 
         
     def set_widgets_colors(self):
-        self.configure(fg_color=("#ffffff", "#101010"))
-        self.link_entry.configure(fg_color=("#ffffff", "#101010"), border_color=("#1f9bfd", "#1f9bfd"))
-        self.add_btn.configure(fg_color=("#dedede", "#202020"), border_color=("#1f9bfd", "#1f9bfd"),
-                               hover_color=("#eeeeee", "#252525"), text_color=("#1f9bfd", "#1f9bfd"),
+        self.configure(fg_color=self.app_fg_color)
+        self.link_entry.configure(fg_color=self.app_fg_color, border_color=self.app_theme_color)
+        self.add_btn.configure(fg_color=self.app_btn_fg_color, border_color=self.app_theme_color,
+                               hover_color=self.app_btn_fg_hover_color, text_color=self.app_theme_color,
                                border_width=2)
         
-        self.added_btn.configure(fg_color=("#eeeeee","#202020"), hover_color=("#cccccc","#252525"), text_color=("#1f9bfd", "#1f9bfd"))
-        self.downloading_btn.configure(fg_color=("#eeeeee","#202020"), hover_color=("#cccccc","#252525"), text_color=("#1f9bfd", "#1f9bfd"))
-        self.downloaded_btn.configure(fg_color=("#eeeeee","#202020"), hover_color=("#cccccc","#252525"), text_color=("#1f9bfd", "#1f9bfd"))
+        self.added_btn.configure(fg_color=self.app_btn_fg_color, hover_color=self.app_btn_fg_hover_color, text_color=self.app_theme_color)
+        self.downloading_btn.configure(fg_color=self.app_btn_fg_color, hover_color=self.app_btn_fg_hover_color, text_color=self.app_theme_color)
+        self.downloaded_btn.configure(fg_color=self.app_btn_fg_color, hover_color=self.app_btn_fg_hover_color, text_color=self.app_theme_color)
         
-        self.scroll_frame_added.configure(fg_color=("#ffffff", "#101010"),) #scrollbar_button_color="#1f9bfd")
-        self.scroll_frame_downloading.configure(fg_color=("#ffffff", "#101010"),) #scrollbar_button_color="#1f9bfd")
-        self.scroll_frame_downloaded.configure(fg_color=("#ffffff", "#101010"),) #scrollbar_button_color="#1f9bfd")
+        self.scroll_frame_added.configure(fg_color=self.app_frame_fg_color)
+        self.scroll_frame_downloading.configure(fg_color=self.app_frame_fg_color)
+        self.scroll_frame_downloaded.configure(fg_color=self.app_frame_fg_color)
 
     
     def set_widgets_fonts(self):
@@ -123,19 +139,60 @@ class app(ctk.CTk):
     def add_video(self):
         yt_url = self.link_entry.get()
         addedVideo.addedVideo(master=self.scroll_frame_added, height=70,
-                    fg_color=("#ffffff", "#101010"),
-                    bg_color=("#ffffff", "#101010"),
-                    border_color=("#1f9bfd", "#1f9bfd"),
-                    border_width=1, text_color=("#404040", "#aaaaaa"),
-                    url=yt_url, download_btn_command=self.download_video).pack(fill="x", pady=2)
+                              fg_color=self.app_widget_fg_color,
+                              bg_color=self.app_fg_color,
+                              theme_color = self.app_theme_color,
+                              text_color=self.app_widget_text_color,      
+                              hover_color=self.app_btn_fg_hover_color,
+                                
+                              border_width=1, 
+                              url=yt_url, download_btn_command=self.download_video).\
+        pack(fill="x", pady=2)
+        
         
     def download_video(self, video: addedVideo.addedVideo):
         downloadingVideo.downloadingVideo(master=self.scroll_frame_downloading,
-                                          height=70, fg_color=("#ffffff", "#101010"),
-                                          bg_color=("#ffffff", "#101010"),
-                                          border_color=("#1f9bfd", "#1f9bfd"),
-                                          border_width=1, text_color=("#404040", "#aaaaaa"),
-                                          url=video.url, download_quality=video.download_quallity,
-                                          download_type=video.download_type, title=video.title,
-                                          channel=video.channel, thumbnails=video.thumbnails,
-                                          video_stream_data=video.video_stream_data).pack(fill="x", pady=2)
+                                          height=70,
+                                          border_width=1, 
+                                          
+                                          fg_color=self.app_widget_fg_color,
+                                          bg_color=self.app_fg_color,
+                                          theme_color=self.app_theme_color,
+                                          text_color=self.app_widget_text_color,
+                                          hover_color=self.app_btn_fg_hover_color,
+                                          
+                                          channel_url=video.channel_url,
+                                          url=video.url,
+                                          download_quality=video.download_quallity,
+                                          download_type=video.download_type,
+                                          title=video.title,
+                                          channel=video.channel,
+                                          thumbnails=video.thumbnails,
+                                          video_stream_data=video.video_stream_data,
+                                          downloaded_callback_function=self.downloaded_video).\
+        pack(fill="x", pady=2)
+        
+    
+    def downloaded_video(self, video: downloadingVideo.downloadingVideo):
+        downloadedVideo.downloadedVideo(master=self.scroll_frame_downloaded,
+                                        height=70,
+                                        border_width=1,
+                                        
+                                        download_quality=video.download_quality,
+                                        download_type=video.download_type,
+                                        
+                                        fg_color=self.app_widget_fg_color,
+                                        bg_color=self.app_fg_color,
+                                        text_color=self.app_widget_text_color,
+                                        hover_color=self.app_btn_fg_hover_color,
+                                        theme_color=self.app_theme_color,
+                                        
+                                        thumbnails=video.thumbnails,
+                                        title=video.title,
+                                        channel=video.channel,
+                                        channel_url=video.channel_url,
+                                        url=video.url,
+                                        download_path=video.download_file_name,
+                                        file_size=video.total_bytes,
+                                        ).\
+        pack(fill="x", pady=2)

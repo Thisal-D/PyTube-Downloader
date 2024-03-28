@@ -1,5 +1,6 @@
 import pytube
 
+
 def toDict(data):
     data_list = []    
     for d in data:
