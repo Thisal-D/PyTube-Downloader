@@ -5,9 +5,11 @@ from functions.passIt import passIt
 from functions.getSupportedDownloadTypes import getSupportedDownloadTypes
 from functions.sortDict import sortDict
 from functions.formatToComboBoxValues import formatToComboBoxValues
+from functions.getColor import getColor
 import time
 import pytube
 import threading
+
 
 class addedVideo(Video):
     index = 0
@@ -23,16 +25,21 @@ class addedVideo(Video):
     
     def __init__(self, master,
                  border_width=None,
-                 border_color=None,
+                 
+                 height=None,
+                 url=None,
+                 download_btn_command=passIt,
+                         
                  bg_color=None,
                  fg_color=None,
-                 height=None,
                  text_color=None,
-                 url=None,
-                 download_btn_command=passIt):
+                 theme_color=None,
+                 hover_color=None):
         
+        self.loading_failed = False
+        self.loading_loop_running = True
         self.download_btn_command = download_btn_command
-        super().__init__(master=master, border_width=border_width, border_color=border_color,
+        super().__init__(master=master, border_width=border_width, theme_color=theme_color, hover_color=hover_color,
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color)
         
         threading.Thread(target=self.loading).start()
@@ -40,32 +47,40 @@ class addedVideo(Video):
     
     
     def loading(self):
-        while not self.loading_done :
+        while not self.loading_done and not self.loading_failed :
+            self.loading_loop_running = True
             self.thumbnail_btn.configure(text="."*addedVideo.index)
             self.update()
             time.sleep(0.7)
-        self.set_video_data()
-        self.set_fetch_data()
-    
+        if not self.loading_failed:
+            self.set_video_data()
+            self.set_fetch_data()
+        self.loading_loop_running = False
+
     
     def get_video_data(self):
-        self.video = pytube.YouTube(self.url)
-        self.title = self.video.title
-        self.channel = self.video.author
-        self.length = self.video.length
-        self.video_stream_data  = self.video.streams
-        self.channel_url = self.video.channel_url
-        self.thumbnails = getThumbnails(self.video)
-        self.supported_download_types = sortDict(getSupportedDownloadTypes(self.video_stream_data))
-        self.loading_done = True
-    
+        try:
+            self.video = pytube.YouTube(self.url)
+            self.title = self.video.title
+            self.channel = self.video.author
+            self.length = self.video.length
+            self.video_stream_data  = self.video.streams
+            self.channel_url = self.video.channel_url
+            self.thumbnails = getThumbnails(self.video)
+            self.supported_download_types = sortDict(getSupportedDownloadTypes(self.video_stream_data))
+            self.loading_done = True
+            self.status_label.configure(text="Loaded")
+        except Exception as error:
+            print(error)
+            self.loading_failed = False
+            self.set_loading_failed()
     
     def select_download_option(self, e: str):
         self.download_quallity = e.replace(" ","").split("|")[0]
         if "kbps" in self.download_quallity:
-            self.download_type = "audio"
+            self.download_type = "Audio"
         else: 
-            self.download_type = "video"
+            self.download_type = "Video"
             
             
     def set_fetch_data(self):
@@ -76,12 +91,9 @@ class addedVideo(Video):
         self.thumbnail_btn.configure(state="normal")
         self.channel_label.configure(state="normal")
         self.download_btn.configure(state="normal")
-        
-        
-    def set_video_data(self):
-        super().set_video_data()
-        
-        
+    
+    
+
     def create_widgets(self):
         super().create_widgets()
         self.info_frame = ctk.CTkFrame(master=self,
@@ -90,20 +102,54 @@ class addedVideo(Video):
                                        bg_color=self.bg_color,
                                        fg_color=self.fg_color)
         self.resolutions_box = ctk.CTkComboBox(master=self.info_frame, values=[".........."])
+        
         self.download_btn = ctk.CTkButton(master=self.info_frame, text="Download", width=80, height=25,
-                                          border_width=2, fg_color=("#eeeeee", "#202020"), bg_color=self.bg_color,
-                                          hover_color=("#dddddd","#353535"),
-                                          border_color=("#dddddd", "#353535"), text_color=("#505050","#cccccc"),
+                                          border_width=2,
+                                          fg_color=self.fg_color, bg_color=self.bg_color,
+                                          hover_color=self.hover_color,
+                                          border_color=self.theme_color, text_color=self.text_color,
                                           state="disabled",
                                           command=lambda:self.download_btn_command(self))
-    
+        
+        self.status_label = ctk.CTkLabel(master=self.info_frame,
+                                         text="Loading",
+                                         height=15,
+                                         font=("arial", 12, "bold"),
+                                         bg_color=self.bg_color,
+                                         fg_color=self.fg_color,
+                                         text_color=self.theme_color)
+        
+        self.reload_btn = ctk.CTkButton(self ,text="⟳", 
+                                        width=15 ,height=15,
+                                        font=("arial", 20,"bold"),
+                                        text_color=self.theme_color,
+                                        command = self.reload_video,
+                                        fg_color=self.fg_color,
+                                        bg_color=self.bg_color,
+                                        hover=False,
+                                        )
+        #  ⏯ ↺ ↻ ⏵ ⏸ ▷
     
     def place_widgets(self):
         super().place_widgets()
-        self.info_frame.place(y=2, relx=1, x=-300)
-        self.resolutions_box.place(y=20)
-        self.download_btn.place(x=150 ,y=22)
+        self.info_frame.place(y=2, relx=1, x=-350)
+        self.resolutions_box.place(y=15,x=20)
+        self.download_btn.place(x=170 ,y=8)
+        self.status_label.place(x=210, anchor="n", y=44)
+        
     
-    
-    def configure_widget_sizes(self, e):
-        super().configure_widget_sizes(e)
+    def set_loading_failed(self):
+        self.loading_failed = True
+        while self.loading_loop_running: self.master.master.master.update()
+        self.thumbnail_btn.configure(text="...", disabledforeground="#fc4a46")
+        self.status_label.configure(text_color=("#fc4a46", "#fc4a46"), text="Failed")
+        self.reload_btn.place(relx=1, y=22, x=-80)
+        
+        
+    def reload_video(self):
+        self.loading_failed = False
+        self.reload_btn.place_forget()
+        self.thumbnail_btn.configure(disabledforeground=self.getColorBasedOnTheme(self.text_color))
+        self.status_label.configure(text_color=self.theme_color, text="Loading")
+        threading.Thread(target=self.loading).start()
+        threading.Thread(target=self.get_video_data).start()

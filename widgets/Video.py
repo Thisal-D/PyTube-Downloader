@@ -4,29 +4,31 @@ import tkinter as tk
 import webbrowser
 import time
 import threading
+from functions.getColor import getColor
+
+
 class Video(ctk.CTkFrame):
-    
-    #remove_btn_normal_img = PhotoImage(file=r"./imgs/remove button/normal.png")
-    #remove_btn_hover_img = PhotoImage(file=r"./imgs/remove button/hover.png")
-    
     def __init__(self,
                  master,
                  border_width=None,
-                 border_color=None,
-                 bg_color=None,
-                 fg_color=None,
+                
                  height=None,
-                 text_color=None,
                  url=None,
                  title = "---------",
                  channel = "---------",
                  thumbnails = (None, None),
+                 channel_url = None,
                  loading_done = False,
-                 ):
-        super().__init__(master=master, border_width=border_width, border_color=border_color,
+                 
+                 bg_color=None,
+                 fg_color=None,
+                 text_color=None,
+                 theme_color=None,
+                 hover_color=None):
+        
+        super().__init__(master=master, border_width=border_width, border_color=theme_color,corner_radius=8,
                          fg_color=fg_color, bg_color=bg_color, height=height)
 
-        
         self.loading_done = loading_done
         self.url = url
         self.title = title
@@ -34,15 +36,15 @@ class Video(ctk.CTkFrame):
         self.thumbnails = thumbnails
         self.supported_download_types = ["..........","..........",".........."]
         
-        self.channel_url = ""
+        self.channel_url = channel_url
         
         self.theme = "-"
         self.fg_color = fg_color
         self.text_color = text_color
         self.bg_color = bg_color
         self.height = height
-        
-        
+        self.theme_color = theme_color
+        self.hover_color = hover_color
         
         self.create_widgets()
         self.place_widgets()
@@ -52,52 +54,53 @@ class Video(ctk.CTkFrame):
 
     def create_widgets(self):
         self.thumbnail_btn = tk.Button(master=self,
-                                        bd=0,
-                                        font=("arial", 14, "bold"),
-                                        bg=self.get_color(self.fg_color),
-                                        activebackground=self.get_color(self.fg_color),
-                                        relief="sunken",
-                                        state="disabled",
-                                        command=lambda:webbrowser.open(self.url),
-                                        )
+                                       bd=0,
+                                       font=("arial", 14, "bold"),
+                                       bg=self.getColorBasedOnTheme(self.fg_color),
+                                       relief="sunken",
+                                       state="disabled",
+                                       cursor="hand2",
+                                       command=lambda:webbrowser.open(self.url)
+                                       )
         
         self.title_label = tk.Label(master=self ,anchor="w",
-                                        text = "Title : ",
-                                        font=('arial',10,'normal'),
-                                        bg=self.get_color(self.fg_color),
-                                        fg=self.get_color(self.text_color),
-                                        #bg="red",
-                                        )
+                                    text = "Title : ",
+                                    font=('arial',10,'normal'),
+                                    bg=self.getColorBasedOnTheme(self.fg_color),
+                                    fg=self.getColorBasedOnTheme(self.text_color)
+                                    )
 
-        self.channel_label = tk.Button(master=self ,font=('arial',9,'bold') ,anchor="w",
-                                        text = "Channel : ",
-                                        bd=0,
-                                        bg=self.get_color(self.fg_color),
-                                        fg=self.get_color(self.text_color),
-                                        command=lambda:webbrowser.open(self.channel_url),
-                                        activebackground=self.get_color(self.fg_color),
-                                        relief="sunken",
-                                        state="disabled"
-                                        )
+        self.channel_label = tk.Button(master=self ,font=('arial',9,'bold'), 
+                                       anchor="w",
+                                       text = "Channel : ",
+                                       bd=0,
+                                       bg=self.getColorBasedOnTheme(self.fg_color),
+                                       fg=self.getColorBasedOnTheme(self.text_color),
+                                       command=lambda:webbrowser.open(self.channel_url),
+                                       relief="sunken",
+                                       state="disabled",
+                                       cursor="hand2",
+                                       activeforeground=self.getColorBasedOnTheme(self.theme_color),
+                                       )
         
         self.url_label = tk.Label(master=self ,anchor="w",
-                                    bg=self.get_color(self.fg_color),
-                                    fg=self.get_color(self.text_color),
-                                    text=self.url, font=('arial',9,"underline"),
-                                    #bg="blue",
-                                    )
+                                  bg=self.getColorBasedOnTheme(self.fg_color),
+                                  fg=self.getColorBasedOnTheme(self.theme_color),
+                                  text=self.url, font=('arial',9,"underline"),
+                                  )
  
         self.remove_image = PhotoImage(file=r"./imgs/remove button/normal.png")
         self.remove_hover_image = PhotoImage(file=r"./imgs/remove button/hover.png")
         
         self.remove_btn = ctk.CTkButton(master=self,
-                                        command=self.remove,
+                                        command=self.kill,
                                         text = None,
                                         image=self.remove_image,
                                         bg_color=self.bg_color,
                                         fg_color=self.fg_color,
                                         width=12, height=15,
-                                        hover_color=self.fg_color)
+                                        hover_color=self.fg_color
+                                        )
         def remove_btn_enter(e):
             self.remove_btn.configure(image=self.remove_hover_image)
         def remove_btn_leave(e):
@@ -109,19 +112,19 @@ class Video(ctk.CTkFrame):
         self.bind("<Configure>", self.configure_widget_sizes)
         
         
-    def get_color(self, color):
-        if self.theme == "Dark":
-            return color[1]
-        return color[0]
-    
-    
     def set_theme(self):
-        self.thumbnail_btn.configure(bg=self.get_color(self.bg_color), fg=self.get_color(self.text_color), activebackground=self.get_color(self.fg_color))
-        self.title_label.configure(bg=self.get_color(self.bg_color), fg=self.get_color(self.text_color))
-        self.url_label.configure(bg=self.get_color(self.bg_color), fg="#1f9bfd")
-        self.channel_label.configure(bg=self.get_color(self.bg_color), fg=self.get_color(self.text_color), activebackground=self.get_color(self.fg_color))
+        self.thumbnail_btn.configure(bg=self.getColorBasedOnTheme(self.bg_color), fg=self.getColorBasedOnTheme(self.text_color),
+                                     disabledforeground=self.getColorBasedOnTheme(self.text_color),
+                                     activebackground=self.getColorBasedOnTheme(self.fg_color))
+        self.title_label.configure(bg=self.getColorBasedOnTheme(self.bg_color), fg=self.getColorBasedOnTheme(self.text_color))
+        self.url_label.configure(bg=self.getColorBasedOnTheme(self.bg_color))
+        self.channel_label.configure(bg=self.getColorBasedOnTheme(self.bg_color), fg=self.getColorBasedOnTheme(self.text_color), activebackground=self.getColorBasedOnTheme(self.fg_color))
         
-        
+    
+    def getColorBasedOnTheme(self, color):
+        return getColor(color, self.theme)
+    
+    
     def RunThemeTracker(self):
         while True:
             if ctk.get_appearance_mode() != self.theme:
@@ -158,9 +161,10 @@ class Video(ctk.CTkFrame):
             self.thumbnail_btn.bind("<Leave>",thumbnail_img_set)    
             
             
-    def remove(self):
-        self.pack_forget()
-        for childs_widget in self.winfo_children():
-            childs_widget.destroy()
+    def kill(self):
+        for child_widget in self.winfo_children():
+            for sub_child_widget in child_widget.winfo_children():
+                sub_child_widget.destroy()
+            child_widget.destroy()
+        self.place_forget()
         self.destroy()
-        del self
