@@ -1,4 +1,4 @@
-ufrom app import app
+from app import app
 from widgets.addedVideo import addedVideo, Video
 import customtkinter as ctk
 import os
@@ -45,4 +45,4 @@ for url in urls:
 app.run()
 
 
-[os.remove("temp\\"+file) for file in os.listdir("temp")]
+[os.remove("temp\\"+file) for file in os.listdir("temp")]
