@@ -20,7 +20,6 @@ def sortDict(info):
     while True:
         for dict_ in info :
             if list(dict_.keys())[0] == keys[index2]:
-                changed = True
                 sorted_dict.append(dict_)
                 index2 += 1
                 if index2>=len(keys):

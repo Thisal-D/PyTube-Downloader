@@ -1,6 +1,5 @@
 import os
 
-
 def getValidFileName(path):
     splited = path.split(".")
     file_name ,extenstion = ".".join(splited[0:-1]),splited[-1]

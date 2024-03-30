@@ -8,6 +8,7 @@ from functions.passIt import passIt
 from functions.getConvertedSize import getConvertedSize
 from functions.getValidFileName import getValidFileName
 from functions.removeInvalidCharts import removeInvalidChars
+from functions.createDownloadDirectory import createDownloadDirectory
 
 
 class downloadingVideo(Video):
@@ -32,13 +33,15 @@ class downloadingVideo(Video):
                  hover_color=None,
                  special_color=None,
                  
-                 downloaded_callback_function=None):
+                 downloaded_callback_function=None,
+                 download_directory = ""):
         
         self.download_pause_req = False
         self.downloaded_callback_function = downloaded_callback_function
         self.download_quality = download_quality
         self.download_type = download_type
         self.video_stream_data = video_stream_data
+        self.download_directory = download_directory
         super().__init__(master=master, border_width=border_width, theme_color=theme_color,hover_color=hover_color,
                          channel_url=channel_url, width=width,
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color,
@@ -144,7 +147,7 @@ class downloadingVideo(Video):
         self.redownload_btn.place_forget()
         self.pause_resume_button.place(y=22, relx=1, x=-80)
         self.net_speed_label.configure(text="0.0 B/s")
-        self.download_progress_bar.set(0.0)
+        self.download_progress_bar.set(0)
         self.download_percentage_label.configure(text="0.0 %")
         self.status_label.configure(text="Downloading", text_color=self.theme_color)
         threading.Thread(target=self.download_video).start()
@@ -170,8 +173,13 @@ class downloadingVideo(Video):
         
         
     def download_video(self):
+        try:
+            createDownloadDirectory(self.download_directory)
+        except BufferError:
+            pass
+        
         self.downloaded_bytes = 0
-        self.download_file_name = removeInvalidChars(self.channel + " - " + self.title)
+        self.download_file_name = self.download_directory + "\\" + removeInvalidChars(self.channel + " - " + self.title)
         try:
             self.download_type_label.configure(text=self.download_type + " : "+self.download_quality)
             if self.download_type == "Video":
@@ -185,9 +193,10 @@ class downloadingVideo(Video):
             self.download_file_name = getValidFileName(self.download_file_name)
             self.set_download_progress()
         except Exception as error:
-            print(error)
+            self.set_redownload()
             self.set_status("Failed")
-            
+        
+        print(self.download_file_name)
         try:
             with open(self.download_file_name,"wb") as self.video_file :
                 stream =  pytube_request.stream(stream.url)
@@ -201,7 +210,7 @@ class downloadingVideo(Video):
                                 self.set_status("Paused")
                                 self.set_resume_btn()
                                 count = 1
-                            time.sleep(0.2)
+                            time.sleep(0.3)
                             continue
                         self.pause_resume_button.configure(command=self.pause_downloading)
                         count = 0
@@ -222,6 +231,7 @@ class downloadingVideo(Video):
                                     print(error)
                                 break
                             else:
+                                self.set_redownload()
                                 self.set_status("Failed")
                                 break
                     except Exception as error:
@@ -229,7 +239,7 @@ class downloadingVideo(Video):
                         self.set_status("Failed")
                         break
         except Exception as error:
-            print(error)
+            self.set_redownload()
             self.set_status("Failed")
 
 

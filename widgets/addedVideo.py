@@ -34,11 +34,13 @@ class addedVideo(Video):
                  text_color=None,
                  theme_color=None,
                  hover_color=None,
-                 special_color=None):
+                 special_color=None,
+                 ):
         
         self.loading_failed = False
         self.loading_loop_running = True
         self.download_btn_command = download_btn_command
+        
         super().__init__(master=master, border_width=border_width, theme_color=theme_color, hover_color=hover_color,
                          special_color=special_color, width=width,
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color)

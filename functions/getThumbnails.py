@@ -4,7 +4,6 @@ from urllib import request
 import tkinter
 from PIL import Image, ImageDraw
 
-
 def add_corners(im, rad):
     circle = Image.new('L', (rad * 2, rad * 2), 0)
     draw = ImageDraw.Draw(circle)

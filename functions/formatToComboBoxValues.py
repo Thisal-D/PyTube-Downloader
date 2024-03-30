@@ -1,6 +1,5 @@
 from .getConvertedSize import getConvertedSize
 
-
 def formatToComboBoxValues(supported_download_types):
     reso_box_values = []
     for data_dict in supported_download_types:

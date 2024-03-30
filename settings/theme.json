@@ -16,7 +16,8 @@
                 "#101010"
         ],
         "app_special_color": "#1f9bfd",
-        "app_theme_color": "#5ffd66",
+        "app_theme_color": "#adadad",
+        "app_theme_mode": "System",
         "app_widget_fg_color": [
                 "#ffffff",
                 "#101010"

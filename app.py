@@ -12,8 +12,10 @@ class app(ctk.CTk):
                  app_widget_fg_color = ("#ffffff", "#101010"),
                  app_widget_text_color = ("#404040", "#aaaaaa"),
                  app_theme_color = "#1f9bfd",
+                 app_theme_mode = "System",
                  app_special_color = "#fc4a46",
                  app_theme_colors = [],
+                 download_directory = "",
                  ):
         
         super().__init__()
@@ -29,11 +31,12 @@ class app(ctk.CTk):
         self.app_theme_color = app_theme_color
         self.app_special_color = app_special_color
         self.app_theme_colors = app_theme_colors
+        self.app_theme_mode = app_theme_mode
         self.reset_widgets = True
         self.loop_run = False
-        
+        self.download_directory = download_directory
         addedVideo.addedVideo.configure_loading_display()
-
+        
 
     def create_widgets(self):
         self.link_entry = ctk.CTkEntry(master=self, height=40, placeholder_text="Enter Youtube URL")
@@ -49,10 +52,11 @@ class app(ctk.CTk):
         self.downloaded_btn =  ctk.CTkButton(master=self, text="Downloaded", height=40, command=lambda: self.place_frame(self.scroll_frame_downloaded))
         
         self.settings_panel = settingPanel.settingPanel(master=self, fg_color=self.app_fg_color, bg_color=self.app_fg_color,
-                                                        text_color=self.app_widget_text_color, app_theme_colors=self.app_theme_colors,
-                                                        theme_color=self.app_theme_color, call_back=self.theme_color_change_callback,
+                                                        text_color=self.app_widget_text_color,
+                                                        directory_change_call_back=self.directory_change_callback,
+                                                        theme_color_change_call_back=self.theme_color_change_callback,
                                                        )
-        self.setting_btn = ctk.CTkButton(master=self, text="⚡", border_spacing=0,
+        self.setting_btn = ctk.CTkButton(master=self, text="⚡", border_spacing=0, 
                                          hover=False, fg_color=self.app_fg_color, width=30, height=40,
                                          command=self.open_settings)
          
@@ -191,6 +195,8 @@ class app(ctk.CTk):
                                           channel=video.channel,
                                           thumbnails=video.thumbnails,
                                           video_stream_data=video.video_stream_data,
+                                          
+                                          download_directory = self.download_directory,
                                           downloaded_callback_function=self.downloaded_video).\
         pack(fill="x", pady=2)
         
@@ -236,6 +242,9 @@ class app(ctk.CTk):
             if type(video_object) == downloadedVideo.downloadedVideo:
                 video_object.set_new_theme(self.app_theme_color)
                 
+    
+    def directory_change_callback(self, download_directory):
+        self.download_directory = download_directory
     
     def open_settings(self):
         self.settings_panel.place(relwidth=1, relheight=1)
