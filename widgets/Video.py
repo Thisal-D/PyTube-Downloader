@@ -1,5 +1,4 @@
 import customtkinter as ctk
-from tkinter import PhotoImage
 import tkinter as tk
 import webbrowser
 import time
@@ -89,9 +88,6 @@ class Video(ctk.CTkFrame):
                                   text=self.url, font=('arial',9,"underline"),
                                   )
  
-        self.remove_image = PhotoImage(file=r"./imgs/remove button/normal.png")
-        self.remove_hover_image = PhotoImage(file=r"./imgs/remove button/hover.png")
-        
         self.remove_btn = ctk.CTkButton(master=self,
                                         command=self.kill,
                                         text="X",

@@ -1,6 +1,5 @@
 from .Video import Video
 import customtkinter as ctk
-import tkinter as tk
 import pytube
 import threading
 import time
@@ -8,6 +7,7 @@ from pytube import request as pytube_request
 from functions.passIt import passIt
 from functions.getConvertedSize import getConvertedSize
 from functions.getValidFileName import getValidFileName
+from functions.removeInvalidCharts import removeInvalidChars
 
 
 class downloadingVideo(Video):
@@ -171,7 +171,7 @@ class downloadingVideo(Video):
         
     def download_video(self):
         self.downloaded_bytes = 0
-        self.download_file_name = self.channel + " - " + self.title
+        self.download_file_name = removeInvalidChars(self.channel + " - " + self.title)
         try:
             self.download_type_label.configure(text=self.download_type + " : "+self.download_quality)
             if self.download_type == "Video":

@@ -1,4 +1,3 @@
-from typing import Any, Tuple
 import customtkinter as ctk
 from .colorBtn import ColorBtn
 from functions.saveSettings import saveSettings
