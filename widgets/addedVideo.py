@@ -5,7 +5,6 @@ from functions.passIt import passIt
 from functions.getSupportedDownloadTypes import getSupportedDownloadTypes
 from functions.sortDict import sortDict
 from functions.formatToComboBoxValues import formatToComboBoxValues
-from functions.getColor import getColor
 import time
 import pytube
 import threading
@@ -25,7 +24,7 @@ class addedVideo(Video):
     
     def __init__(self, master,
                  border_width=None,
-                 
+                 width=None,
                  height=None,
                  url=None,
                  download_btn_command=passIt,
@@ -34,12 +33,14 @@ class addedVideo(Video):
                  fg_color=None,
                  text_color=None,
                  theme_color=None,
-                 hover_color=None):
+                 hover_color=None,
+                 special_color=None):
         
         self.loading_failed = False
         self.loading_loop_running = True
         self.download_btn_command = download_btn_command
         super().__init__(master=master, border_width=border_width, theme_color=theme_color, hover_color=hover_color,
+                         special_color=special_color, width=width,
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color)
         
         threading.Thread(target=self.loading).start()
@@ -99,15 +100,16 @@ class addedVideo(Video):
         self.info_frame = ctk.CTkFrame(master=self,
                                        height=self.height-4,
                                        width=250,
-                                       bg_color=self.bg_color,
+                                       bg_color=self.fg_color,
                                        fg_color=self.fg_color)
         self.resolutions_box = ctk.CTkComboBox(master=self.info_frame, values=[".........."])
         
+        #⇩ ⤓
         self.download_btn = ctk.CTkButton(master=self.info_frame, text="Download", width=80, height=25,
                                           border_width=2,
-                                          fg_color=self.fg_color, bg_color=self.bg_color,
+                                          fg_color=self.fg_color, bg_color=self.fg_color,
                                           hover_color=self.hover_color,
-                                          border_color=self.theme_color, text_color=self.text_color,
+                                          text_color=self.text_color,
                                           state="disabled",
                                           command=lambda:self.download_btn_command(self))
         
@@ -115,20 +117,26 @@ class addedVideo(Video):
                                          text="Loading",
                                          height=15,
                                          font=("arial", 12, "bold"),
-                                         bg_color=self.bg_color,
+                                         bg_color=self.fg_color,
                                          fg_color=self.fg_color,
-                                         text_color=self.theme_color)
+                                         )
         
         self.reload_btn = ctk.CTkButton(self ,text="⟳", 
                                         width=15 ,height=15,
-                                        font=("arial", 20,"bold"),
-                                        text_color=self.theme_color,
+                                        font=("arial", 20, "normal"),
                                         command = self.reload_video,
                                         fg_color=self.fg_color,
-                                        bg_color=self.bg_color,
+                                        bg_color=self.fg_color,
                                         hover=False,
                                         )
         #  ⏯ ↺ ↻ ⏵ ⏸ ▷
+        
+    
+    def set_theme(self):
+        super().set_theme()
+        self.download_btn.configure(border_color=self.theme_color)
+        self.status_label.configure(text_color=self.theme_color)
+        self.reload_btn.configure(text_color=self.theme_color)
     
     def place_widgets(self):
         super().place_widgets()
@@ -141,8 +149,10 @@ class addedVideo(Video):
     def set_loading_failed(self):
         self.loading_failed = True
         while self.loading_loop_running: self.master.master.master.update()
-        self.thumbnail_btn.configure(text="...", disabledforeground="#fc4a46")
-        self.status_label.configure(text_color=("#fc4a46", "#fc4a46"), text="Failed")
+        self.thumbnail_btn.configure(text="...",
+                                     disabledforeground=self.special_color)
+        self.status_label.configure(text_color=self.special_color,
+                                    text="Failed")
         self.reload_btn.place(relx=1, y=22, x=-80)
         
         

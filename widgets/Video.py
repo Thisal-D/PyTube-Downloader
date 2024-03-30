@@ -11,7 +11,7 @@ class Video(ctk.CTkFrame):
     def __init__(self,
                  master,
                  border_width=None,
-                
+                 width=None,
                  height=None,
                  url=None,
                  title = "---------",
@@ -24,10 +24,11 @@ class Video(ctk.CTkFrame):
                  fg_color=None,
                  text_color=None,
                  theme_color=None,
-                 hover_color=None):
+                 hover_color=None,
+                 special_color=None):
         
-        super().__init__(master=master, border_width=border_width, border_color=theme_color,corner_radius=8,
-                         fg_color=fg_color, bg_color=bg_color, height=height)
+        super().__init__(master=master, border_width=border_width, corner_radius=8,
+                         fg_color=fg_color, bg_color=bg_color, height=height, width=width)
 
         self.loading_done = loading_done
         self.url = url
@@ -41,10 +42,10 @@ class Video(ctk.CTkFrame):
         self.theme = "-"
         self.fg_color = fg_color
         self.text_color = text_color
-        self.bg_color = bg_color
         self.height = height
         self.theme_color = theme_color
         self.hover_color = hover_color
+        self.special_color = special_color
         
         self.create_widgets()
         self.place_widgets()
@@ -80,12 +81,11 @@ class Video(ctk.CTkFrame):
                                        relief="sunken",
                                        state="disabled",
                                        cursor="hand2",
-                                       activeforeground=self.getColorBasedOnTheme(self.theme_color),
+                                       
                                        )
         
         self.url_label = tk.Label(master=self ,anchor="w",
                                   bg=self.getColorBasedOnTheme(self.fg_color),
-                                  fg=self.getColorBasedOnTheme(self.theme_color),
                                   text=self.url, font=('arial',9,"underline"),
                                   )
  
@@ -94,31 +94,35 @@ class Video(ctk.CTkFrame):
         
         self.remove_btn = ctk.CTkButton(master=self,
                                         command=self.kill,
-                                        text = None,
-                                        image=self.remove_image,
-                                        bg_color=self.bg_color,
+                                        text="X",
+                                        font=("arial", 12, "bold"),
                                         fg_color=self.fg_color,
-                                        width=12, height=15,
-                                        hover_color=self.fg_color
+                                        bg_color=self.fg_color,
+                                        border_width=2,
+                                        border_color=self.special_color,
+                                        text_color=self.special_color,
+                                        width=12, height=10,
+                                        border_spacing=0,
+                                        hover=False,
                                         )
-        def remove_btn_enter(e):
-            self.remove_btn.configure(image=self.remove_hover_image)
-        def remove_btn_leave(e):
-            self.remove_btn.configure(image=self.remove_image)
-            
-        self.remove_btn.bind("<Enter>", remove_btn_enter)
-        self.remove_btn.bind("<Leave >", remove_btn_leave)
         
         self.bind("<Configure>", self.configure_widget_sizes)
         
         
     def set_theme(self):
-        self.thumbnail_btn.configure(bg=self.getColorBasedOnTheme(self.bg_color), fg=self.getColorBasedOnTheme(self.text_color),
+        self.configure(border_color=self.theme_color)
+        self.thumbnail_btn.configure(bg=self.getColorBasedOnTheme(self.fg_color), 
+                                     fg=self.getColorBasedOnTheme(self.text_color),
                                      disabledforeground=self.getColorBasedOnTheme(self.text_color),
                                      activebackground=self.getColorBasedOnTheme(self.fg_color))
-        self.title_label.configure(bg=self.getColorBasedOnTheme(self.bg_color), fg=self.getColorBasedOnTheme(self.text_color))
-        self.url_label.configure(bg=self.getColorBasedOnTheme(self.bg_color))
-        self.channel_label.configure(bg=self.getColorBasedOnTheme(self.bg_color), fg=self.getColorBasedOnTheme(self.text_color), activebackground=self.getColorBasedOnTheme(self.fg_color))
+        self.title_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
+                                   fg=self.getColorBasedOnTheme(self.text_color))
+        self.url_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
+                                 fg=self.theme_color)
+        self.channel_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
+                                     fg=self.getColorBasedOnTheme(self.text_color),
+                                     activebackground=self.getColorBasedOnTheme(self.fg_color),
+                                     activeforeground=self.theme_color,)
         
     
     def getColorBasedOnTheme(self, color):
@@ -134,7 +138,7 @@ class Video(ctk.CTkFrame):
     
     
     def configure_widget_sizes(self, e):
-        self.remove_btn.place(x=self.winfo_width()-34,y=2)
+        self.remove_btn.place(x=self.winfo_width()-24,y=4)
         self.title_label.place(width=self.winfo_width()-450)
         self.url_label.place(width=self.winfo_width()-450)
         self.channel_label.place(width=self.winfo_width()-450)
@@ -168,3 +172,8 @@ class Video(ctk.CTkFrame):
             child_widget.destroy()
         self.place_forget()
         self.destroy()
+        
+        
+    def set_new_theme(self, new_theme_color):
+        self.theme_color = new_theme_color
+        self.set_theme()

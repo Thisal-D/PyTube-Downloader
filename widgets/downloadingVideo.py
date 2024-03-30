@@ -13,6 +13,7 @@ from functions.getValidFileName import getValidFileName
 class downloadingVideo(Video):
     def __init__(self, master,
                  border_width=None,
+                 width=None,
                  height=None,
                  download_quality=None,
                  download_type=None,
@@ -23,11 +24,14 @@ class downloadingVideo(Video):
                  video_stream_data: pytube.StreamQuery = None,
                  url=None,
                  channel_url=None,
+                 
                  bg_color=None,
                  fg_color=None,
                  text_color=None,
                  theme_color=None,
                  hover_color=None,
+                 special_color=None,
+                 
                  downloaded_callback_function=None):
         
         self.download_pause_req = False
@@ -36,9 +40,9 @@ class downloadingVideo(Video):
         self.download_type = download_type
         self.video_stream_data = video_stream_data
         super().__init__(master=master, border_width=border_width, theme_color=theme_color,hover_color=hover_color,
-                         channel_url=channel_url,
+                         channel_url=channel_url, width=width,
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color,
-                         thumbnails=thumbnails, title=title, channel=channel, loading_done=loading_done)
+                         thumbnails=thumbnails, title=title, channel=channel, loading_done=loading_done, special_color=special_color)
         self.set_state()
         threading.Thread(target=self.redownload_video).start()
         
@@ -46,66 +50,62 @@ class downloadingVideo(Video):
     def create_widgets(self):
         super().create_widgets()
         
-        self.info_frame = ctk.CTkFrame(self ,height=25, bg_color=self.bg_color, fg_color=self.fg_color)
+        self.info_frame = ctk.CTkFrame(self, height=self.height-4, bg_color=self.fg_color, fg_color=self.fg_color)
     
         self.download_progress_bar = ctk.CTkProgressBar(master=self.info_frame,
-                                                        bg_color=self.bg_color,
-                                                        progress_color=self.theme_color,
-                                                        width=(self.master.cget("width")-200)/2,
+                                                        bg_color=self.fg_color,
                                                         height=8)
              
         self.download_progress_label = ctk.CTkLabel(master=self.info_frame,
                                                     text="",
                                                     font=("arial", 12, "bold"),
-                                                    bg_color=self.bg_color,
+                                                    bg_color=self.fg_color,
                                                     fg_color=self.fg_color,
                                                     text_color=self.text_color)
         
         self.download_percentage_label = ctk.CTkLabel(master=self.info_frame,
                                                       text="",
                                                       font=("arial", 12, "bold"),
-                                                      bg_color=self.bg_color,
+                                                      bg_color=self.fg_color,
                                                       fg_color=self.fg_color,
                                                       text_color=self.text_color)
         
         self.download_type_label = ctk.CTkLabel(master=self.info_frame,
                                           text="",
                                           font=("arial", 12, "normal"),
-                                          bg_color=self.bg_color,
+                                          bg_color=self.fg_color,
                                           fg_color=self.fg_color,
                                           text_color=self.text_color)
         
         self.net_speed_label = ctk.CTkLabel(master=self.info_frame,
                                             text="",
                                             font=("arial", 12, "normal"),
-                                            bg_color=self.bg_color,
+                                            bg_color=self.fg_color,
                                             fg_color=self.fg_color,
                                             text_color=self.text_color)
         
         self.status_label = ctk.CTkLabel(master=self.info_frame,
                                          text="",
                                          font=("arial", 12, "bold"),
-                                         bg_color=self.bg_color,
+                                         bg_color=self.fg_color,
                                          fg_color=self.fg_color,
-                                         text_color=self.theme_color)
+                                         )
         
         self.redownload_btn = ctk.CTkButton(self ,text="⟳", 
-                                                 width=15 ,height=15,
-                                                 font=("arial", 20,"bold"),
-                                                 text_color=self.theme_color,
-                                                 command = self.redownload_video,
-                                                 fg_color=self.fg_color,
-                                                 bg_color=self.bg_color,
-                                                 hover=False,
-                                                 )
+                                            width=15 ,height=15,
+                                            font=("arial", 20,"normal"),
+                                            command = self.redownload_video,
+                                            fg_color=self.fg_color,
+                                            bg_color=self.fg_color,
+                                            hover=False,
+                                            )
         #  ⏯ ↺ ↻ ⏵ ⏸ ▷
         self.pause_resume_button = ctk.CTkButton(self ,text="⏸", 
                                                  width=15 ,height=15,
                                                  font=("arial", 20,"normal"),
-                                                 text_color=self.theme_color,
                                                  command = self.pause_downloading,
                                                  fg_color=self.fg_color,
-                                                 bg_color=self.bg_color,
+                                                 bg_color=self.fg_color,
                                                  hover=False,
                                                  )
         
@@ -115,18 +115,30 @@ class downloadingVideo(Video):
         self.title_label.place(x=130, y=4, height=20, relwidth=0.5, width=-150)
         self.channel_label.place(x=130, y=24, height=20, relwidth=0.5, width=-150)
         self.url_label.place(x=130, y=44, height=20, relwidth=0.5, width=-150)
+        
         self.pause_resume_button.place(y=22, relx=1, x=-80)
-        self.info_frame.place(relx=0.5, relwidth=0.5, width=-100, y=2, relheight=1, height=-4)
+        self.info_frame.place(relx=0.5, y=2)
         
-        self.download_progress_label.place(relx=0.25, height=20, anchor="n", y=4)
-        self.download_percentage_label.place(relx=0.75, height=20, anchor="n", y=4)
+        self.download_progress_label.place(relx=0.25, anchor="n", y=4)
+        self.download_progress_label.configure(height=20)
+        self.download_percentage_label.place(relx=0.75, anchor="n", y=4)
+        self.download_percentage_label.configure(height=20)
         self.download_progress_bar.place(relwidth=1, y=30)
-
-        self.download_type_label.place(relx=0.115, height=20, anchor="n", y=40)
-        self.net_speed_label.place(relx=0.445, height=20, anchor="n", y=40)
-        self.status_label.place(relx=0.775, height=20, anchor="n", y=40)
+        self.download_type_label.place(relx=0.115, anchor="n", y=40)
+        self.download_type_label.configure(height=20)
+        self.net_speed_label.place(relx=0.445, anchor="n", y=40)
+        self.net_speed_label.configure(height=20)
+        self.status_label.place(relx=0.775, anchor="n", y=40)
+        self.status_label.configure(height=20)
         
 
+    def set_theme(self):
+        super().set_theme()
+        self.download_progress_bar.configure(progress_color=self.theme_color)
+        self.status_label.configure(text_color=self.theme_color)
+        self.redownload_btn.configure(text_color=self.theme_color)
+        self.pause_resume_button.configure(text_color=self.theme_color)
+        
     def redownload_video(self):
         self.set_pause_btn()
         self.redownload_btn.place_forget()
@@ -144,8 +156,8 @@ class downloadingVideo(Video):
     
     
     def configure_widget_sizes(self, e):
-        self.remove_btn.place(x=self.winfo_width()-34,y=2)
-        
+        self.remove_btn.place(x=self.winfo_width()-24,y=4)
+        self.info_frame.configure(width=self.winfo_width()/2-100)
         
     def set_state(self):
         self.thumbnail_btn.configure(state="normal")
@@ -153,7 +165,7 @@ class downloadingVideo(Video):
     
     def set_status(self, status):
         if status=="Failed":
-            self.status_label.configure(text_color=("#fc4a46", "#fc4a46"))
+            self.status_label.configure(text_color=self.special_color)
         self.status_label.configure(text=status)
         
         
