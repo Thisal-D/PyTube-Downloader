@@ -52,3 +52,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Disclaimer
 
 This application is intended for personal use only. Please respect YouTube's terms of service and the rights of content creators when downloading videos.
+
+
+
+<br>
+<hr>
+<br>
+Thanks to :
+
+- [childeyouyu]("https://github.com/childeyouyu")
+- [Navindu]("https://github.com/Navindu21")
+
+for their support...
