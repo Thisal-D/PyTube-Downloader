@@ -60,7 +60,7 @@ This application is intended for personal use only. Please respect YouTube's ter
 <br>
 Thanks to :
 
-- ![childeyouyu]("https://github.com/childeyouyu")
-- ![Navindu]("https://github.com/Navindu21")
+- [childeyouyu](https://github.com/childeyouyu)
+
 
 for their support...
