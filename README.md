@@ -53,8 +53,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 This application is intended for personal use only. Please respect YouTube's terms of service and the rights of content creators when downloading videos.
 
-
-
 <br>
 <hr>
 <br>
