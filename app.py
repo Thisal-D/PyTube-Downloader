@@ -35,12 +35,23 @@ class app(ctk.CTk):
         self.reset_widgets = True
         self.loop_run = False
         self.download_directory = download_directory
+        self.selected_download_mode = "video"
         addedVideo.addedVideo.configure_loading_display()
         
 
     def create_widgets(self):
         self.link_entry = ctk.CTkEntry(master=self, height=40, placeholder_text="Enter Youtube URL")
         self.add_btn =  ctk.CTkButton(master=self, text="Add +", height=40, width=100, command=self.add_video)
+        
+        self.video_radio_btn = ctk.CTkRadioButton(master=self, text="Video",
+                                                  radiobutton_width=16, radiobutton_height=16,
+                                                  width=60, height=18,
+                                                  command=lambda:self.select_download_mode("video"))
+        self.video_radio_btn.select()
+        self.playlist_radio_btn = ctk.CTkRadioButton(master=self, text="Playlist",
+                                                     radiobutton_width=16, radiobutton_height=16,
+                                                     width=60, height=18,
+                                                     command=lambda:self.select_download_mode("playlist"))
         
         self.scroll_frame_added = ctk.CTkScrollableFrame(master=self)
         self.scroll_frame_downloading = ctk.CTkScrollableFrame(master=self)
@@ -74,7 +85,7 @@ class app(ctk.CTk):
     def set_widgets_size(self):
         root_width = self.winfo_width()
         root_height = self.winfo_height()
-        self.link_entry.configure(width = root_width-156)
+        self.link_entry.configure(width = root_width-250)
         
         btn_width = (root_width-26)/3
         self.added_btn.configure(width=btn_width)
@@ -118,8 +129,9 @@ class app(ctk.CTk):
     
     def place_widgets(self):
         self.link_entry.place(x=43)
+        self.video_radio_btn.place(relx=1, x=-190,y=2)
+        self.playlist_radio_btn.place(relx=1, x=-190, y=22)
         self.add_btn.place(relx=1, x=-110)
-        
         self.added_btn.place(y=45, x=10)
         self.downloading_btn.place(y=45)
         self.downloaded_btn.place(y=45)
@@ -153,26 +165,32 @@ class app(ctk.CTk):
         self.downloaded_btn.configure(font=("arial", 15, "bold"))
         self.setting_btn.configure(font=("arial", 25, "normal"))
         
-    
-    def run(self):
-        self.mainloop()
         
+    def select_download_mode(self, download_mode):
+        self.selected_download_mode = download_mode
+        if download_mode == "playlist":
+            self.video_radio_btn.deselect()
+        else:
+            self.playlist_radio_btn.deselect()
+    
+   
         
     def add_video(self):
         yt_url = self.link_entry.get()
-        addedVideo.addedVideo(master=self.scroll_frame_added, 
-                              height=70,
-                              width=self.scroll_frame_added.winfo_width(),
-                              fg_color=self.app_widget_fg_color,
-                              bg_color=self.app_fg_color,
-                              theme_color = self.app_theme_color,
-                              text_color=self.app_widget_text_color,      
-                              hover_color=self.app_btn_fg_hover_color,
-                              special_color=self.app_special_color,
-                              
-                              border_width=1, 
-                              url=yt_url, download_btn_command=self.download_video).\
-        pack(fill="x", pady=2)
+        if self.selected_download_mode == "video":
+            addedVideo.addedVideo(master=self.scroll_frame_added, 
+                                height=70,
+                                width=self.scroll_frame_added.winfo_width(),
+                                fg_color=self.app_widget_fg_color,
+                                bg_color=self.app_fg_color,
+                                theme_color = self.app_theme_color,
+                                text_color=self.app_widget_text_color,      
+                                hover_color=self.app_btn_fg_hover_color,
+                                special_color=self.app_special_color,
+                                
+                                border_width=1, 
+                                url=yt_url, download_btn_command=self.download_video).\
+            pack(fill="x", pady=2)
         
         
     def download_video(self, video: addedVideo.addedVideo):
@@ -254,3 +272,7 @@ class app(ctk.CTk):
         self.settings_panel.place_forget()
         self.setting_btn.configure(command=self.open_settings)
     
+    
+    
+    def run(self):
+        self.mainloop()
