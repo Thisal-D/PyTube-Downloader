@@ -1,6 +1,7 @@
 #third party libs
 import customtkinter as ctk
-from widgets import  addedVideo, downloadingVideo, downloadedVideo, settingPanel
+from widgets import  addedVideo, downloadingVideo, downloadedVideo,\
+    settingPanel, playList, addedPlaylist
 
 
 class app(ctk.CTk):
@@ -35,8 +36,7 @@ class app(ctk.CTk):
         self.reset_widgets = True
         self.loop_run = False
         self.download_directory = download_directory
-        self.selected_download_mode = "video"
-        addedVideo.addedVideo.configure_loading_display()
+        self.selected_download_mode = "video"#"video"
         
 
     def create_widgets(self):
@@ -191,6 +191,21 @@ class app(ctk.CTk):
                                 border_width=1, 
                                 url=yt_url, download_btn_command=self.download_video).\
             pack(fill="x", pady=2)
+        else:
+            addedPlaylist.addedPlaylist(master=self.scroll_frame_added, 
+                              height=85,
+                              width=self.scroll_frame_added.winfo_width(),
+                              fg_color=self.app_widget_fg_color,
+                              bg_color=self.app_fg_color,
+                              theme_color = self.app_theme_color,
+                              text_color=self.app_widget_text_color,      
+                              hover_color=self.app_btn_fg_hover_color,
+                              special_color=self.app_special_color,
+                              download_btn_command=self.download_video,
+                              border_width=1, 
+                              playlist_url=yt_url).\
+            pack(fill="x", pady=2)
+            
         
         
     def download_video(self, video: addedVideo.addedVideo):
@@ -271,8 +286,6 @@ class app(ctk.CTk):
     def close_settings(self):
         self.settings_panel.place_forget()
         self.setting_btn.configure(command=self.open_settings)
-    
-    
     
     def run(self):
         self.mainloop()
