@@ -107,19 +107,23 @@ class Video(ctk.CTkFrame):
         
     def set_theme(self):
         self.configure(border_color=self.theme_color)
+    
         self.thumbnail_btn.configure(bg=self.getColorBasedOnTheme(self.fg_color), 
-                                     fg=self.getColorBasedOnTheme(self.text_color),
-                                     disabledforeground=self.getColorBasedOnTheme(self.text_color),
-                                     activebackground=self.getColorBasedOnTheme(self.fg_color))
+                                    fg=self.getColorBasedOnTheme(self.text_color),
+                                    disabledforeground=self.getColorBasedOnTheme(self.text_color),
+                                    activebackground=self.getColorBasedOnTheme(self.fg_color))
+    
         self.title_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
-                                   fg=self.getColorBasedOnTheme(self.text_color))
+                                fg=self.getColorBasedOnTheme(self.text_color))
+    
         self.url_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
-                                 fg=self.theme_color)
+                                fg=self.theme_color)
+    
         self.channel_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
-                                     fg=self.getColorBasedOnTheme(self.text_color),
-                                     activebackground=self.getColorBasedOnTheme(self.fg_color),
-                                     activeforeground=self.theme_color,)
-        
+                                    fg=self.getColorBasedOnTheme(self.text_color),
+                                    activebackground=self.getColorBasedOnTheme(self.fg_color),
+                                    activeforeground=self.theme_color,)
+    
     
     def getColorBasedOnTheme(self, color):
         return getColor(color, self.theme)

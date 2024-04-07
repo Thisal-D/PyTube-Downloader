@@ -11,15 +11,33 @@ import threading
 
 
 class addedVideo(Video):
-    index = 0
-    def configure_loading_display():
-        def loading_count():
+    dot_count = 1
+    
+    waiting_started = False
+    loading_configure_started = False
+    
+    simultaneous_loading = 0
+    max_simultaneous_loading = 1
+    
+    waiting_added_videos = []
+    
+    def configure_loading():
+        def loading():
             while True:
-                addedVideo.index += 1
-                if addedVideo.index > 4:
-                    addedVideo.index = 1
+                addedVideo.dot_count += 1
+                if addedVideo.dot_count > 4:
+                    addedVideo.dot_count = 1
                 time.sleep(0.7)
-        threading.Thread(target=loading_count).start()
+        threading.Thread(target=loading).start()
+        
+    def waiting_for_loading():
+        def waiting():
+            while True:
+                if addedVideo.max_simultaneous_loading > addedVideo.simultaneous_loading and len(addedVideo.waiting_added_videos) > 0:
+                    addedVideo.waiting_added_videos[0].start_get_video_data()
+                    addedVideo.waiting_added_videos.pop(0)
+                time.sleep(1)
+        threading.Thread(target=waiting).start()
     
     
     def __init__(self, master,
@@ -37,6 +55,14 @@ class addedVideo(Video):
                  special_color=None,
                  ):
         
+        if  not addedVideo.waiting_started:
+            addedVideo.waiting_started = True 
+            addedVideo.waiting_for_loading()
+            
+        if not addedVideo.loading_configure_started:
+            addedVideo.loading_configure_started = True
+            addedVideo.configure_loading()
+            
         self.loading_failed = False
         self.loading_loop_running = True
         self.download_btn_command = download_btn_command
@@ -46,13 +72,25 @@ class addedVideo(Video):
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color)
         
         threading.Thread(target=self.loading).start()
-        threading.Thread(target=self.get_video_data).start()
+        
+        self.start_get_video_data()
+    
+    
+    def start_get_video_data(self):
+        if addedVideo.max_simultaneous_loading > addedVideo.simultaneous_loading :
+            addedVideo.simultaneous_loading += 1
+            self.status_label.configure(text="Loading")
+            threading.Thread(target=self.get_video_data).start()
+        else:
+            #print("Here")
+            addedVideo.waiting_added_videos.append(self)
+            self.status_label.configure(text="Waiting")
     
     
     def loading(self):
         while not self.loading_done and not self.loading_failed :
             self.loading_loop_running = True
-            self.thumbnail_btn.configure(text="."*addedVideo.index)
+            self.thumbnail_btn.configure(text="."*addedVideo.dot_count)
             self.update()
             time.sleep(0.7)
         if not self.loading_failed:
@@ -74,10 +112,10 @@ class addedVideo(Video):
             self.loading_done = True
             self.status_label.configure(text="Loaded")
         except Exception as error:
-            print(error)
-            self.loading_failed = False
             self.set_loading_failed()
-    
+        addedVideo.simultaneous_loading -= 1
+
+      
     def select_download_option(self, e: str):
         self.download_quallity = e.replace(" ","").split("|")[0]
         if "kbps" in self.download_quallity:
@@ -116,7 +154,7 @@ class addedVideo(Video):
                                           command=lambda:self.download_btn_command(self))
         
         self.status_label = ctk.CTkLabel(master=self.info_frame,
-                                         text="Loading",
+                                         text="",
                                          height=15,
                                          font=("arial", 12, "bold"),
                                          bg_color=self.fg_color,
@@ -133,7 +171,6 @@ class addedVideo(Video):
                                         )
         #  ⏯ ↺ ↻ ⏵ ⏸ ▷
         
-    
     def set_theme(self):
         super().set_theme()
         self.download_btn.configure(border_color=self.theme_color)
@@ -150,7 +187,9 @@ class addedVideo(Video):
     
     def set_loading_failed(self):
         self.loading_failed = True
-        while self.loading_loop_running: self.master.master.master.update()
+        while self.loading_loop_running:
+            time.sleep(1)
+            self.master.master.master.update()
         self.thumbnail_btn.configure(text="...",
                                      disabledforeground=self.special_color)
         self.status_label.configure(text_color=self.special_color,
@@ -164,4 +203,4 @@ class addedVideo(Video):
         self.thumbnail_btn.configure(disabledforeground=self.getColorBasedOnTheme(self.text_color))
         self.status_label.configure(text_color=self.theme_color, text="Loading")
         threading.Thread(target=self.loading).start()
-        threading.Thread(target=self.get_video_data).start()
+        self.start_get_video_data()
