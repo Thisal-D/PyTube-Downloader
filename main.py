@@ -36,6 +36,7 @@ app.set_widgets_colors()
 app.set_widgets_fonts()
 app.place_frame(app.scroll_frame_added)
 
+
 #enable these line for test
 #tests
 """
@@ -61,5 +62,6 @@ for url in play_lists:
 """
 
 app.run()
+
 
 [os.remove("temp\\"+file) for file in os.listdir("temp") if file != 'this directory is necessary']
