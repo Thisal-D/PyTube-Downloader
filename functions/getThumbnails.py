@@ -47,8 +47,8 @@ def getThumbnail(video):
     request.urlretrieve(thumbnail_url, thumbnail_download_path)
     
     thumbnail_temp = Image.open(thumbnail_download_path)
-    print(thumbnail_temp.width)
-    print(thumbnail_temp.height)
+    #print(thumbnail_temp.width)
+    #print(thumbnail_temp.height)
     if round(thumbnail_temp.width/4*3) <= 480:
         thumbnail_temp = thumbnail_temp.resize((113, 64),Image.Resampling.LANCZOS).crop((0,8,113,56)).resize((113,64))
     else:

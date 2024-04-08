@@ -101,6 +101,7 @@ class addedVideo(Video):
     
     def get_video_data(self):
         try:
+            #print("Loading : ",addedVideo.simultaneous_loading)
             self.video = pytube.YouTube(self.url)
             self.title = self.video.title
             self.channel = self.video.author
@@ -110,12 +111,13 @@ class addedVideo(Video):
             self.thumbnails = getThumbnails(self.video)
             self.supported_download_types = sortDict(getSupportedDownloadTypes(self.video_stream_data))
             self.loading_done = True
+            addedVideo.simultaneous_loading -= 1
             self.status_label.configure(text="Loaded")
         except Exception as error:
+            addedVideo.simultaneous_loading -= 1
             self.set_loading_failed()
-        addedVideo.simultaneous_loading -= 1
-
-      
+            
+        
     def select_download_option(self, e: str):
         self.download_quallity = e.replace(" ","").split("|")[0]
         if "kbps" in self.download_quallity:
@@ -156,6 +158,7 @@ class addedVideo(Video):
         self.status_label = ctk.CTkLabel(master=self.info_frame,
                                          text="",
                                          height=15,
+                                         text_color=self.theme_color,
                                          font=("arial", 12, "bold"),
                                          bg_color=self.fg_color,
                                          fg_color=self.fg_color,
@@ -176,6 +179,7 @@ class addedVideo(Video):
         self.download_btn.configure(border_color=self.theme_color)
         self.status_label.configure(text_color=self.theme_color)
         self.reload_btn.configure(text_color=self.theme_color)
+    
     
     def place_widgets(self):
         super().place_widgets()
