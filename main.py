@@ -36,7 +36,6 @@ app.set_widgets_colors()
 app.set_widgets_fonts()
 app.place_frame(app.scroll_frame_added)
 
-
 #enable these line for test
 #tests
 """
@@ -44,25 +43,23 @@ urls = ["https://www.youtube.com/shorts/gunhFbIeakA?feature=share",
             "https://www.youtube.com/watch?v=DM2vX8Ks93E",
             "https://www.youtube.com/watch?v=WpnLehvOM6E",
             "https://www.youtube.com/watch?v=iZW-5gpCC_Q",
-            "https://www.youtube.com/watch?v=R83W2XR3IC8",
+            "https://www.youtube.com/watch?v=R83W2XR3IC8",   1
             "https://www.youtube.com/watch?v=q45jxjne3BU",
             "https://www.youtube.com/watch?v=JTZU7FcAv-Y"]
 for url in urls:
     app.link_entry.delete(0,"end")
     app.link_entry.insert(0, url)
     app.add_video()
-
 """
-'''
+"""
 app.selected_download_mode = "playlist"#"video"
 play_lists = ["https://www.youtube.com/watch?v=KJgsSFOSQv0&list=PLWKjhJtqVAbmUE5IqyfGYEYjrZBYzaT4m&pp=iAQB"]
 for url in play_lists:
     app.link_entry.delete(0,"end")
     app.link_entry.insert(0, url)
     app.add_video()
-'''
+"""
 
 app.run()
-
 
 [os.remove("temp\\"+file) for file in os.listdir("temp") if file != 'this directory is necessary']

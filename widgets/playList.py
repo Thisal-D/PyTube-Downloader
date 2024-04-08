@@ -18,6 +18,7 @@ class playList(ctk.CTkFrame):
                     loading_done = False,
                     playlist_title = "---------",
                     channel = "---------",
+                    video_count = "?",
                 
                     download_btn_command = None,
                     bg_color=None,
@@ -53,6 +54,8 @@ class playList(ctk.CTkFrame):
         self.hover_color = hover_color
         self.download_btn_command = download_btn_command
         self.videos = []
+        
+        self.video_count = video_count
         
         self.create_widgets()
         self.place_widgets()
@@ -92,13 +95,13 @@ class playList(ctk.CTkFrame):
         """
         self.title_label = tk.Label(master=self.playlist_info_widget ,anchor="w",
                                     text = "Title : ",
-                                    font=('arial',12,'bold'),
+                                    font=('arial',10,'bold'),
                                     bg=self.getColorBasedOnTheme(self.fg_color),
                                     fg=self.getColorBasedOnTheme(self.text_color)
                                     )
 
         self.channel_label = tk.Button(master=self.playlist_info_widget,
-                                       font=('arial',11,'bold'), 
+                                       font=('arial',9,'bold'), 
                                        anchor="w",
                                        text = "Channel : ",
                                        bd=0,
@@ -118,7 +121,7 @@ class playList(ctk.CTkFrame):
         self.remove_btn = ctk.CTkButton(master=self.playlist_info_widget,
                                         command=self.kill,
                                         text="X",
-                                        font=("arial", 12, "bold"),
+                                        font=("arial", 10, "bold"),
                                         fg_color=self.fg_color,
                                         bg_color=self.fg_color,
                                         border_width=2,
@@ -128,6 +131,13 @@ class playList(ctk.CTkFrame):
                                         border_spacing=0,
                                         hover=False,
                                         )
+        
+        self.complete_count_label = ctk.CTkLabel(master=self.playlist_info_widget, text="?",
+                                               width=15 ,height=15,
+                                               font=("arial", 13, "normal"),
+                                               fg_color=self.fg_color,
+                                               bg_color=self.fg_color,
+                                               text_color=self.theme_color, justify="right")
         
         self.playlist_item_frame = ctk.CTkFrame(self, fg_color=self.fg_color)
         
@@ -152,7 +162,6 @@ class playList(ctk.CTkFrame):
         #                            fg=self.getColorBasedOnTheme(self.text_color),
         #                            disabledforeground=self.getColorBasedOnTheme(self.text_color),
         #                            activebackground=self.getColorBasedOnTheme(self.fg_color))
-
         self.title_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
                                 fg=self.getColorBasedOnTheme(self.text_color))
     
@@ -167,12 +176,13 @@ class playList(ctk.CTkFrame):
     
     def place_widgets(self):
         self.playlist_info_widget.pack(fill="x")
-        self.view_btn.place(y=55, x=5)
+        self.view_btn.place(y=55, x=10)
         #self.thumbnail_btn.place(x=25, y=2, relheight=1, height=-4, width=int((self.height-4)/9*16))
         self.title_label.place(x=50, y=10, height=20)
         self.channel_label.place(x=50, y=34, height=20)
         self.url_label.place(x=50, y=54, height=20)
-    
+        self.complete_count_label.place(relx=1, x=-60, rely=1, y=-25)
+
     
     def hide_videos(self):
         self.view_btn.configure(command=self.view_videos, text=">", font=('arial', 18, 'bold'))
@@ -192,6 +202,7 @@ class playList(ctk.CTkFrame):
         
     
     def set_playlist_data(self):
+        self.complete_count_label.configure(text=f"{self.video_count}")
         self.title_label.configure(text="Title : "+self.playlist_title)
         self.channel_label.configure(text="Channel : "+self.channel)
         self.url_label.configure(text=self.playlist_url)
