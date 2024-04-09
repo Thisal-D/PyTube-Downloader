@@ -74,9 +74,9 @@ This application is intended for personal use only. Please respect YouTube's ter
 
 ## Contributors
 
-- [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu)
+- [<img src="https://github.com/childeyouyu.png?size=25" width="15">](https://github.com/childeyouyu)
 [youyu](https://github.com/childeyouyu)
 
 
-- [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)
+- [<img src="https://github.com/Navindu21.png?size=25" width="15">](https://github.com/Navindu21)
 [Navindu Pahasara](https://github.com/Navindu21)
