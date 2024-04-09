@@ -69,3 +69,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Disclaimer
 
 This application is intended for personal use only. Please respect YouTube's terms of service and the rights of content creators when downloading videos.
+
+<hr>
+
+## Contributors
+
+- [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu)
+[youyu](https://github.com/childeyouyu)
+
+
+- [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)
+[Navindu Pahasara](https://github.com/Navindu21)
