@@ -46,6 +46,9 @@ class Video(ctk.CTkFrame):
         self.hover_color = hover_color
         self.special_color = special_color
         
+        self.killed = False
+        
+        
         self.create_widgets()
         self.place_widgets()
         threading.Thread(target=self.RunThemeTracker).start()
@@ -138,13 +141,13 @@ class Video(ctk.CTkFrame):
     
     
     def configure_widget_sizes(self, e):
-        self.remove_btn.place(x=self.winfo_width()-24,y=4)
         self.title_label.place(width=self.winfo_width()-450)
         self.url_label.place(width=self.winfo_width()-450)
         self.channel_label.place(width=self.winfo_width()-450)
 
     
     def place_widgets(self):
+        self.remove_btn.place(relx=1, x=-24, y=4)
         self.thumbnail_btn.place(x=5, y=2, relheight=1, height=-4, width=int((self.height-4)/9*16))
         self.title_label.place(x=130, y=4, height=20)
         self.channel_label.place(x=130, y=24, height=20)

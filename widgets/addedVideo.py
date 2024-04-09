@@ -34,7 +34,10 @@ class addedVideo(Video):
         def waiting():
             while True:
                 if addedVideo.max_simultaneous_loading > addedVideo.simultaneous_loading and len(addedVideo.waiting_added_videos) > 0:
-                    addedVideo.waiting_added_videos[0].start_get_video_data()
+                    try:
+                        addedVideo.waiting_added_videos[0].start_get_video_data()
+                    except:
+                        pass
                     addedVideo.waiting_added_videos.pop(0)
                 time.sleep(1)
         threading.Thread(target=waiting).start()
@@ -111,16 +114,17 @@ class addedVideo(Video):
             self.thumbnails = getThumbnails(self.video)
             self.supported_download_types = sortDict(getSupportedDownloadTypes(self.video_stream_data))
             self.loading_done = True
-            addedVideo.simultaneous_loading -= 1
             self.status_label.configure(text="Loaded")
-        except Exception as error:
             addedVideo.simultaneous_loading -= 1
+        except Exception as error:
+            if self.killed is not True:
+                addedVideo.simultaneous_loading -= 1
             self.set_loading_failed()
             
         
     def select_download_option(self, e: str):
-        self.download_quallity = e.replace(" ","").split("|")[0]
-        if "kbps" in self.download_quallity:
+        self.download_quality = e.replace(" ","").split("|")[0]
+        if "kbps" in self.download_quality:
             self.download_type = "Audio"
         else: 
             self.download_type = "Video"
@@ -208,3 +212,11 @@ class addedVideo(Video):
         self.status_label.configure(text_color=self.theme_color, text="Loading")
         threading.Thread(target=self.loading).start()
         self.start_get_video_data()
+        
+    def kill(self):
+        self.killed = True
+        if self in addedVideo.waiting_added_videos:
+            addedVideo.waiting_added_videos.remove(self)
+        elif self.loading_done is not True:
+            addedVideo.simultaneous_loading -= 1
+        super().kill()
