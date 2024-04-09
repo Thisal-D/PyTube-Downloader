@@ -12,6 +12,23 @@ from functions.createDownloadDirectory import createDownloadDirectory
 
 
 class downloadingVideo(Video):
+    d = 1
+    waiting_started = False
+    simultaneous_downloading = 0
+    max_simultaneous_downloading = 1
+    waiting_downloading_videos = []
+    def waiting_for_downloading():
+        def waiting():
+            while True:
+                if downloadingVideo.max_simultaneous_downloading > downloadingVideo.simultaneous_downloading and len(downloadingVideo.waiting_downloading_videos) > 0:
+                    try:
+                        downloadingVideo.waiting_downloading_videos[0].start_download_video()
+                    except:
+                        pass
+                    downloadingVideo.waiting_downloading_videos.pop(0)
+                time.sleep(1)
+        threading.Thread(target=waiting).start()
+    
     def __init__(self, master,
                  border_width=None,
                  width=None,
@@ -36,6 +53,11 @@ class downloadingVideo(Video):
                  downloaded_callback_function=None,
                  download_directory = ""):
         
+        if  not downloadingVideo.waiting_started:
+            downloadingVideo.waiting_started = True 
+            downloadingVideo.waiting_for_downloading()
+        
+        self.download_completed = False
         self.download_pause_req = False
         self.downloaded_callback_function = downloaded_callback_function
         self.download_quality = download_quality
@@ -47,7 +69,7 @@ class downloadingVideo(Video):
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color,
                          thumbnails=thumbnails, title=title, channel=channel, loading_done=loading_done, special_color=special_color)
         self.set_state()
-        threading.Thread(target=self.redownload_video).start()
+        threading.Thread(target=self.start_download_video).start()
         
         
     def create_widgets(self):
@@ -119,7 +141,7 @@ class downloadingVideo(Video):
         self.channel_label.place(x=130, y=24, height=20, relwidth=0.5, width=-150)
         self.url_label.place(x=130, y=44, height=20, relwidth=0.5, width=-150)
         
-        self.pause_resume_button.place(y=22, relx=1, x=-80)
+        #self.pause_resume_button.place(y=22, relx=1, x=-80)
         self.info_frame.place(relx=0.5, y=2)
         
         self.download_progress_label.place(relx=0.25, anchor="n", y=4)
@@ -142,20 +164,34 @@ class downloadingVideo(Video):
         self.redownload_btn.configure(text_color=self.theme_color)
         self.pause_resume_button.configure(text_color=self.theme_color)
         
-    def redownload_video(self):
-        self.set_pause_btn()
-        self.redownload_btn.place_forget()
-        self.pause_resume_button.place(y=22, relx=1, x=-80)
-        self.net_speed_label.configure(text="0.0 B/s")
-        self.download_progress_bar.set(0)
-        self.download_percentage_label.configure(text="0.0 %")
-        self.status_label.configure(text="Downloading", text_color=self.theme_color)
-        threading.Thread(target=self.download_video).start()
+    def start_download_video(self):
+        if downloadingVideo.max_simultaneous_downloading > downloadingVideo.simultaneous_downloading :
+            downloadingVideo.simultaneous_downloading += 1
+            try:
+                threading.Thread(target=self.download_video).start()
+                self.set_pause_btn()
+                self.redownload_btn.place_forget()
+                self.pause_resume_button.place(y=22, relx=1, x=-80)
+                self.net_speed_label.configure(text="0.0 B/s")
+                self.download_progress_bar.set(0)
+                self.download_percentage_label.configure(text="0.0 %")
+                self.status_label.configure(text="Downloading", text_color=self.theme_color)
+            except:
+                downloadingVideo.simultaneous_downloading -= 1
+        else:
+            #print("Here")
+            downloadingVideo.waiting_downloading_videos.append(self)
+            self.status_label.configure(text="Waiting")
+        
     
+    def redownload_video(self):
+        self.start_download_video()
     
     def set_redownload(self):
-        self.pause_resume_button.place_forget()
-        self.redownload_btn.place(y=22, relx=1, x=-80)
+        if self.killed is not True:
+            downloadingVideo.simultaneous_downloading -= 1
+            self.pause_resume_button.place_forget()
+            self.redownload_btn.place(y=22, relx=1, x=-80)
     
     
     def configure_widget_sizes(self, e):
@@ -223,12 +259,7 @@ class downloadingVideo(Video):
                             self.set_download_progress()
                         else:
                             if self.downloaded_bytes == self.total_bytes:
-                                self.set_status("Downloaded")
-                                try:
-                                    self.downloaded_callback_function(self)
-                                    self.kill()
-                                except Exception as error:
-                                    print(error)
+                                self.set_download_complete()
                                 break
                             else:
                                 self.set_redownload()
@@ -273,8 +304,23 @@ class downloadingVideo(Video):
         self.download_progress_label.configure(text=f"{getConvertedSize(self.downloaded_bytes,2)} / {self.converted_total_bytes}")
         
         
-    def download_done(self):
-        self.downloaded_callback_function(self)
-        
-        
+    def set_download_complete(self):
+        self.set_status("Downloaded")
+        self.download_completed = True
+        downloadingVideo.simultaneous_downloading -= 1
+        try:
+            if self.downloaded_callback_function is not None:
+                self.downloaded_callback_function(self)
+            self.kill()
+        except Exception as error:
+            print(error)
     
+    
+    def kill(self):
+        self.killed = True
+        if self in downloadingVideo.waiting_downloading_videos:
+            downloadingVideo.waiting_downloading_videos.remove(self)
+        elif self.download_completed is not True:
+            downloadingVideo.simultaneous_downloading -= 1
+        super().kill()
+        

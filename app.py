@@ -1,7 +1,7 @@
 #third party libs
 import customtkinter as ctk
 from widgets import  addedVideo, downloadingVideo, downloadedVideo,\
-    settingPanel, playList, addedPlaylist
+    settingPanel, playList, addedPlayList, downloadingPlayList
 
 
 class app(ctk.CTk):
@@ -192,7 +192,7 @@ class app(ctk.CTk):
                                 url=yt_url, download_btn_command=self.download_video).\
             pack(fill="x", pady=2)
         else:
-            addedPlaylist.addedPlaylist(master=self.scroll_frame_added, 
+            addedPlayList.addedPlayList(master=self.scroll_frame_added, 
                               height=85,
                               width=self.scroll_frame_added.winfo_width(),
                               fg_color=self.app_widget_fg_color,
@@ -201,11 +201,10 @@ class app(ctk.CTk):
                               text_color=self.app_widget_text_color,      
                               hover_color=self.app_btn_fg_hover_color,
                               special_color=self.app_special_color,
-                              download_btn_command=self.download_video,
+                              download_btn_command=self.download_playlist,
                               border_width=1, 
                               playlist_url=yt_url).\
             pack(fill="x", pady=2)
-            
         
         
     def download_video(self, video: addedVideo.addedVideo):
@@ -213,6 +212,7 @@ class app(ctk.CTk):
                                           height=70,
                                           border_width=1,
                                           width=self.scroll_frame_downloading.winfo_width(),
+                                          
                                           fg_color=self.app_widget_fg_color,
                                           bg_color=self.app_fg_color,
                                           theme_color=self.app_theme_color,
@@ -222,7 +222,7 @@ class app(ctk.CTk):
                                           
                                           channel_url=video.channel_url,
                                           url=video.url,
-                                          download_quality=video.download_quallity,
+                                          download_quality=video.download_quality,
                                           download_type=video.download_type,
                                           title=video.title,
                                           channel=video.channel,
@@ -232,7 +232,34 @@ class app(ctk.CTk):
                                           download_directory = self.download_directory,
                                           downloaded_callback_function=self.downloaded_video).\
         pack(fill="x", pady=2)
-        
+    
+    
+    def download_playlist(self, playlist: addedPlayList.addedPlayList):
+        downloadingPlayList.downloadingPlayList(master=self.scroll_frame_downloading,
+                                                height=85,
+                                                width=self.scroll_frame_added.winfo_width(),
+                                                border_width=1,
+                                                
+                                                
+                                                fg_color=self.app_widget_fg_color,
+                                                bg_color=self.app_fg_color,
+                                                theme_color=self.app_theme_color,
+                                                text_color=self.app_widget_text_color,
+                                                hover_color=self.app_btn_fg_hover_color,
+                                                special_color=self.app_special_color,
+                                                
+                                                channel_url=playlist.channel_url,
+                                                channel=playlist.channel,
+                                                playlist_title=playlist.playlist_title,
+                                                video_count=playlist.video_count,
+                                                playlist_url=playlist.playlist_url,
+                                                
+                                                download_directory = self.download_directory,
+                                                videos=playlist.videos,
+                                                downloaded_callback_function = self.download_playlist
+                                                ).\
+            pack(fill="x", pady=2)
+              
     
     def downloaded_video(self, video: downloadingVideo.downloadingVideo):
         downloadedVideo.downloadedVideo(master=self.scroll_frame_downloaded,
@@ -258,7 +285,10 @@ class app(ctk.CTk):
                                         file_size=video.total_bytes,
                                         ).\
         pack(fill="x", pady=2)
- 
+    
+    
+    def downloaded_playlist(self):
+        print("Downloaded")
     
     def theme_color_change_callback(self, new_theme_color):
         self.app_theme_color = new_theme_color
