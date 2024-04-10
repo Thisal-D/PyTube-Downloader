@@ -18,6 +18,7 @@ class addedPlayList(playList):
                 channel = "---------",
                 
                 download_btn_command = None,
+                video_download_btn_command = None,
                 bg_color=None,
                 fg_color=None,
                 text_color=None,
@@ -47,6 +48,7 @@ class addedPlayList(playList):
         
         self.removed_count = 0
         self.download_btn_command = download_btn_command
+        self.video_download_btn_command = video_download_btn_command
         self.videos_thumbnails = []
         self.videos = []
         threading.Thread(target=self.get_playlist_data).start()
@@ -59,13 +61,14 @@ class addedPlayList(playList):
                                         width=270,
                                         bg_color=self.fg_color,
                                         fg_color=self.fg_color)
-        self.resolutions_box = ctk.CTkComboBox(master=self.info_frame, values=[".........."])
+        self.resolutions_box = ctk.CTkComboBox(master=self.info_frame, values=["..........", "..........", ".........."])
         
         #⇩ ⤓
-        self.download_btn = ctk.CTkButton(master=self.info_frame, text="Download", width=80, height=25,
+        self.download_btn = ctk.CTkButton(master=self.info_frame, text="Download",
+                                        width=80, height=25,
                                         border_width=2,
-                                        border_color=self.theme_color,
-                                        fg_color=self.fg_color, bg_color=self.fg_color,
+                                        fg_color=self.fg_color,
+                                        bg_color=self.fg_color,
                                         hover_color=self.hover_color,
                                         text_color=self.text_color,
                                         state="disabled",
@@ -74,7 +77,6 @@ class addedPlayList(playList):
         self.status_label = ctk.CTkLabel(master=self.info_frame,
                                         text="Loading",
                                         height=15,
-                                        text_color=self.theme_color,
                                         font=("arial", 13, "bold"),
                                         bg_color=self.fg_color,
                                         fg_color=self.fg_color,
@@ -88,6 +90,16 @@ class addedPlayList(playList):
                                         bg_color=self.fg_color,
                                         hover=False,
                                         )        
+    
+    
+    def set_theme(self):
+        super().set_theme()
+        self.download_btn.configure(border_color=self.theme_color)
+        if self.status_label.cget("text") != "Failed":
+            self.status_label.configure(text_color=self.theme_color)
+        self.reload_btn.configure(text_color=self.theme_color)
+        for video in self.videos:
+            video.set_new_theme(self.theme_color)
     
     
     def place_widgets(self):
@@ -136,20 +148,23 @@ class addedPlayList(playList):
                         text_color=self.text_color,      
                         hover_color=self.hover_color,
                         special_color=self.special_color,
-                        border_width=1, 
-                        url=video_url, download_btn_command=self.download_btn_command)
+                        border_width=1,
+                        url=video_url, download_btn_command=self.video_download_btn_command)
                 )
             self.videos[-1].remove_btn.configure(command=lambda video = self.videos[-1]: self.remove_video(video))
             self.videos[-1].pack(fill="x", padx=(20,0), pady=1)
-        threading.Thread(target=self.check_load_state).start()
+        threading.Thread(target=self.progress_track).start()
 
     
-    def check_load_state(self):
+    def progress_track(self):
         videos = self.videos.copy()
         loaded = 0
         while True:
             load_fails = False
             for video in videos:
+                if video not in self.videos:
+                    videos.remove(video)
+                    continue
                 if video.loading_failed:
                     self.set_loading_failed()
                     load_fails = True
@@ -160,6 +175,7 @@ class addedPlayList(playList):
                 break
             if not load_fails:
                 self.reload_btn.place_forget()
+                self.status_label.configure(text="Loading", text_color=self.theme_color)
             time.sleep(1)
         self.set_loading_done()
             
@@ -172,10 +188,31 @@ class addedPlayList(playList):
     def set_loading_done(self):
         self.status_label.configure(text="Loaded")
         self.download_btn.configure(state="normal")
+        self.resolutions_box.configure(values=["Highest Quality", "Lowest Quality", "Audio Only"])
+        self.resolutions_box.set("Highest Quality")
+        self.resolutions_box.configure(command=self.select_download_option)
         
+    
+    def select_download_option(self, e):
+        if e=="Highest Quality":
+            index = 0
+        elif e=="Lowest Quality":
+            index = -2
+        elif e=="Audio Only":
+            index = -1
+        for video in self.videos:
+            video.resolutions_box.set(video.resolutions_box.cget("values")[index])
+            video.select_download_option(video.resolutions_box.cget("values")[index])
+    
     
     def remove_video(self, video):
         self.videos.remove(video)
         self.complete_count_label.configure(text=len(self.videos))
+        self.video_count -= 1
         video.pack_forget()
         video.kill()
+        
+    def kill(self):
+        for video in self.videos:
+            video.kill()
+        super().kill()

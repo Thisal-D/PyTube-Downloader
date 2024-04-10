@@ -25,7 +25,6 @@ class playList(ctk.CTkFrame):
                     theme_color=None,
                     hover_color=None,
                     special_color=None,
-                    
                     ):
         
         super().__init__(master=master, fg_color=fg_color)
@@ -58,8 +57,9 @@ class playList(ctk.CTkFrame):
     
     def create_widgets(self):
         self.playlist_info_widget = ctk.CTkFrame(master=self, border_width=self.border_width,
-                                                 fg_color=self.fg_color, bg_color=self.bg_color,
-                                                 border_color=self.theme_color, height=85)
+                                                 fg_color=self.fg_color,
+                                                 bg_color=self.bg_color,
+                                                 height=85)
         
         self.view_btn = ctk.CTkButton(master=self.playlist_info_widget,
                                        font=('arial', 18, 'bold'),
@@ -69,7 +69,6 @@ class playList(ctk.CTkFrame):
                                        bg_color=self.fg_color,
                                        fg_color=self.fg_color,
                                        hover=False,
-                                       text_color=self.theme_color,
                                        command=self.view_videos,
                                        state="disabled",
                                        cursor="hand2",
@@ -85,7 +84,8 @@ class playList(ctk.CTkFrame):
                                        command=lambda:webbrowser.open(self.playlist_url)
                                        )
         """
-        self.title_label = tk.Label(master=self.playlist_info_widget ,anchor="w",
+        self.title_label = tk.Label(master=self.playlist_info_widget,
+                                    anchor="w",
                                     text = "Title : ",
                                     font=('arial',10,'bold'),
                                     bg=self.getColorBasedOnTheme(self.fg_color),
@@ -107,7 +107,8 @@ class playList(ctk.CTkFrame):
         
         self.url_label = tk.Label(master=self.playlist_info_widget ,anchor="w",
                                   bg=self.getColorBasedOnTheme(self.fg_color),
-                                  text=self.playlist_url, font=('arial',11,"underline"),
+                                  text=self.playlist_url,
+                                  font=('arial',11,"underline"),
                                   )
  
         self.remove_btn = ctk.CTkButton(master=self.playlist_info_widget,
@@ -129,7 +130,7 @@ class playList(ctk.CTkFrame):
                                                font=("arial", 13, "normal"),
                                                fg_color=self.fg_color,
                                                bg_color=self.fg_color,
-                                               text_color=self.theme_color, justify="right")
+                                               justify="right")
         
         self.playlist_item_frame = ctk.CTkFrame(self, fg_color=self.fg_color)
         
@@ -150,10 +151,13 @@ class playList(ctk.CTkFrame):
     def set_theme(self):
         self.configure(border_color=self.theme_color)
         
+        self.playlist_info_widget.configure(border_color=self.theme_color)
         #self.thumbnail_btn.configure(bg=self.getColorBasedOnTheme(self.fg_color), 
         #                            fg=self.getColorBasedOnTheme(self.text_color),
         #                            disabledforeground=self.getColorBasedOnTheme(self.text_color),
         #                            activebackground=self.getColorBasedOnTheme(self.fg_color))
+        self.view_btn.configure(text_color=self.theme_color)
+        
         self.title_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
                                 fg=self.getColorBasedOnTheme(self.text_color))
     
@@ -164,18 +168,24 @@ class playList(ctk.CTkFrame):
                                     fg=self.getColorBasedOnTheme(self.text_color),
                                     activebackground=self.getColorBasedOnTheme(self.fg_color),
                                     activeforeground=self.theme_color,)
-            
+        
+        self.complete_count_label.configure(text_color=self.theme_color)
+        
     
     def place_widgets(self):
         self.playlist_info_widget.pack(fill="x")
         self.view_btn.place(y=55, x=10)
         #self.thumbnail_btn.place(x=25, y=2, relheight=1, height=-4, width=int((self.height-4)/9*16))
-        self.title_label.place(x=50, y=10, height=20)
-        self.channel_label.place(x=50, y=34, height=20)
-        self.url_label.place(x=50, y=54, height=20)
+        self.title_label.place(x=50, y=10, height=20, width=-420, relwidth=1)
+        self.channel_label.place(x=50, y=34, height=20, width=-420, relwidth=1)
+        self.url_label.place(x=50, y=54, height=20, width=-420, relwidth=1)
         self.complete_count_label.place(relx=1, x=-60, rely=1, y=-25)
         self.remove_btn.place(relx=1, x=-23, y=4)
-
+    
+    
+    def configure_widget_sizes(self, e):
+        pass
+    
     
     def hide_videos(self):
         self.view_btn.configure(command=self.view_videos, text=">", font=('arial', 18, 'bold'))
@@ -186,13 +196,7 @@ class playList(ctk.CTkFrame):
         self.view_btn.configure(command=self.hide_videos, text="V",  font=('arial', 13, 'bold'))
         self.playlist_item_frame.pack(padx=10, fill="x", pady=2)
         
-        
-    def configure_widget_sizes(self, e):
-        self.title_label.place(width=self.winfo_width()-420)
-        self.url_label.place(width=self.winfo_width()-420)
-        self.channel_label.place(width=self.winfo_width()-420)
-        
-    
+
     def set_playlist_data(self):
         self.complete_count_label.configure(text=f"{self.video_count}")
         self.title_label.configure(text="Title : "+self.playlist_title)
@@ -203,3 +207,8 @@ class playList(ctk.CTkFrame):
     def kill(self):
         self.pack_forget()
         self.destroy()
+        
+        
+    def set_new_theme(self, new_theme_color):
+        self.theme_color = new_theme_color
+        self.set_theme()

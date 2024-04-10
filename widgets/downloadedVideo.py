@@ -19,6 +19,7 @@ class downloadedVideo(Video):
                  channel_url=None,
                  file_size=0,
                  download_path="",
+                 length=None,
                  
                  bg_color=None,
                  fg_color=None,
@@ -33,7 +34,7 @@ class downloadedVideo(Video):
         self.download_quality = download_quality
         self.download_type = download_type
         super().__init__(master=master, border_width=border_width, theme_color=theme_color,hover_color=hover_color,
-                         channel_url=channel_url,special_color=special_color,width=width,
+                         channel_url=channel_url,special_color=special_color,width=width, length=length,
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color,
                          thumbnails=thumbnails, title=title, channel=channel, loading_done=loading_done)
         self.set_state()
@@ -52,11 +53,6 @@ class downloadedVideo(Video):
                                               font=("arial", 12, "normal"),
                                               height=15,
                                               text_color=self.text_color, bg_color=self.fg_color)
-        self.video_len_label = ctk.CTkLabel(master=self, 
-                                              text="15 min", fg_color=self.fg_color,
-                                              font=("arial", 12, "normal"),
-                                              height=15,
-                                              text_color=self.text_color, bg_color=self.fg_color)
         #📁🗀📂🖿🗁
         self.download_path_btn = ctk.CTkButton(master=self,
                                                text="📂",
@@ -72,11 +68,11 @@ class downloadedVideo(Video):
         super().set_theme()
         self.download_path_btn.configure(text_color=self.theme_color)
         
+        
     def place_widgets(self):
         super().place_widgets()
-        self.download_type_label.place(y=4)
-        self.file_size_label.place(y=28)
-        self.video_len_label.place(y=48)
+        self.download_type_label.place(y=14)
+        self.file_size_label.place(y=40)
         self.download_path_btn.place(y=12)
         
         
@@ -84,7 +80,6 @@ class downloadedVideo(Video):
         super().configure_widget_sizes(e)
         self.download_type_label.place(x=self.winfo_width()-300)
         self.file_size_label.place(x=self.winfo_width()-300)  
-        self.video_len_label.place(x=self.winfo_width()-300)
         self.download_path_btn.place(x=self.winfo_width()-150)    
     
     

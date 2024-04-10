@@ -49,7 +49,7 @@ class addedVideo(Video):
                  height=None,
                  url=None,
                  download_btn_command=passIt,
-                         
+                 
                  bg_color=None,
                  fg_color=None,
                  text_color=None,
@@ -139,7 +139,6 @@ class addedVideo(Video):
         self.channel_label.configure(state="normal")
         self.download_btn.configure(state="normal")
     
-    
 
     def create_widgets(self):
         super().create_widgets()
@@ -181,7 +180,8 @@ class addedVideo(Video):
     def set_theme(self):
         super().set_theme()
         self.download_btn.configure(border_color=self.theme_color)
-        self.status_label.configure(text_color=self.theme_color)
+        if self.status_label.cget("text") != "Failed":
+            self.status_label.configure(text_color=self.theme_color)
         self.reload_btn.configure(text_color=self.theme_color)
     
     

@@ -42,6 +42,7 @@ class downloadingVideo(Video):
                  video_stream_data: pytube.StreamQuery = None,
                  url=None,
                  channel_url=None,
+                 length = None,
                  
                  bg_color=None,
                  fg_color=None,
@@ -58,6 +59,7 @@ class downloadingVideo(Video):
             downloadingVideo.waiting_for_downloading()
         
         self.download_completed = False
+        self.download_failed = False
         self.download_pause_req = False
         self.downloaded_callback_function = downloaded_callback_function
         self.download_quality = download_quality
@@ -65,7 +67,7 @@ class downloadingVideo(Video):
         self.video_stream_data = video_stream_data
         self.download_directory = download_directory
         super().__init__(master=master, border_width=border_width, theme_color=theme_color,hover_color=hover_color,
-                         channel_url=channel_url, width=width,
+                         channel_url=channel_url, width=width, length=length,
                          fg_color=fg_color, bg_color=bg_color, height=height ,url=url, text_color=text_color,
                          thumbnails=thumbnails, title=title, channel=channel, loading_done=loading_done, special_color=special_color)
         self.set_state()
@@ -133,14 +135,15 @@ class downloadingVideo(Video):
                                                  bg_color=self.fg_color,
                                                  hover=False,
                                                  )
-        
+
     
     def place_widgets(self):
+        self.remove_btn.place(relx=1, x=-24, y=4)
         self.thumbnail_btn.place(x=5, y=2, relheight=1, height=-4, width=int((self.height-4)/9*16))
         self.title_label.place(x=130, y=4, height=20, relwidth=0.5, width=-150)
         self.channel_label.place(x=130, y=24, height=20, relwidth=0.5, width=-150)
         self.url_label.place(x=130, y=44, height=20, relwidth=0.5, width=-150)
-        
+        self.len_label.place(rely=1, y=-10, x=117, anchor="e")
         #self.pause_resume_button.place(y=22, relx=1, x=-80)
         self.info_frame.place(relx=0.5, y=2)
         
@@ -160,42 +163,55 @@ class downloadingVideo(Video):
     def set_theme(self):
         super().set_theme()
         self.download_progress_bar.configure(progress_color=self.theme_color)
-        self.status_label.configure(text_color=self.theme_color)
+        if self.status_label.cget("text") != "Failed":
+            self.status_label.configure(text_color=self.theme_color)
         self.redownload_btn.configure(text_color=self.theme_color)
         self.pause_resume_button.configure(text_color=self.theme_color)
         
+        
     def start_download_video(self):
+        self.download_completed = False
+        self.download_failed = False
         if downloadingVideo.max_simultaneous_downloading > downloadingVideo.simultaneous_downloading :
             downloadingVideo.simultaneous_downloading += 1
             try:
                 threading.Thread(target=self.download_video).start()
                 self.set_pause_btn()
-                self.redownload_btn.place_forget()
                 self.pause_resume_button.place(y=22, relx=1, x=-80)
                 self.net_speed_label.configure(text="0.0 B/s")
                 self.download_progress_bar.set(0)
                 self.download_percentage_label.configure(text="0.0 %")
-                self.status_label.configure(text="Downloading", text_color=self.theme_color)
+                self.set_status("Downloading")
             except:
                 downloadingVideo.simultaneous_downloading -= 1
         else:
-            #print("Here")
+            self.set_waiting()
             downloadingVideo.waiting_downloading_videos.append(self)
-            self.status_label.configure(text="Waiting")
         
     
     def redownload_video(self):
+        self.redownload_btn.place_forget()
         self.start_download_video()
     
-    def set_redownload(self):
+    
+    def set_download_failed(self):
+        self.download_failed = True
         if self.killed is not True:
             downloadingVideo.simultaneous_downloading -= 1
             self.pause_resume_button.place_forget()
             self.redownload_btn.place(y=22, relx=1, x=-80)
+            
     
+    def set_waiting(self):
+        self.pause_resume_button.place_forget()
+        self.download_progress_bar.set(0.5)
+        self.download_percentage_label.configure(text="")
+        self.net_speed_label.configure(text="")
+        self.download_progress_label.configure(text="")
+        self.download_type_label.configure(text="")
+        self.set_status("Waiting")
     
     def configure_widget_sizes(self, e):
-        self.remove_btn.place(x=self.winfo_width()-24,y=4)
         self.info_frame.configure(width=self.winfo_width()/2-100)
         
     def set_state(self):
@@ -205,6 +221,8 @@ class downloadingVideo(Video):
     def set_status(self, status):
         if status=="Failed":
             self.status_label.configure(text_color=self.special_color)
+        else:
+            self.status_label.configure(text_color=self.theme_color)
         self.status_label.configure(text=status)
         
         
@@ -229,7 +247,7 @@ class downloadingVideo(Video):
             self.download_file_name = getValidFileName(self.download_file_name)
             self.set_download_progress()
         except Exception as error:
-            self.set_redownload()
+            self.set_download_failed()
             self.set_status("Failed")
         
         print(self.download_file_name)
@@ -262,15 +280,15 @@ class downloadingVideo(Video):
                                 self.set_download_complete()
                                 break
                             else:
-                                self.set_redownload()
+                                self.set_download_failed()
                                 self.set_status("Failed")
                                 break
                     except Exception as error:
-                        self.set_redownload()
+                        self.set_download_failed()
                         self.set_status("Failed")
                         break
         except Exception as error:
-            self.set_redownload()
+            self.set_download_failed()
             self.set_status("Failed")
 
 
@@ -311,7 +329,7 @@ class downloadingVideo(Video):
         try:
             if self.downloaded_callback_function is not None:
                 self.downloaded_callback_function(self)
-            self.kill()
+                self.kill()
         except Exception as error:
             print(error)
     

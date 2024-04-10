@@ -4,7 +4,7 @@ import webbrowser
 import time
 import threading
 from functions.getColor import getColor
-
+from functions.convertTime import convertTime
 
 class Video(ctk.CTkFrame):
     def __init__(self,
@@ -18,6 +18,7 @@ class Video(ctk.CTkFrame):
                  thumbnails = (None, None),
                  channel_url = None,
                  loading_done = False,
+                 length = 0,
                  
                  bg_color=None,
                  fg_color=None,
@@ -34,10 +35,10 @@ class Video(ctk.CTkFrame):
         self.title = title
         self.channel = channel
         self.thumbnails = thumbnails
-        self.supported_download_types = ["..........","..........",".........."]
+        self.supported_download_types = ["..........", "..........", ".........."]
         
         self.channel_url = channel_url
-        
+        self.length = length
         self.theme = "-"
         self.fg_color = fg_color
         self.text_color = text_color
@@ -65,6 +66,12 @@ class Video(ctk.CTkFrame):
                                        cursor="hand2",
                                        command=lambda:webbrowser.open(self.url)
                                        )
+        
+        self.len_label = ctk.CTkLabel(master=self, width=1, height=1,
+                                      text_color=self.text_color,
+                                      fg_color=self.fg_color,
+                                      bg_color=self.fg_color,
+                                      font=("arial", 11, "bold"))
         
         self.title_label = tk.Label(master=self ,anchor="w",
                                     text = "Title : ",
@@ -115,7 +122,7 @@ class Video(ctk.CTkFrame):
                                     fg=self.getColorBasedOnTheme(self.text_color),
                                     disabledforeground=self.getColorBasedOnTheme(self.text_color),
                                     activebackground=self.getColorBasedOnTheme(self.fg_color))
-    
+        
         self.title_label.configure(bg=self.getColorBasedOnTheme(self.fg_color),
                                 fg=self.getColorBasedOnTheme(self.text_color))
     
@@ -149,6 +156,7 @@ class Video(ctk.CTkFrame):
     def place_widgets(self):
         self.remove_btn.place(relx=1, x=-24, y=4)
         self.thumbnail_btn.place(x=5, y=2, relheight=1, height=-4, width=int((self.height-4)/9*16))
+        self.len_label.place(rely=1, y=-10, x=117, anchor="e")
         self.title_label.place(x=130, y=4, height=20)
         self.channel_label.place(x=130, y=24, height=20)
         self.url_label.place(x=130, y=44, height=20)
@@ -158,6 +166,7 @@ class Video(ctk.CTkFrame):
         self.title_label.configure(text="Title : "+self.title)
         self.channel_label.configure(text="Channel : "+self.channel)
         self.url_label.configure(text=self.url)
+        self.len_label.configure(text=convertTime(self.length))
         if self.loading_done:
             self.thumbnail_btn.configure(image=self.thumbnails[0], text="")
             def thumbnail_hover_img_set(e):
@@ -166,6 +175,8 @@ class Video(ctk.CTkFrame):
                 self.thumbnail_btn.configure(image=self.thumbnails[0], text="")
             self.thumbnail_btn.bind("<Enter>",thumbnail_hover_img_set)
             self.thumbnail_btn.bind("<Leave>",thumbnail_img_set)    
+            self.len_label.bind("<Enter>",thumbnail_hover_img_set)
+            self.len_label.bind("<Leave>",thumbnail_img_set)    
             
             
     def kill(self):
@@ -173,7 +184,7 @@ class Video(ctk.CTkFrame):
             for sub_child_widget in child_widget.winfo_children():
                 sub_child_widget.destroy()
             child_widget.destroy()
-        self.place_forget()
+        self.pack_forget()
         self.destroy()
         
         
