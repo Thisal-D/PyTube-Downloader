@@ -8,7 +8,19 @@ Your support means a lot and inspires me to do better with each update. Thank yo
 
 <a href="https://drive.usercontent.google.com/download?id=1MBn13dgxY0qTajxJVrjcM_vxTQKAORQW&export=download&authuser=0&confirm=t&uuid=7f7f3a7e-cc5f-4b44-8d21-75863cc10a30&at=APZUnTXf30S6xNS7lOvS1c8dvXL4:1711541083027">**Download .exe for Windows**</a>
 
+
 PyTube  Downloader is a user-friendly application that allows users to download YouTube videos with ease. It features a simple and intuitive user interface, making the downloading process straightforward for all users.
+
+<hr>
+
+## Features
+
+- **Easy Downloading :** Download YouTube videos effortlessly by pasting the video URL into the application.
+- **Playlist Downloading :** Download entire playlists using just the playlist URL
+- **Format Selection :** Choose from various video and audio formats for downloading.
+- **Progress Tracking :** Track the download progress within the application.
+- **Customization Options :** Customize download locations and notification settings.
+
 
 <hr>
 
@@ -22,14 +34,6 @@ PyTube  Downloader is a user-friendly application that allows users to download 
 <img src="https://drive.google.com/thumbnail?id=1pd5h0FHgLdPihGPdVaFJsIAwkaNfCqzh&sz=w970" style="width: 100%">
 <img src="https://drive.google.com/thumbnail?id=1IJLbwMh5dRiTXKlXeHiH2Kiu8d-dL4A2&sz=w970" style="width: 100%">
 
-<hr>
-
-## Features
-
-- **Easy Downloading:** Download YouTube videos effortlessly by pasting the video URL into the application.
-- **Format Selection:** Choose from various video and audio formats for downloading.
-- **Progress Tracking:** Track the download progress within the application.
-- **Customization Options:** Customize download locations and notification settings.
 
 <hr>
 
@@ -70,13 +74,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 This application is intended for personal use only. Please respect YouTube's terms of service and the rights of content creators when downloading videos.
 
-<hr>
 
 ## Contributors
 
-- [<img src="https://github.com/childeyouyu.png?size=25" width="15">](https://github.com/childeyouyu)
+- [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu)
 [youyu](https://github.com/childeyouyu)
 
 
-- [<img src="https://github.com/Navindu21.png?size=25" width="15">](https://github.com/Navindu21)
+- [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)
 [Navindu Pahasara](https://github.com/Navindu21)
