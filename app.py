@@ -1,7 +1,7 @@
 #third party libs
 import customtkinter as ctk
 from widgets import  addedVideo, downloadingVideo, downloadedVideo,\
-    settingPanel, playList, addedPlayList, downloadingPlayList, downloadedPlayList
+    settingPanel , addedPlayList, downloadingPlayList, downloadedPlayList
 
 
 class app(ctk.CTk):
@@ -46,12 +46,12 @@ class app(ctk.CTk):
         self.link_entry = ctk.CTkEntry(master=self, height=40, placeholder_text="Enter Youtube URL")
         self.add_btn =  ctk.CTkButton(master=self, text="Add +", height=40, width=100, command=self.add_video)
         
-        self.video_radio_btn = ctk.CTkRadioButton(master=self, text="Video",
+        self.video_radio_btn = ctk.CTkRadioButton(master=self, text="Video", fg_color=self.app_theme_color,
                                                   radiobutton_width=16, radiobutton_height=16,
                                                   width=60, height=18,
                                                   command=lambda:self.select_download_mode("video"))
         self.video_radio_btn.select()
-        self.playlist_radio_btn = ctk.CTkRadioButton(master=self, text="Playlist",
+        self.playlist_radio_btn = ctk.CTkRadioButton(master=self, text="Playlist", fg_color=self.app_theme_color,
                                                      radiobutton_width=16, radiobutton_height=16,
                                                      width=60, height=18,
                                                      command=lambda:self.select_download_mode("playlist"))
@@ -376,7 +376,9 @@ class app(ctk.CTk):
         self.added_frame_label.configure(text_color=self.app_theme_color)
         self.downloading_frame_label.configure(text_color=self.app_theme_color)
         self.downloaded_frame_label.configure(text_color=self.app_theme_color)
-                
+        self.video_radio_btn.configure(fg_color=self.app_theme_color)
+        self.playlist_radio_btn.configure(fg_color=self.app_theme_color)
+        
     
     def directory_change_callback(self, download_directory):
         self.download_directory = download_directory
