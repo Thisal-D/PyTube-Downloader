@@ -34,7 +34,7 @@ app.create_widgets()
 app.place_widgets()
 app.set_widgets_colors()
 app.set_widgets_fonts()
-app.place_frame(app.scroll_frame_added)
+app.place_frame(app.scroll_frame_added, "added")
 app.run()
 
 

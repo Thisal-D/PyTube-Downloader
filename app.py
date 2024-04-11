@@ -38,7 +38,10 @@ class app(ctk.CTk):
         self.download_directory = download_directory
         self.selected_download_mode = "video"#"video"
         
-
+        self.downloading = False
+        self.downloaded = False
+        self.added = False
+        
     def create_widgets(self):
         self.link_entry = ctk.CTkEntry(master=self, height=40, placeholder_text="Enter Youtube URL")
         self.add_btn =  ctk.CTkButton(master=self, text="Add +", height=40, width=100, command=self.add_video)
@@ -58,9 +61,17 @@ class app(ctk.CTk):
         self.scroll_frame_downloaded = ctk.CTkScrollableFrame(master=self)
         self.settings_btn = ctk.CTkButton(master=self, text="Setting")
         
-        self.added_btn =  ctk.CTkButton(master=self, text="Added", height=40, command=lambda: self.place_frame(self.scroll_frame_added))
-        self.downloading_btn =  ctk.CTkButton(master=self, text="Downloading", height=40, command=lambda: self.place_frame(self.scroll_frame_downloading))
-        self.downloaded_btn =  ctk.CTkButton(master=self, text="Downloaded", height=40, command=lambda: self.place_frame(self.scroll_frame_downloaded))
+        self.added_btn =  ctk.CTkButton(master=self, text="Added", height=40, command=lambda: self.place_frame(self.scroll_frame_added, "added"))
+        self.downloading_btn =  ctk.CTkButton(master=self, text="Downloading", height=40, command=lambda: self.place_frame(self.scroll_frame_downloading, "downloading"))
+        self.downloaded_btn =  ctk.CTkButton(master=self, text="Downloaded", height=40, command=lambda: self.place_frame(self.scroll_frame_downloaded, "downloaded"))
+
+        font_style = ("arial", 18, "bold")
+        self.added_frame_label = ctk.CTkLabel(master=self, text="Added videos will display here.", font=font_style,
+                                              text_color=self.app_theme_color,)
+        self.downloading_frame_label = ctk.CTkLabel(master=self, text="Downloading videos will display here.", font=font_style,
+                                                    text_color=self.app_theme_color,)
+        self.downloaded_frame_label = ctk.CTkLabel(master=self, text="Downloaded videos will display here.", font=font_style,
+                                                   text_color=self.app_theme_color,)
         
         self.settings_panel = settingPanel.settingPanel(master=self, fg_color=self.app_fg_color, bg_color=self.app_fg_color,
                                                         text_color=self.app_widget_text_color,
@@ -71,16 +82,40 @@ class app(ctk.CTk):
                                          hover=False, fg_color=self.app_fg_color, width=30, height=40,
                                          command=self.open_settings)
          
+    
     def place_forget_frames(self):
         self.scroll_frame_added.place_forget()
         self.scroll_frame_downloading.place_forget()
         self.scroll_frame_downloaded.place_forget()
-        
-        
-    def place_frame(self, frame: ctk.CTkScrollableFrame):
+    
+    
+    def place_forget_labels(self, label:str = None):
+        if label == None:
+            self.added_frame_label.place_forget()
+            self.downloading_frame_label.place_forget()
+            self.downloaded_frame_label.place_forget()
+        elif label == "added":
+            self.added_frame_label.place_forget()
+        elif label == "downloading":
+            self.downloading_frame_label.place_forget()
+        elif label == "downloaded":
+            self.downloaded_frame_label.place_forget()
+            
+            
+    def place_label(self, frame_name: str):
+        self.place_forget_labels()
+        if frame_name == "added" and self.added is not True:
+            self.added_frame_label.place(y=45, rely=0.5, relx=0.5, anchor="center")
+        elif frame_name == "downloading" and self.downloading is not True:
+            self.downloading_frame_label.place(y=45, rely=0.5, relx=0.5, anchor="center")
+        elif frame_name == "downloaded" and self.downloaded is not True:
+            self.downloaded_frame_label.place(y=45, rely=0.5, relx=0.5, anchor="center")
+            
+            
+    def place_frame(self, frame: ctk.CTkScrollableFrame, frame_name: str):
         self.place_forget_frames()
         frame.place(y=90, x=10)
-    
+        self.place_label(frame_name)
     
     def set_widgets_size(self):
         root_width = self.winfo_width()
@@ -176,6 +211,8 @@ class app(ctk.CTk):
    
         
     def add_video(self):
+        self.added = True
+        self.place_forget_labels("added")
         yt_url = self.link_entry.get()
         if self.selected_download_mode == "video":
             addedVideo.addedVideo(master=self.scroll_frame_added, 
@@ -209,6 +246,8 @@ class app(ctk.CTk):
         
         
     def download_video(self, video: addedVideo.addedVideo):
+        self.downloading = True
+        self.place_forget_labels("downloading")
         downloadingVideo.downloadingVideo(master=self.scroll_frame_downloading,
                                           height=70,
                                           border_width=1,
@@ -237,6 +276,8 @@ class app(ctk.CTk):
     
     
     def download_playlist(self, playlist: addedPlayList.addedPlayList):
+        self.downloading = True
+        self.place_forget_labels("downloading")
         downloadingPlayList.downloadingPlayList(master=self.scroll_frame_downloading,
                                                 height=85,
                                                 width=self.scroll_frame_downloading.winfo_width(),
@@ -264,6 +305,8 @@ class app(ctk.CTk):
               
     
     def downloaded_video(self, video: downloadingVideo.downloadingVideo):
+        self.downloaded = True
+        self.place_forget_labels("downloaded")
         downloadedVideo.downloadedVideo(master=self.scroll_frame_downloaded,
                                         height=70,
                                         border_width=1,
@@ -291,6 +334,8 @@ class app(ctk.CTk):
         pack(fill="x", pady=2)
     
     def downloaded_playlist(self, playlist: downloadingPlayList.downloadingPlayList):
+        self.downloaded = True
+        self.place_forget_labels("downloaded")
         downloadedPlayList.downloadedPlayList(master=self.scroll_frame_downloaded,
                                                 height=85,
                                                 width=self.scroll_frame_downloaded.winfo_width(),
@@ -327,9 +372,10 @@ class app(ctk.CTk):
         for video_object in self.scroll_frame_downloaded.winfo_children():
             if type(video_object) == downloadedVideo.downloadedVideo or type(video_object) == downloadedPlayList.downloadedPlayList:
                 video_object.set_new_theme(self.app_theme_color)
-                
         
-        
+        self.added_frame_label.configure(text_color=self.app_theme_color)
+        self.downloading_frame_label.configure(text_color=self.app_theme_color)
+        self.downloaded_frame_label.configure(text_color=self.app_theme_color)
                 
     
     def directory_change_callback(self, download_directory):
