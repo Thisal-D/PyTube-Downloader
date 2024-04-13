@@ -85,5 +85,5 @@ This application is intended for personal use only. Please respect YouTube's ter
 [Navindu Pahasara](https://github.com/Navindu21)
 
 - [<img src="https://github.com/sooryasuraweera.png?size=25" width="25">](https://github.com/sooryasuraweera)
-  [Soorya Suraweer](https://github.com/sooryasuraweera)
+  [Soorya Suraweera](https://github.com/sooryasuraweera)
 
