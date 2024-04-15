@@ -1,8 +1,6 @@
-#third party libs
 import customtkinter as ctk
 from widgets import  addedVideo, downloadingVideo, downloadedVideo,\
     settingPanel , addedPlayList, downloadingPlayList, downloadedPlayList
-
 
 class app(ctk.CTk):
     def __init__(self,
