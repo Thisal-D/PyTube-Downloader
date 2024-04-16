@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from widgets import addedVideo, downloadingVideo, downloadedVideo, \
     settingPanel, addedPlayList, downloadingPlayList, downloadedPlayList
-import json
+from functions.saveSettings import saveSettings
 
 
 class app(ctk.CTk):
@@ -385,26 +385,22 @@ class app(ctk.CTk):
         self.settings_panel.place_forget()
         self.setting_btn.configure(command=self.open_settings)
 
-    def set_geometry(self):
-        with open('settings/general.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-        if data["height"] and data["width"] and data["x_pos"] and data["y_pos"]:
-            self.geometry(f"{data['width']}x{data['height']}+{data['x_pos']}+{data['y_pos']}")
+    def set_geometry(self, height, width, x_pos, y_pos):
+        if height and width and x_pos and y_pos:
+            self.geometry(f"{width}x{height}+{x_pos}+{y_pos}")
         else:
             self.geometry("900x500+200+200")
 
     def on_closing(self):
-        with open('settings/general.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
+        data = {
+            'download_directory': self.download_directory,
+            'height': self.winfo_height(),
+            'width': self.winfo_width(),
+            'x_pos': self.winfo_x(),
+            'y_pos': self.winfo_y()
+        }
 
-        data["height"] = self.winfo_height()
-        data["width"] = self.winfo_width()
-        data["x_pos"] = self.winfo_x()
-        data["y_pos"] = self.winfo_y()
-        modified_json_string = json.dumps(data, indent=4)
-
-        with open('settings/general.json', 'w', encoding='utf-8') as f:
-            f.write(modified_json_string)
+        saveSettings("settings/general.json", data)
         self.destroy()
 
     def run(self):
