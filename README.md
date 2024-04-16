@@ -19,7 +19,7 @@ PyTube  Downloader is a user-friendly application that allows users to download 
 - **Playlist Downloading :** Download entire playlists using just the playlist URL
 - **Format Selection :** Choose from various video and audio formats for downloading.
 - **Progress Tracking :** Track the download progress within the application.
-- **Customization Options :** Customize download locations and theme and colors
+- **Customization Options :** Customize download locations and notification settings.
 
 
 <hr>
@@ -83,7 +83,3 @@ This application is intended for personal use only. Please respect YouTube's ter
 
 - [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)
 [Navindu Pahasara](https://github.com/Navindu21)
-
-- [<img src="https://github.com/sooryasuraweera.png?size=25" width="25">](https://github.com/sooryasuraweera)
-  [Soorya Suraweera](https://github.com/sooryasuraweera)
-

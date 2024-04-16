@@ -1,4 +1,4 @@
 # Project dependencies
-customtkinter # for ui elements
+customtkinter==5.2.2 # for ui elements
 pillow # for image handling
-pytube # for working with yt
+pytube==15.0.0 # for working with y

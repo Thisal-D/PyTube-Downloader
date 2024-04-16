@@ -210,7 +210,7 @@ class downloadingPlayList(playList):
     
     def remove_video(self, video):
         self.downloading_videos.remove(video)
-        self.complete_count_label.configure(text=len(self.videos))
+        self.complete_count_label.configure(text=len(self.downloading_videos))
         self.video_count -= 1
         video.pack_forget()
         video.kill()

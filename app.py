@@ -3,7 +3,7 @@ from widgets import addedVideo, downloadingVideo, downloadedVideo, \
     settingPanel, addedPlayList, downloadingPlayList, downloadedPlayList
 from functions.saveSettings import saveSettings
 import sys
-
+import os
 
 class app(ctk.CTk):
     def __init__(self,
@@ -71,14 +71,11 @@ class app(ctk.CTk):
                                             command=lambda: self.place_frame(self.scroll_frame_downloaded,
                                                                              "downloaded"))
 
-        font_style = ("arial", 18, "bold")
-        self.added_frame_label = ctk.CTkLabel(master=self, text="Added videos will display here.", font=font_style,
+        self.added_frame_label = ctk.CTkLabel(master=self, text="Added videos & playlists will be display here.",
                                               text_color=self.app_theme_color, )
-        self.downloading_frame_label = ctk.CTkLabel(master=self, text="Downloading videos will display here.",
-                                                    font=font_style,
+        self.downloading_frame_label = ctk.CTkLabel(master=self, text="Downloading videos & playlists will be display here.",
                                                     text_color=self.app_theme_color, )
-        self.downloaded_frame_label = ctk.CTkLabel(master=self, text="Downloaded videos will display here.",
-                                                   font=font_style,
+        self.downloaded_frame_label = ctk.CTkLabel(master=self, text="Downloaded videos & playlists will be display here.",
                                                    text_color=self.app_theme_color, )
 
         self.settings_panel = settingPanel.settingPanel(master=self, fg_color=self.app_fg_color,
@@ -195,9 +192,15 @@ class app(ctk.CTk):
         self.setting_btn.configure(text_color=self.app_theme_color)
 
     def set_widgets_fonts(self):
-        self.link_entry.configure(font=("arial", 15, "underline"))
+        self.link_entry.configure(font=ctk.CTkFont(family="arial", size=16, weight="normal", slant="italic", underline=True))
+        self.video_radio_btn.configure(font=("Monospace", 12, "bold"))
+        self.playlist_radio_btn.configure(font=("Monospace", 12, "bold"))
         self.add_btn.configure(font=("arial", 15, "bold"))
         self.added_btn.configure(font=("arial", 15, "bold"))
+        font_style = ctk.CTkFont(family="arial", size=16, weight="bold", slant="italic")
+        self.added_frame_label.configure(font=font_style)
+        self.downloading_frame_label.configure(font=font_style)
+        self.downloaded_frame_label.configure(font=font_style)
         self.downloading_btn.configure(font=("arial", 15, "bold"))
         self.downloaded_btn.configure(font=("arial", 15, "bold"))
         self.setting_btn.configure(font=("arial", 25, "normal"))
@@ -388,15 +391,24 @@ class app(ctk.CTk):
 
     def set_geometry(self, geometry: str):
         self.geometry(geometry)
-        
+    
+    def clear_temp(self):
+        for file in os.listdir("temp") :
+            try:
+                if file != 'this directory is necessary':
+                    os.remove("temp\\"+file)
+            except:
+                pass
+                    
     def on_closing(self):
         data = {
             'download_directory': self.download_directory,
             'geometry': self.geometry(),
         }
+        self.clear_temp()
         saveSettings("settings/general.json", data)
         self.destroy()
-        sys.exit()
+        os._exit(1)
 
     def run(self):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)

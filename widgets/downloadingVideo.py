@@ -341,3 +341,4 @@ class downloadingVideo(Video):
         elif self.download_completed is not True:
             downloadingVideo.simultaneous_downloading -= 1
         super().kill()
+        

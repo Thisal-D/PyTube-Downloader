@@ -108,7 +108,7 @@ class playList(ctk.CTkFrame):
         self.url_label = tk.Label(master=self.playlist_info_widget ,anchor="w",
                                   bg=self.getColorBasedOnTheme(self.fg_color),
                                   text=self.playlist_url,
-                                  font=('arial',11,"underline"),
+                                  font=('arial',11,"italic underline"),
                                   )
  
         self.remove_btn = ctk.CTkButton(master=self.playlist_info_widget,

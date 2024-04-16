@@ -95,7 +95,7 @@ class Video(ctk.CTkFrame):
         
         self.url_label = tk.Label(master=self ,anchor="w",
                                   bg=self.getColorBasedOnTheme(self.fg_color),
-                                  text=self.url, font=('arial',9,"underline"),
+                                  text=self.url, font=('arial',10,"italic underline"),
                                   )
  
         self.remove_btn = ctk.CTkButton(master=self,
