@@ -26,8 +26,7 @@ app = app(
 ctk.set_appearance_mode(app_theme_settings["app_theme_mode"])
 ctk.deactivate_automatic_dpi_awareness()
 app.iconbitmap("src\\icon.ico")
-app.set_geometry(app_general_settings["height"], app_general_settings["width"],
-                 app_general_settings["x_pos"], app_general_settings["y_pos"])
+app.set_geometry(app_general_settings["geometry"])
 app.attributes("-alpha", 0.97)
 app.title("PyTube Downloader")
 app.create_widgets()

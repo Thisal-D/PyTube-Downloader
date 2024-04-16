@@ -2,6 +2,7 @@ import customtkinter as ctk
 from widgets import addedVideo, downloadingVideo, downloadedVideo, \
     settingPanel, addedPlayList, downloadingPlayList, downloadedPlayList
 from functions.saveSettings import saveSettings
+import sys
 
 
 class app(ctk.CTk):
@@ -271,7 +272,7 @@ class app(ctk.CTk):
                                           downloaded_callback_function=self.downloaded_video). \
             pack(fill="x", pady=2)
 
-    def download_playlist(self, playlist: addedPlayList.addedPlaylist):
+    def download_playlist(self, playlist: addedPlayList.addedPlayList):
         self.downloading = True
         self.place_forget_labels("downloading")
         downloadingPlayList.downloadingPlayList(master=self.scroll_frame_downloading,
@@ -385,23 +386,17 @@ class app(ctk.CTk):
         self.settings_panel.place_forget()
         self.setting_btn.configure(command=self.open_settings)
 
-    def set_geometry(self, height, width, x_pos, y_pos):
-        if height and width and x_pos and y_pos:
-            self.geometry(f"{width}x{height}+{x_pos}+{y_pos}")
-        else:
-            self.geometry("900x500+200+200")
-
+    def set_geometry(self, geometry: str):
+        self.geometry(geometry)
+        
     def on_closing(self):
         data = {
             'download_directory': self.download_directory,
-            'height': self.winfo_height(),
-            'width': self.winfo_width(),
-            'x_pos': self.winfo_x(),
-            'y_pos': self.winfo_y()
+            'geometry': self.geometry(),
         }
-
         saveSettings("settings/general.json", data)
         self.destroy()
+        sys.exit()
 
     def run(self):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
