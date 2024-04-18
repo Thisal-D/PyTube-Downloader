@@ -158,8 +158,7 @@ class downloadingVideo(Video):
         self.net_speed_label.configure(height=20)
         self.status_label.place(relx=0.775, anchor="n", y=40)
         self.status_label.configure(height=20)
-        
-
+    
     def set_theme(self):
         super().set_theme()
         self.download_progress_bar.configure(progress_color=self.theme_color)
@@ -167,7 +166,6 @@ class downloadingVideo(Video):
             self.status_label.configure(text_color=self.theme_color)
         self.redownload_btn.configure(text_color=self.theme_color)
         self.pause_resume_button.configure(text_color=self.theme_color)
-        
         
     def start_download_video(self):
         self.download_completed = False
@@ -187,7 +185,6 @@ class downloadingVideo(Video):
         else:
             self.set_waiting()
             downloadingVideo.waiting_downloading_videos.append(self)
-        
     
     def redownload_video(self):
         self.redownload_btn.place_forget()
@@ -200,7 +197,6 @@ class downloadingVideo(Video):
             downloadingVideo.simultaneous_downloading -= 1
             self.pause_resume_button.place_forget()
             self.redownload_btn.place(y=22, relx=1, x=-80)
-            
     
     def set_waiting(self):
         self.pause_resume_button.place_forget()
