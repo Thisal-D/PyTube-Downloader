@@ -1,6 +1,7 @@
 import json
 
-def saveSettings(file, settings):
-    file = open(file, "w")
+
+def save_settings(settings_file, settings):
+    file = open(settings_file, "w")
     json.dump(obj=settings, fp=file, indent=8, sort_keys=True)
     file.close()

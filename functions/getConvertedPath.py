@@ -1,2 +1,2 @@
-def getConvertedPath(path):
-    return path.replace("/","\\")
+def get_converted_path(path):
+    return path.replace("/", "\\")

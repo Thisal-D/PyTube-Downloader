@@ -1,8 +1,9 @@
-from .getValidFileName import getValidFileName
-from .removeInvalidCharts import removeInvalidChars
+from .getAvailableFileName import get_available_file_name
+from .getValidFileName import get_valid_file_name
 from urllib import request
 import tkinter
 from PIL import Image, ImageDraw
+
 
 def add_corners(im, rad):
     circle = Image.new('L', (rad * 2, rad * 2), 0)
@@ -18,48 +19,45 @@ def add_corners(im, rad):
     return im
 
 
-def getHoverThumbnail(thumbnail_download_path):
+def get_hover_thumbnail(thumbnail_download_path):
     thumbnail_hover_temp = Image.open(thumbnail_download_path)
-    thumbnail_hover_path = ".".join(thumbnail_download_path.split(".")[0:-1]) + "-hover." + thumbnail_download_path.split(".")[-1] 
+    thumbnail_hover_path = ".".join(thumbnail_download_path.split(".")[0:-1]) + "-hover." + \
+                           thumbnail_download_path.split(".")[-1]
     thumbnail_hover_temp = thumbnail_hover_temp.convert("RGB")
     thumbnail_hover_data = thumbnail_hover_temp.getdata()
     thumbnail_hover_data_list = []
     for item in thumbnail_hover_data:
         item = list(item)
-        for index ,i in enumerate(item):
-            if i+30  < 256 :
-                item[index] = i+30
+        for index, i in enumerate(item):
+            if i + 30 < 256:
+                item[index] = i + 30
             else:
                 item[index] = 255
         thumbnail_hover_data_list.append(tuple(item))
-        
+
     thumbnail_hover_temp.putdata(thumbnail_hover_data_list)
-    #thumbnail_hover_temp.save(thumbnail_hover_path)
-    thumbnail_hover_corner_rounded = add_corners(thumbnail_hover_temp,6)
+    thumbnail_hover_corner_rounded = add_corners(thumbnail_hover_temp, 6)
     thumbnail_hover_corner_rounded.save(thumbnail_hover_path)
-    thumbnail_hover = tkinter.PhotoImage(file = thumbnail_hover_path)
+    thumbnail_hover = tkinter.PhotoImage(file=thumbnail_hover_path)
+
     return thumbnail_hover
 
 
-def getThumbnail(video):
+def get_thumbnails(video):
     thumbnail_url = video.thumbnail_url
-    thumbnail_download_path = getValidFileName("./temp/" + removeInvalidChars(thumbnail_url) + ".png")
+    thumbnail_download_path = get_available_file_name("./temp/" + get_valid_file_name(thumbnail_url) + ".png")
     request.urlretrieve(thumbnail_url, thumbnail_download_path)
-    
+
     thumbnail_temp = Image.open(thumbnail_download_path)
-    #print(thumbnail_temp.width)
-    #print(thumbnail_temp.height)
-    if round(thumbnail_temp.width/4*3) <= 480:
-        thumbnail_temp = thumbnail_temp.resize((113, 64),Image.Resampling.LANCZOS).crop((0,8,113,56)).resize((113,64))
+
+    if round(thumbnail_temp.width / 4 * 3) <= 480:
+        thumbnail_temp = thumbnail_temp.resize((113, 64), Image.Resampling.LANCZOS).crop((0, 8, 113, 56)).resize(
+            (113, 64))
     else:
-        thumbnail_temp = thumbnail_temp.resize((113,64),Image.Resampling.LANCZOS)#.crop((0,7,110,55))
-    #else:
-    #    thumbnail_temp = thumbnail_temp.resize((103, 58),Image.Resampling.LANCZOS).crop((0,7,110,55)).resize((97,55))
-    thumbnail_temp_corner_rounded = add_corners(thumbnail_temp,6)
+        thumbnail_temp = thumbnail_temp.resize((113, 64), Image.Resampling.LANCZOS)
+
+    thumbnail_temp_corner_rounded = add_corners(thumbnail_temp, 6)
     thumbnail_temp_corner_rounded.save(thumbnail_download_path)
     thumbnail = tkinter.PhotoImage(file=thumbnail_download_path)
-    return thumbnail, getHoverThumbnail(thumbnail_download_path)
 
-    
-def getThumbnails(video):
-    return getThumbnail(video)
+    return thumbnail, get_hover_thumbnail(thumbnail_download_path)

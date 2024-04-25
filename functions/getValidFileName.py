@@ -1,11 +1,8 @@
-import os
+def get_valid_file_name(url: str) -> str:
+    valid_file_name = url
 
-def getValidFileName(path):
-    splited = path.split(".")
-    file_name ,extenstion = ".".join(splited[0:-1]),splited[-1]
-    generate_file_name = file_name
-    i = 2
-    while os.path.exists(generate_file_name+"."+extenstion):
-        generate_file_name = file_name + " ({})".format(i)
-        i += 1
-    return generate_file_name + "." + extenstion
+    replaces = ["\\", "/", ":", '"', "?", "<", ">", "|", "*"]
+    for re in replaces:
+        valid_file_name = valid_file_name.replace(re, "~")
+
+    return valid_file_name

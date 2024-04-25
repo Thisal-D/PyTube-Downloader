@@ -1,31 +1,34 @@
 import pytube
 
-def toDict(data):
-    data_list = []    
+
+def to_dict(data) -> list[dict]:
+    data_list = []
     for d in data:
-        data_list.append({value.split("=")[0]:value.split("=")[1] for value in str(d)[9:-1].replace('"',"").split(" ")})
+        data_list.append(
+            {value.split("=")[0]: value.split("=")[1] for value in str(d)[9:-1].replace('"', "").split(" ")})
     return data_list
 
 
-def getSupportedDownloadTypes(video_streams: pytube.StreamQuery):
-    supportedDownloadTypes = []
-    data = toDict(video_streams.all())
-    for type_info in data:
-        if type_info["type"] == "video":
+def get_supported_download_types(video_streams: pytube.StreamQuery) -> list[dict]:
+    data = to_dict(video_streams.all())
+
+    support_download_types = []
+    for stream_type in data:
+        if stream_type["type"] == "video":
             try:
-                file_size = video_streams.get_by_resolution(type_info["res"]).filesize
-                download_info = {type_info["res"] : file_size}
-                if download_info not in supportedDownloadTypes:
-                    supportedDownloadTypes.append(download_info)
-            except:
-                #print("Error :",type_info["res"])
+                file_size = video_streams.get_by_resolution(stream_type["res"]).filesize
+                download_info = {stream_type["res"]: file_size}
+                if download_info not in support_download_types:
+                    support_download_types.append(download_info)
+            except Exception:
                 pass
+
     try:
-        audio_only = video_streams.get_audio_only()
-        file_size = audio_only.filesize
-        bitrate = str(int((audio_only.bitrate)/1024)) + "kbps"
-        supportedDownloadTypes.append({bitrate: file_size})
-    except:
+        audio_stream = video_streams.get_audio_only()
+        file_size = audio_stream.filesize
+        audio_bit_rate = f"{str(int(audio_stream.bitrate / 1024))}kbps"
+        support_download_types.append({audio_bit_rate: file_size})
+    except Exception:
         pass
-        #print("Error :","Audio")
-    return supportedDownloadTypes
+
+    return support_download_types
