@@ -11,7 +11,7 @@ from widgets import (
 from widgets import (
     SettingPanel
 )
-from services import (
+from Services import (
     LoadingIndicatorController,
     LoadManager,
     DownloadManager,
@@ -729,18 +729,13 @@ class App(ctk.CTk):
             theme_settings=self.theme_settings["video_object"],
         ).pack(fill="x", pady=2)
 
-    def update_theme_settings(
-            self,
-            theme_settings: Dict,
-            updated: Literal["accent_color", "theme_mode", "opacity"] = None):
+    def update_theme_settings(self, theme_settings: Dict, updated: Literal["accent_color", "theme_mode"] = None):
         self.theme_settings = theme_settings
         if updated == "theme_mode":
             ctk.set_appearance_mode(theme_settings["root"]["theme_mode"])
         if updated == "accent_color":
             self.set_accent_color()
             ThemeManager.update_accent_color(theme_settings["root"]["accent_color"])
-        if updated == "opacity":
-            self.attributes("-alpha", theme_settings["opacity"])
         save_settings("settings/theme.json", self.theme_settings)
 
     def update_general_settings(self, general_settings):
