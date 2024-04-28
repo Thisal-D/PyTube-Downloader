@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from typing import Any, Dict, List, Callable
-from services import ThemeManager
+from Services import ThemeManager
 
 
 class NavigationPanel(ctk.CTkFrame):

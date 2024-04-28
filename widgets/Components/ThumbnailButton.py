@@ -3,7 +3,7 @@ from tkinter import PhotoImage
 import threading
 import time
 from typing import Tuple, List, Literal, Any
-from services import LoadingIndicatorController
+from Services import LoadingIndicatorController
 
 
 class ThumbnailButton(tk.Button):

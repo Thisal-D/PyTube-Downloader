@@ -7,7 +7,7 @@ from functions import (
     get_converted_time,
 )
 from widgets.Components import ThumbnailButton
-from services import ThemeManager
+from Services import ThemeManager
 
 
 class Video(ctk.CTkFrame):

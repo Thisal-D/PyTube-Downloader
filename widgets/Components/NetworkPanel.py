@@ -1,6 +1,6 @@
 from typing import Dict, Any, Callable
 import customtkinter as ctk
-from services import ThemeManager
+from Services import ThemeManager
 from functions import validate_simultaneous_count
 
 

@@ -1,2 +1,2 @@
-def pass_command(*args_):
+def pass_command(*args):
     pass

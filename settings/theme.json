@@ -34,7 +34,6 @@
                         ]
                 }
         },
-        "opacity": 1.0,
         "radio_btn": {
                 "text_color": {
                         "hover": [
@@ -63,7 +62,7 @@
                                 "#0a0c12"
                         ]
                 },
-                "theme_mode": "system"
+                "theme_mode": "dark"
         },
         "settings_panel": {
                 "accent_colors": {

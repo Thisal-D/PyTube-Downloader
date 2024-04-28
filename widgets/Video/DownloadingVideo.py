@@ -6,7 +6,7 @@ import os
 from tkinter import PhotoImage
 from typing import Literal, List, Union, Any, Dict
 from pytube import request as pytube_request
-from services import DownloadManager
+from Services import DownloadManager
 from functions import (
     pass_command,
     get_converted_size,

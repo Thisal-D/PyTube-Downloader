@@ -1,6 +1,6 @@
-def removeInvalidChars(url: str) -> str:
+def removeInvalidChars(url:str):
     filename = url
-    replaces = ["\\", "/", ":", '"', "?", "<", ">", "|", "*"]
+    replaces = ["\\","/",":",'"',"?","<",">","|","*"]
     for re in replaces:
-        filename = filename.replace(re, "~")
+        filename = filename.replace(re,"~")
     return filename
