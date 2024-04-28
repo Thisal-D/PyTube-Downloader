@@ -1,10 +1,12 @@
 from widgets.Video import Video
 import customtkinter as ctk
-from Services import ThemeManager
 import pytube
 import threading
 from typing import Literal, Union, List, Any, Callable, Dict
-from Services import LoadManager
+from services import (
+    LoadManager,
+    ThemeManager
+)
 from functions import (
     get_thumbnails,
     get_supported_download_types,

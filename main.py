@@ -43,8 +43,6 @@ app.geometry(app_general_settings["geometry"])
 app.minsize(900, 500)
 # set the title icon
 app.iconbitmap("src\\icon.ico")
-# set the transparent to window by setting alpha to 0.97
-app.attributes("-alpha", 1)
 # set the app title
 app.title("PyTube Downloader")
 # Create the main widgets of the application
@@ -57,6 +55,8 @@ app.set_widgets_colors()
 app.set_accent_color()
 # configure fonts for main widgets
 app.set_widgets_fonts()
+# configure alpha
+app.attributes("-alpha", app_theme_settings["opacity"])
 # initiate services
 app.initiate_services()
 app.configure_services_values()

@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from typing import Dict, Callable, Any
 from tkinter import filedialog
-from Services import ThemeManager
+from services import ThemeManager
 from functions import validate_download_path, format_path
 
 

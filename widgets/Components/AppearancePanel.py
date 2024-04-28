@@ -2,7 +2,7 @@ from typing import Dict, Any, List, Callable, Literal, Union
 import customtkinter as ctk
 from functions import validate_color
 from .AccentColorButton import AccentColorButton
-from Services import ThemeManager
+from services import ThemeManager
 
 
 class AppearancePanel(ctk.CTkFrame):
@@ -106,6 +106,23 @@ class AppearancePanel(ctk.CTkFrame):
             width=560,
             fg_color=theme_settings["root"]["fg_color"]["normal"],
         )
+        
+        self.opacity_label = ctk.CTkLabel(
+            master=self,
+            text="Transparent"
+        )
+        
+        self.dash4_label = ctk.CTkLabel(
+            master=self,
+            text=":"
+        )
+        
+        self.opacity_change_slider = ctk.CTkSlider(
+            master=self,
+            command=self.apply_opacity,
+            from_=0.6,
+            to=1,
+        )
 
         self.custom_accent_color = ""
         self.theme_settings = theme_settings
@@ -156,6 +173,10 @@ class AppearancePanel(ctk.CTkFrame):
         self.theme_combo_box.configure(state="normal")
         self.theme_settings["root"]["theme_mode"] = ctk.get_appearance_mode().lower()
         self.theme_settings_change_callback(self.theme_settings, "theme_mode")
+        
+    def apply_opacity(self, opacity_value: float):
+        self.theme_settings["opacity"] = opacity_value
+        self.theme_settings_change_callback(self.theme_settings, "opacity")
 
     def validate_custom_accent_color_and_apply(self, _event):
         text = self.custom_accent_color_entry.get()
@@ -199,6 +220,12 @@ class AppearancePanel(ctk.CTkFrame):
             fg_color=self.theme_settings["root"]["accent_color"]["normal"],
             hover_color=self.theme_settings["root"]["accent_color"]["hover"]
         )
+        self.opacity_change_slider.configure(
+            button_color=self.theme_settings["root"]["accent_color"]["normal"],
+            fg_color=self.theme_settings["root"]["accent_color"]["normal"],
+            progress_color=self.theme_settings["root"]["accent_color"]["hover"],
+            button_hover_color=self.theme_settings["root"]["accent_color"]["hover"],
+        )
 
     def update_accent_color(self, new_accent_color: Dict):
         self.theme_settings["root"]["accent_color"] = new_accent_color
@@ -213,9 +240,9 @@ class AppearancePanel(ctk.CTkFrame):
         self.theme_combo_box.place(y=50, x=270)
         self.system_theme_check_box.place(y=50, x=440)
 
-        self.accent_color_label.place(y=100, x=100)
-        self.dash2_label.place(y=100, x=240)
-        self.accent_color_frame.place(y=100, x=270)
+        self.accent_color_label.place(y=90, x=100)
+        self.dash2_label.place(y=90, x=240)
+        self.accent_color_frame.place(y=90, x=270)
 
         # place accent color buttons
         max_columns = 3
@@ -229,12 +256,16 @@ class AppearancePanel(ctk.CTkFrame):
                 row += 1
             button.bind_event()
 
-        self.custom_accent_color_label.place(y=300, x=100)
-        self.dash3_label.place(y=300, x=240)
-        self.custom_accent_color_entry.place(y=300, x=270)
-        self.custom_accent_color_display_btn.place(y=298, x=420)
-        self.custom_accent_color_apply_btn.place(y=301, x=470)
-        self.custom_accent_color_warning_text.place(y=330, x=50)
+        self.custom_accent_color_label.place(y=270, x=100)
+        self.dash3_label.place(y=270, x=240)
+        self.custom_accent_color_entry.place(y=270, x=270)
+        self.custom_accent_color_display_btn.place(y=270, x=420)
+        self.custom_accent_color_apply_btn.place(y=272, x=470)
+        self.custom_accent_color_warning_text.place(y=300, x=50)
+        
+        self.opacity_label.place(y=430, x=100)
+        self.dash4_label.place(y=430, x=240)
+        self.opacity_change_slider.place(y=435, x=270)
 
     # set default values to widgets
     def configure_values(self):
@@ -283,6 +314,8 @@ class AppearancePanel(ctk.CTkFrame):
             self.theme_combo_box.set("Dark")
         if self.theme_settings["root"]["theme_mode"] == "light":
             self.theme_combo_box.set("Light")
+            
+        self.opacity_change_slider.set(self.theme_settings["opacity"])
 
     def bind_events(self):
         self.custom_accent_color_entry.bind("<KeyRelease>", self.validate_custom_accent_color_and_apply)

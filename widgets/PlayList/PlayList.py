@@ -5,7 +5,7 @@ from typing import Any, Union, Dict
 from widgets import AddedVideo
 from widgets import DownloadingVideo
 from widgets import DownloadedVideo
-from Services import ThemeManager
+from services import ThemeManager
 
 
 class PlayList(ctk.CTkFrame):
