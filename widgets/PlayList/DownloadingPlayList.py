@@ -81,6 +81,7 @@ class DownloadingPlayList(PlayList):
                 # download info
                 download_type=added_video.download_type,
                 download_quality=added_video.download_quality,
+                download_directory=self.download_directory,
                 # video info
                 video_title=added_video.video_title,
                 channel=added_video.channel,
