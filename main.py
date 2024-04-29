@@ -7,23 +7,12 @@ from functions import (
     get_general_settings,
     accessible
 )
+from services import ThemeManager
 
 # get the theme settings
 # get the general settings
 app_theme_settings = get_theme_settings()
 app_general_settings = get_general_settings()
-
-# Check directory access during startup.
-# If accessible, nothing happens if not, show an error message.
-DIRECTORIES = ["temp", app_general_settings["download_directory"]]
-for directory in DIRECTORIES:
-    if not accessible(directory):
-        error_message = AlertWindow(
-            error_msg="Please run this application as an administrator...!",
-            button_text="ok",
-        )
-        error_message.show()
-        sys.exit()
 
 # Initialize app.
 app = App(
@@ -31,6 +20,21 @@ app = App(
     general_settings=app_general_settings,
     theme_settings=app_theme_settings,
 )
+# initiate services
+app.initiate_services()
+app.configure_services_values()
+# Check directory access during startup.
+# If accessible, nothing happens if not, show an error message.
+DIRECTORIES = ["temp", app_general_settings["download_directory"]]
+for directory in DIRECTORIES:
+    if not accessible(directory):
+        AlertWindow(
+            master=app,
+            alert_msg="Please run this application as an administrator...!",
+            ok_button_text="ok",
+            ok_button_callback=app.on_app_closing,
+            callback=app.on_app_closing
+        )
 # set the theme mode, dark or light or system, by getting from settings
 ctk.set_appearance_mode(app_theme_settings["root"]["theme_mode"])
 # deactivate the automatic scale
@@ -45,9 +49,6 @@ app.attributes("-alpha", app_theme_settings["opacity"])
 app.iconbitmap("src\\icon.ico")
 # set the app title
 app.title("PyTube Downloader")
-# initiate services
-app.initiate_services()
-app.configure_services_values()
 # Create the main widgets of the application
 app.create_widgets()
 # place main widgets

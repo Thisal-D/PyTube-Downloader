@@ -1,11 +1,5 @@
 {
         "alert_window": {
-                "fg_color": {
-                        "normal": [
-                                "#ffffff",
-                                "#0a0c12"
-                        ]
-                },
                 "msg_color": {
                         "normal": "#ee0000"
                 }

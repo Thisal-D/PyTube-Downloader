@@ -5,7 +5,7 @@ from typing import Literal, Dict
 from widgets import (
     AddedVideo, DownloadingVideo, DownloadedVideo,
     AddedPlayList, DownloadingPlayList, DownloadedPlayList,
-    SettingPanel, ContextMenu, TrayMenu
+    SettingPanel, ContextMenu, TrayMenu, AlertWindow
 )
 from services import (
     LoadingIndicatorController,
@@ -188,7 +188,6 @@ class App(ctk.CTk):
         self.navigate_downloading_frame_btn.place(y=50)
         self.navigate_downloaded_frame_btn.place(y=50)
         self.place_frame(self.added_content_scroll_frame, "added")
-        self.bind("<Configure>", self.run_geometry_tracker)
 
     def place_forget_frames(self):
         self.added_content_scroll_frame.place_forget()
@@ -742,6 +741,7 @@ class App(ctk.CTk):
         self.url_entry.bind("<Button-1>", self.close_context_menu_directly)
         self.bind("<Button-1>", self.close_context_menu_directly)
         self.bind('<FocusOut>', self.close_context_menu_directly)
+        self.bind("<Configure>", self.run_geometry_tracker)
 
     def update_theme_settings(
             self,
@@ -777,14 +777,29 @@ class App(ctk.CTk):
         self.destroy()
         os._exit(0)
 
-    def maximize_from_tray(self):
+    def cancel_app_closing(self):
+        self.bind_events()
+
+    def show_close_confirmation_dialog(self):
+        self.restore_from_tray()
+        AlertWindow(
+            master=self,
+            alert_msg="Are you sure you want to exit the application?",
+            ok_button_text="ok",
+            cancel_button_text="cancel",
+            ok_button_callback=self.on_app_closing,
+            cancel_button_callback=self.cancel_app_closing,
+            callback=self.cancel_app_closing
+        )
+
+    def restore_from_tray(self):
         self.tray_menu.stop()
         self.deiconify()
 
     def minimize_to_tray(self):
         self.tray_menu = TrayMenu(
-            open_command=self.maximize_from_tray,
-            quit_command=self.on_app_closing,
+            open_command=self.restore_from_tray,
+            quit_command=self.show_close_confirmation_dialog,
         )
         self.iconify()
         self.withdraw()
