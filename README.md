@@ -6,6 +6,8 @@ Your support means a lot and inspires me to do better with each update. Thank yo
 
 # PyTube Downloader
 
+<meta property="og:image" content="https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/be798646-ccc8-4691-8084-c2f4969e5069"/>
+
 [Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/tree/main/Windows%20Installer)
 
 PyTube Downloader is a user-friendly application that allows users to download YouTube videos with ease. It features a simple and intuitive user interface, making the downloading process straightforward for all users.
