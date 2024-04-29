@@ -10,6 +10,12 @@
                         "normal": "#ee0000"
                 }
         },
+        "context_menu": {
+                "text_color": [
+                        "#101010",
+                        "#eeeeee"
+                ]
+        },
         "navigation_button": {
                 "fg_color": {
                         "hover": [
@@ -34,6 +40,7 @@
                         ]
                 }
         },
+        "opacity": 0.982,
         "radio_btn": {
                 "text_color": {
                         "hover": [
@@ -49,8 +56,8 @@
         "root": {
                 "accent_color": {
                         "default": true,
-                        "hover": "#166afe",
-                        "normal": "#1578ff"
+                        "hover": "#5f4ff1",
+                        "normal": "#412ff0"
                 },
                 "fg_color": {
                         "hover": [
@@ -62,13 +69,13 @@
                                 "#0a0c12"
                         ]
                 },
-                "theme_mode": "dark"
+                "theme_mode": "system"
         },
         "settings_panel": {
                 "accent_colors": {
                         "0": {
-                                "hover": "#166afe",
-                                "normal": "#1578ff"
+                                "hover": "#5f4ff1",
+                                "normal": "#412ff0"
                         },
                         "1": {
                                 "hover": "#ffac1a",
@@ -87,7 +94,7 @@
                                 "normal": "#ffbf00"
                         },
                         "5": {
-                                "hover": "#882dff",
+                                "hover": "#903efb",
                                 "normal": "#7a14ff"
                         },
                         "6": {
@@ -99,38 +106,46 @@
                                 "normal": "#ff6363"
                         },
                         "8": {
-                                "hover": "#d966ff",
-                                "normal": "#c94dff"
+                                "hover": "#19CAAD",
+                                "normal": "#05e5c0"
                         },
                         "9": {
-                                "hover": "#66ffaa",
-                                "normal": "#4dff87"
+                                "hover": "#D6D5B7",
+                                "normal": "#d9d791"
                         },
                         "a": {
-                                "hover": "#73ff73",
-                                "normal": "#5bff5b"
+                                "hover": "#D1BA74",
+                                "normal": "#d2b14d"
                         },
                         "b": {
-                                "hover": "#96ff73",
-                                "normal": "#7aff5b"
+                                "hover": "#6ce8d3",
+                                "normal": "#A0EEE1"
                         },
                         "c": {
-                                "hover": "#fffd73",
-                                "normal": "#ffea5b"
+                                "hover": "#e8b66e",
+                                "normal": "#E6CEAC"
                         },
                         "d": {
-                                "hover": "#ffc573",
-                                "normal": "#ffa65b"
+                                "hover": "#84e5ea",
+                                "normal": "#BEE7E9"
                         },
                         "e": {
-                                "hover": "#ff9f7a",
-                                "normal": "#ff895f"
+                                "hover": "#eb8971",
+                                "normal": "#ECAD9E"
                         },
                         "f": {
-                                "hover": "#ff6347",
-                                "normal": "#ff4500"
+                                "hover": "#73e98a",
+                                "normal": "#BEEDC7"
                         }
                 },
+                "nav_text_color": [
+                        "#252525",
+                        "#dddddd"
+                ],
+                "text_color": [
+                        "#141212",
+                        "#eeeeee"
+                ],
                 "warning_color": {
                         "hover": "#ff3131",
                         "normal": "#f95568"

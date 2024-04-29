@@ -21,7 +21,6 @@ for directory in DIRECTORIES:
         error_message = AlertWindow(
             error_msg="Please run this application as an administrator...!",
             button_text="ok",
-            theme_settings=app_theme_settings,
         )
         error_message.show()
         sys.exit()
@@ -32,7 +31,6 @@ app = App(
     general_settings=app_general_settings,
     theme_settings=app_theme_settings,
 )
-
 # set the theme mode, dark or light or system, by getting from settings
 ctk.set_appearance_mode(app_theme_settings["root"]["theme_mode"])
 # deactivate the automatic scale
@@ -41,12 +39,15 @@ ctk.deactivate_automatic_dpi_awareness()
 app.geometry(app_general_settings["geometry"])
 # set minimum window size to 900x500
 app.minsize(900, 500)
+# configure alpha
+app.attributes("-alpha", app_theme_settings["opacity"])
 # set the title icon
 app.iconbitmap("src\\icon.ico")
-# set the transparent to window by setting alpha to 0.97
-app.attributes("-alpha", 1)
 # set the app title
 app.title("PyTube Downloader")
+# initiate services
+app.initiate_services()
+app.configure_services_values()
 # Create the main widgets of the application
 app.create_widgets()
 # place main widgets
@@ -57,8 +58,7 @@ app.set_widgets_colors()
 app.set_accent_color()
 # configure fonts for main widgets
 app.set_widgets_fonts()
-# initiate services
-app.initiate_services()
-app.configure_services_values()
+# app event bind
+app.bind_events()
 # just rut the app
 app.run()
