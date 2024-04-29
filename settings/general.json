@@ -1,6 +1,6 @@
 {
-        "download_directory": "C:\\Users\\Thisal Dilmith\\Downloads\\PyTube Downloader",
-        "geometry": "1920x1009+437+-20",
+        "download_directory": false,
+        "geometry": "900x500+0+0",
         "simultaneous_downloads": 1,
         "simultaneous_loads": 1
 }
