@@ -23,7 +23,7 @@ class DownloadManager:
                     DownloadManager.queued_downloads.pop(0)
                 time.sleep(1)
 
-        threading.Thread(target=check_and_enqueue_downloads).start()
+        threading.Thread(target=check_and_enqueue_downloads, daemon=True).start()
 
     @staticmethod
     def set_max_concurrent_downloads(count: int):

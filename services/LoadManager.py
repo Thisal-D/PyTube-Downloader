@@ -13,6 +13,7 @@ class LoadManager:
         def check_and_enqueue_loads():
             while True:
                 # print(f"@loadManager.py > Active loads : {LoadManager.active_load_count}")
+                # print(f"@loadManager.py > Queued loads : {len(LoadManager.queued_loads)}")
                 if (LoadManager.max_concurrent_loads > LoadManager.active_load_count and
                         len(LoadManager.queued_loads) > 0):
                     try:
@@ -23,7 +24,7 @@ class LoadManager:
                     LoadManager.queued_loads.pop(0)
                 time.sleep(1)
 
-        threading.Thread(target=check_and_enqueue_loads).start()
+        threading.Thread(target=check_and_enqueue_loads, daemon=True).start()
 
     @staticmethod
     def set_max_concurrent_loads(count: int):
