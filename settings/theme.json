@@ -34,7 +34,7 @@
                         ]
                 }
         },
-        "opacity": 0.982,
+        "opacity": 1.0,
         "radio_btn": {
                 "text_color": {
                         "hover": [
@@ -217,11 +217,11 @@
                 "fg_color": {
                         "hover": [
                                 "#ffffff",
-                                "#202020"
+                                "#161616"
                         ],
                         "normal": [
-                                "#ededed",
-                                "#151515"
+                                "#eeeeee",
+                                "#121212"
                         ]
                 },
                 "remove_btn_text_color": {
