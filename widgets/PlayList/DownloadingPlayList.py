@@ -57,7 +57,7 @@ class DownloadingPlayList(PlayList):
             playlist_video_count=playlist_video_count,
         )
         self.channel_btn.configure(state="normal")
-        threading.Thread(target=self.download_videos).start()
+        threading.Thread(target=self.download_videos, daemon=True).start()
 
     def re_download_videos(self):
         self.re_download_btn.place_forget()

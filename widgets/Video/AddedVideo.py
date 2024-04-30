@@ -28,8 +28,7 @@ class AddedVideo(Video):
             # state callbacks only use if mode is play list
             mode: Literal["video", "playlist"] = "video",
             video_load_status_callback: callable = None):
-
-        self.loading_loop_running: bool = False
+        
         # video info
         self.video_stream_data: pytube.YouTube.streams = None
         self.support_download_types: Union[List[str], None] = None
@@ -82,7 +81,7 @@ class AddedVideo(Video):
             if self.mode == "playlist":
                 self.video_load_status_callback(self, self.load_state)
             self.status_label.configure(text="Loading")
-            threading.Thread(target=self.retrieve_video_data).start()
+            threading.Thread(target=self.retrieve_video_data, daemon=True).start()
         else:
             self.set_waiting()
 
@@ -128,7 +127,6 @@ class AddedVideo(Video):
 
     def set_loading_failed(self):
         if self.load_state != "removed":
-            print(self.load_state)
             if self in LoadManager.active_loads:
                 LoadManager.active_loads.remove(self)
                 LoadManager.active_load_count -= 1
@@ -141,8 +139,6 @@ class AddedVideo(Video):
                 text="Failed"
             )
             self.reload_btn.place(relx=1, y=22, x=-80)
-        else:
-            print(self.load_state)
 
     def set_video_data(self):
         if self.load_state != "removed":

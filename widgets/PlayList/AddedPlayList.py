@@ -51,7 +51,7 @@ class AddedPlayList(PlayList):
             playlist_url=playlist_url
         )
 
-        threading.Thread(target=self.load_playlist).start()
+        threading.Thread(target=self.load_playlist, daemon=True).start()
 
     def load_playlist(self):
         self.view_btn.configure(state="disabled")
@@ -146,7 +146,7 @@ class AddedPlayList(PlayList):
                 if video.load_state == "failed":
                     video.reload_video()
         else:
-            threading.Thread(target=self.load_playlist).start()
+            threading.Thread(target=self.load_playlist, daemon=True).start()
 
     def indicate_loading_failure(self):
         self.status_label.configure(text="Failed", text_color=ThemeManager.theme_settings["video_object"]["error_color"]["normal"])

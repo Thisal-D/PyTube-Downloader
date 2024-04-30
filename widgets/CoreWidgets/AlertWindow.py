@@ -79,6 +79,7 @@ class AlertWindow(ctk.CTkToplevel):
         self.master.bind("<Configure>", self.move)
         self.bind("<Configure>", self.move)
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.move("event")
 
     def move(self, _event):
         geometry_x = int(self.master.winfo_width() * 0.5 + self.master.winfo_x() - 0.5 * self.width + 7)

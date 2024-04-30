@@ -88,13 +88,13 @@ class DownloadingVideo(Video):
         )
 
         self.set_video_data()
-        threading.Thread(target=self.start_download_video).start()
+        threading.Thread(target=self.start_download_video, daemon=True).start()
 
     def start_download_video(self):
         if DownloadManager.max_concurrent_downloads > DownloadManager.active_download_count:
             DownloadManager.active_download_count += 1
             DownloadManager.active_downloads.append(self)
-            threading.Thread(target=self.download_video).start()
+            threading.Thread(target=self.download_video, daemon=True).start()
             self.set_pause_btn()
             self.pause_resume_btn.place(y=22, relx=1, x=-80)
             self.net_speed_label.configure(text="0.0 B/s")
@@ -236,7 +236,6 @@ class DownloadingVideo(Video):
             self.video_download_progress_callback()
 
     def set_download_failed(self):
-        print(self.download_state)
         if self.download_state != "removed":
             self.download_state = "failed"
             self.display_status()
