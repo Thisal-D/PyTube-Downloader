@@ -1,6 +1,5 @@
 from app import App
 import customtkinter as ctk
-import sys
 from widgets import AlertWindow
 from functions import (
     get_theme_settings,
@@ -22,7 +21,8 @@ app = App(
 )
 # initiate services
 app.initiate_services()
-app.configure_services_values()
+# run services
+app.run_services()
 # Check directory access during startup.
 # If accessible, nothing happens if not, show an error message.
 DIRECTORIES = ["temp", app_general_settings["download_directory"]]

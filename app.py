@@ -12,6 +12,7 @@ from services import (
     LoadManager,
     DownloadManager,
     ThemeManager,
+    GeneralSettings,
 )
 from functions import (
     save_settings,
@@ -157,7 +158,6 @@ class App(ctk.CTk):
 
         self.settings_panel = SettingPanel(
             master=self,
-            general_settings=self.general_settings,
             theme_settings_change_callback=self.update_theme_settings,
             general_settings_change_callback=self.update_general_settings
         )
@@ -652,7 +652,6 @@ class App(ctk.CTk):
             # download info
             download_quality=video.download_quality,
             download_type=video.download_type,
-            download_directory=self.general_settings['download_directory'],
             video_download_complete_callback=self.downloaded_video,
         ).pack(fill="x", pady=2)
 
@@ -672,7 +671,6 @@ class App(ctk.CTk):
             # play list videos
             videos=playlist.videos,
             # download directory
-            download_directory=self.general_settings['download_directory'],
             # playlist download completed callback functions
             playlist_download_complete_callback=self.downloaded_playlist,
         ).pack(fill="x", pady=2)
@@ -745,21 +743,19 @@ class App(ctk.CTk):
 
     def update_theme_settings(
             self,
-            theme_settings: Dict,
             updated: Literal["accent_color", "theme_mode", "opacity"] = None):
-        self.theme_settings = theme_settings
+        self.theme_settings = ThemeManager.theme_settings
         if updated == "theme_mode":
-            ctk.set_appearance_mode(theme_settings["root"]["theme_mode"])
+            ctk.set_appearance_mode(self.theme_settings["root"]["theme_mode"])
         if updated == "accent_color":
             self.set_accent_color()
-            ThemeManager.update_accent_color(theme_settings["root"]["accent_color"])
+            ThemeManager.update_accent_color(self.theme_settings["root"]["accent_color"])
         if updated == "opacity":
-            self.attributes("-alpha", theme_settings["opacity"])
+            self.attributes("-alpha", self.theme_settings["opacity"])
         save_settings("settings/theme.json", self.theme_settings)
 
-    def update_general_settings(self, general_settings):
-        self.general_settings = general_settings
-        self.configure_services_values()
+    def update_general_settings(self):
+        self.general_settings = GeneralSettings.general_settings
         save_settings("settings/general.json", self.general_settings)
 
     def open_settings(self):
@@ -809,13 +805,12 @@ class App(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.minimize_to_tray)
         self.mainloop()
 
-    def configure_services_values(self):
-        DownloadManager.set_max_concurrent_downloads(self.general_settings["simultaneous_downloads"])
-        LoadManager.set_max_concurrent_loads(self.general_settings["simultaneous_loads"])
+    def initiate_services(self):
         ThemeManager.configure_theme_settings(self.theme_settings)
+        GeneralSettings.configure_general_settings(self.general_settings)
 
     @staticmethod
-    def initiate_services():
+    def run_services():
         threading.Thread(target=ThemeManager.theme_tracker, daemon=True).start()
         threading.Thread(target=LoadingIndicatorController.start, daemon=True).start()
         # loading and downloading handle
