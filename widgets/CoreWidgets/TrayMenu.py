@@ -11,7 +11,7 @@ class TrayMenu:
 
         self.tray_image = Image.open("src/icon.ico")
         self.tray_menu = pystray.MenuItem("Open", open_command), pystray.MenuItem("Quit", quit_command)
-        self.tray_icon = pystray.Icon("name", self.tray_image, "Network Info", self.tray_menu)
+        self.tray_icon = pystray.Icon("name", self.tray_image, "PyTube Downloader", self.tray_menu)
 
     def run(self):
         self.tray_icon.run()
