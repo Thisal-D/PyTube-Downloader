@@ -22,8 +22,6 @@ class DownloadingPlayList(PlayList):
             playlist_video_count: int = 0,
             # videos of playlist
             videos: List[AddedVideo] = None,
-            # download directory
-            download_directory: str = "",
             # playlist download completed callback functions
             playlist_download_complete_callback: Callable = None):
 
@@ -37,7 +35,6 @@ class DownloadingPlayList(PlayList):
         # callback functions
         self.playlist_download_complete_callback = playlist_download_complete_callback
         self.added_videos: List[AddedVideo] = videos
-        self.download_directory = download_directory
         self.videos: List[DownloadingVideo] = []
         # vars for state track
         self.waiting_videos: List[DownloadingVideo] = []
@@ -76,7 +73,6 @@ class DownloadingPlayList(PlayList):
                 # download info
                 download_type=added_video.download_type,
                 download_quality=added_video.download_quality,
-                download_directory=self.download_directory,
                 # video info
                 video_title=added_video.video_title,
                 channel=added_video.channel,

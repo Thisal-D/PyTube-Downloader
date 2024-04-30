@@ -1,10 +1,9 @@
 import threading
 import time
-
+from .GeneralSettings import GeneralSettings
 
 class DownloadManager:
     active_download_count = 0
-    max_concurrent_downloads = 1
     queued_downloads = []
     active_downloads = []
 
@@ -13,7 +12,7 @@ class DownloadManager:
         def check_and_enqueue_downloads():
             while True:
                 # print(f"@DownloadManager.py > Active Downloads : {DownloadManager.active_download_count}")
-                if DownloadManager.max_concurrent_downloads > DownloadManager.active_download_count and len(
+                if GeneralSettings.general_settings["simultaneous_downloads"] > DownloadManager.active_download_count and len(
                         DownloadManager.queued_downloads) > 0:
                     try:
                         DownloadManager.queued_downloads[0].start_download_video()

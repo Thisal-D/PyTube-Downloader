@@ -5,7 +5,8 @@ import threading
 from typing import Literal, Union, List, Any, Callable
 from services import (
     LoadManager,
-    ThemeManager
+    ThemeManager,
+    GeneralSettings
 )
 from functions import (
     get_thumbnails,
@@ -74,7 +75,7 @@ class AddedVideo(Video):
 
     def load_video(self):
         self.thumbnail_btn.run_loading_animation()
-        if LoadManager.max_concurrent_loads > LoadManager.active_load_count:
+        if GeneralSettings.general_settings["simultaneous_loads"] > LoadManager.active_load_count:
             self.load_state = "loading"
             LoadManager.active_loads.append(self)
             LoadManager.active_load_count += 1
@@ -97,11 +98,12 @@ class AddedVideo(Video):
             self.support_download_types = sort_dict(get_supported_download_types(self.video_stream_data))
             self.set_load_completed()
             self.set_video_data()
+            self.download_automatically()
         except Exception as error:
             print(f"@1AddedVideo.py > {error}")
             self.set_loading_failed()
 
-    def choose_download_option(self, e: str):
+    def choose_download_type(self, e: str):
         self.download_quality = e.replace(" ", "").split("|")[0]
         if "kbps" in self.download_quality:
             self.download_type = "Audio"
@@ -114,6 +116,22 @@ class AddedVideo(Video):
             self.video_load_status_callback(self, self.load_state)
         LoadManager.queued_loads.append(self)
         self.status_label.configure(text="Waiting")
+        
+    def select_download_quality_automatic(self):
+        index = None
+        if GeneralSettings.general_settings["automatic_download"]["quality"] == "Audio Only":
+            index = -1
+        elif GeneralSettings.general_settings["automatic_download"]["quality"] == "Lowest Quality":
+            index = -2
+        elif GeneralSettings.general_settings["automatic_download"]["quality"] == "Highest Quality":
+            index = 0
+        self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[index])
+        
+    def download_automatically(self):
+        if self.mode == "video" and GeneralSettings.general_settings["automatic_download"]["state"] == "enable":
+            self.select_download_quality_automatic()
+            self.choose_download_type(self.resolution_select_menu.get())
+            self.video_download_button_click_callback(self)
 
     def set_load_completed(self):
         if self.load_state != "removed":
@@ -124,7 +142,7 @@ class AddedVideo(Video):
             if self in LoadManager.active_loads:
                 LoadManager.active_loads.remove(self)
             LoadManager.active_load_count -= 1
-
+        
     def set_loading_failed(self):
         if self.load_state != "removed":
             if self in LoadManager.active_loads:
@@ -147,8 +165,8 @@ class AddedVideo(Video):
                 values=get_formated_combo_box_values(self.support_download_types)
             )
             self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[0])
-            self.choose_download_option(self.resolution_select_menu.get())
-            self.resolution_select_menu.configure(command=self.choose_download_option)
+            self.choose_download_type(self.resolution_select_menu.get())
+            self.resolution_select_menu.configure(command=self.choose_download_type)
             self.channel_btn.configure(state="normal")
             self.download_btn.configure(state="normal")
 
@@ -206,6 +224,12 @@ class AddedVideo(Video):
     def set_accent_color(self):
         self.download_btn.configure(border_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"])
         self.reload_btn.configure(text_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"])
+        self.resolution_select_menu.configure(
+            button_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"],
+            button_hover_color=ThemeManager.theme_settings["root"]["accent_color"]["hover"],
+            border_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"],
+            dropdown_hover_color=ThemeManager.theme_settings["root"]["accent_color"]["hover"]
+        )
         super().set_accent_color()
 
     def set_widgets_colors(self):
@@ -221,6 +245,11 @@ class AddedVideo(Video):
         )
         self.status_label.configure(
             text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"]
+        )
+        self.resolution_select_menu.configure(
+            dropdown_fg_color=ThemeManager.theme_settings["video_object"]["fg_color"]["normal"],
+            text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"],
+            fg_color=ThemeManager.theme_settings["video_object"]["fg_color"]["normal"],
         )
         super().set_widgets_colors()
 

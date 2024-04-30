@@ -1,4 +1,4 @@
-from typing import Dict, Any, Callable
+from typing import Any, Callable
 import customtkinter as ctk
 from widgets import (
     AppearancePanel,
@@ -6,15 +6,15 @@ from widgets import (
     DownloadsPanel,
     NavigationPanel
 )
-from services import ThemeManager
+from services import (
+    ThemeManager
+)
 
 
 class SettingPanel(ctk.CTkFrame):
     def __init__(
             self,
             master: Any = None,
-            # general info
-            general_settings: Dict = None,
             # changes callbacks
             theme_settings_change_callback: Callable = None,
             general_settings_change_callback: Callable = None):
@@ -30,13 +30,11 @@ class SettingPanel(ctk.CTkFrame):
 
         self.network_panel = NetworkPanel(
             master=self,
-            general_settings=general_settings,
             general_settings_change_callback=general_settings_change_callback
         )
 
         self.downloads_panel = DownloadsPanel(
             master=self,
-            general_settings=general_settings,
             general_settings_change_callback=general_settings_change_callback
         )
 

@@ -2,9 +2,6 @@ import tkinter as tk
 import webbrowser
 import customtkinter as ctk
 from typing import Any, Union
-from widgets import AddedVideo
-from widgets import DownloadingVideo
-from widgets import DownloadedVideo
 from services import ThemeManager
 
 
@@ -43,12 +40,14 @@ class PlayList(ctk.CTkFrame):
         self.remove_btn: Union[ctk.CTkButton, None] = None
         self.playlist_video_count_label: Union[ctk.CTkLabel, None] = None
         self.playlist_item_frame: Union[ctk.CTkFrame, None] = None
+        # self.on_mouse_state: Literal["enter", "leave"] = "leave"
         # initialize the object
         self.create_widgets()
         self.set_widgets_colors()
         self.reset_widgets_colors()
         self.set_accent_color()
         self.place_widgets()
+        self.bind_widget_events()
         # self append to theme manger
         ThemeManager.bind_widget(self)
 
@@ -203,9 +202,9 @@ class PlayList(ctk.CTkFrame):
         self.playlist_video_count_label.configure(
             text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"]
         )
-        self.bind_widget_events()
 
     def on_mouse_enter_self(self, event):
+        # self.on_mouse_state = "enter"
         self.playlist_info_widget.configure(
             fg_color=ThemeManager.theme_settings["video_object"]["fg_color"]["hover"],
             border_color=ThemeManager.theme_settings["root"]["accent_color"]["hover"]
@@ -223,14 +222,21 @@ class PlayList(ctk.CTkFrame):
             bg=ThemeManager.get_color_based_on_theme(ThemeManager.theme_settings["video_object"]["fg_color"]["hover"])
         )
 
-        video_object: AddedVideo
-        for video_object in self.playlist_item_frame.winfo_children():
-            if type(video_object) is AddedVideo or \
-                    type(video_object) is DownloadingVideo or \
-                    type(video_object) is DownloadedVideo:
-                video_object.on_mouse_enter_self(event)
-                
+        # disable due to ui performance
+        """def on_mouse_enter_videos():
+            video_object: AddedVideo
+            for video_object in self.playlist_item_frame.winfo_children():
+                if type(video_object) is AddedVideo or \
+                        type(video_object) is DownloadingVideo or \
+                        type(video_object) is DownloadedVideo:
+                    if self.on_mouse_state == "enter":
+                        video_object.on_mouse_enter_self(event)
+                    else:
+                        break
+        threading.Thread(target=on_mouse_enter_videos).start()"""
+
     def on_mouse_leave_self(self, event):
+        # self.on_mouse_state = "leave"
         self.playlist_info_widget.configure(
             fg_color=ThemeManager.theme_settings["video_object"]["fg_color"]["normal"],
             border_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"]
@@ -248,13 +254,19 @@ class PlayList(ctk.CTkFrame):
             bg=ThemeManager.get_color_based_on_theme(ThemeManager.theme_settings["video_object"]["fg_color"]["normal"])
         )
 
-        video_object: AddedVideo
-        for video_object in self.playlist_item_frame.winfo_children():
-            if type(video_object) is AddedVideo or \
-                    type(video_object) is DownloadingVideo or \
-                    type(video_object) is DownloadedVideo:
-                video_object.on_mouse_leave_self(event)
-                
+        # disable due to ui performance
+        """def on_mouse_leave_videos():
+            video_object: AddedVideo
+            for video_object in self.playlist_item_frame.winfo_children():
+                if type(video_object) is AddedVideo or \
+                        type(video_object) is DownloadingVideo or \
+                        type(video_object) is DownloadedVideo:
+                    if self.on_mouse_state == "leave":
+                        video_object.on_mouse_leave_self(event)
+                    else:
+                        break
+        threading.Thread(target=on_mouse_leave_videos).start()"""
+
     def bind_widget_events(self):
         self.playlist_info_widget.bind("<Enter>", self.on_mouse_enter_self)
         self.playlist_info_widget.bind("<Leave>", self.on_mouse_leave_self)

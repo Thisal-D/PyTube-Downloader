@@ -21,7 +21,7 @@ class ThumbnailButton(tk.Button):
         from widgets.Video.AddedVideo import AddedVideo
 
         self.master: AddedVideo = master
-        self.loading_animation_state: Literal["enabled", "disabled"] = "disabled"
+        self.loading_animation_state: Literal["enabled", "disabled", None] = None
         self.loading_animation_running: bool = False
         self.thumbnails = thumbnails
 
@@ -40,15 +40,17 @@ class ThumbnailButton(tk.Button):
     def run_loading_animation_thread(self):
         self.configure(image="")
         self.loading_animation_running = True
-        self.loading_animation_state = "enabled"
-        while self.master.load_state != "removed":
-            self.configure(text="." * LoadingIndicatorController.dots_count)
-            time.sleep(LoadingIndicatorController.update_delay)
-            if self.loading_animation_state == "disabled" and self.master.load_state != "removed":
-                break
+        if self.loading_animation_state != "disabled":
+            self.loading_animation_state = "enabled"
+            while self.master.load_state != "removed":
+                self.configure(text="." * LoadingIndicatorController.dots_count)
+                time.sleep(LoadingIndicatorController.update_delay)
+                if self.loading_animation_state == "disabled" and self.master.load_state != "removed":
+                    break
         self.loading_animation_running = False
 
     def run_loading_animation(self):
+        self.loading_animation_state = "enabled"
         threading.Thread(target=self.run_loading_animation_thread).start()
 
     def stop_loading_animation(self):

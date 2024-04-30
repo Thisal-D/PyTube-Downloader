@@ -1,7 +1,10 @@
 import customtkinter as ctk
-from typing import Dict, Callable, Any
+from typing import Callable, Any
 from tkinter import filedialog
-from services import ThemeManager
+from services import (
+    ThemeManager,
+    GeneralSettings
+)
 from functions import validate_download_path, format_path
 
 
@@ -9,7 +12,6 @@ class DownloadsPanel(ctk.CTkFrame):
     def __init__(
             self,
             master: Any = None,
-            general_settings: Dict = None,
             general_settings_change_callback: Callable = None,
             width: int = 0):
 
@@ -59,7 +61,6 @@ class DownloadsPanel(ctk.CTkFrame):
         )
 
         self.general_settings_change_callback = general_settings_change_callback
-        self.general_settings = general_settings
         self.configure_values()
         self.set_accent_color()
         self.place_widgets()
@@ -67,13 +68,13 @@ class DownloadsPanel(ctk.CTkFrame):
         ThemeManager.bind_widget(self)
 
     def apply_general_settings(self):
-        self.general_settings["download_directory"] = format_path(self.download_path_entry.get())
-        self.general_settings_change_callback(self.general_settings)
+        GeneralSettings.general_settings["download_directory"] = format_path(self.download_path_entry.get())
+        self.general_settings_change_callback()
         self.apply_changes_btn.configure(state="disabled")
 
     def download_path_validate(self, _event):
         path = format_path(self.download_path_entry.get())
-        if path != self.general_settings["download_directory"]:
+        if path != GeneralSettings.general_settings["download_directory"]:
             if validate_download_path(path):
                 self.apply_changes_btn.configure(state="normal")
             else:
@@ -90,7 +91,9 @@ class DownloadsPanel(ctk.CTkFrame):
         self.download_path_entry.bind("<KeyRelease>", self.download_path_validate)
 
     def set_accent_color(self):
-        self.download_path_choose_button.configure(text_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"])
+        self.download_path_choose_button.configure(
+            text_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"]
+        )
         self.apply_changes_btn.configure(
             fg_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"],
             hover_color=ThemeManager.theme_settings["root"]["accent_color"]["hover"]
@@ -113,4 +116,4 @@ class DownloadsPanel(ctk.CTkFrame):
         self.apply_changes_btn.place(y=100, x=500)
 
     def configure_values(self):
-        self.download_path_entry.insert(0, self.general_settings["download_directory"])
+        self.download_path_entry.insert(0, GeneralSettings.general_settings["download_directory"])

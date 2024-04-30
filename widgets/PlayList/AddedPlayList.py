@@ -140,7 +140,10 @@ class AddedPlayList(PlayList):
 
     def reload_playlist(self):
         self.reload_btn.place_forget()
-        self.status_label.configure(text_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"], text="Loading")
+        self.status_label.configure(
+            text_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"],
+            text="Loading"
+        )
         if len(self.videos) != 0:
             for video in self.videos:
                 if video.load_state == "failed":
@@ -149,11 +152,17 @@ class AddedPlayList(PlayList):
             threading.Thread(target=self.load_playlist, daemon=True).start()
 
     def indicate_loading_failure(self):
-        self.status_label.configure(text="Failed", text_color=ThemeManager.theme_settings["video_object"]["error_color"]["normal"])
+        self.status_label.configure(
+            text="Failed",
+            text_color=ThemeManager.theme_settings["video_object"]["error_color"]["normal"]
+        )
         self.reload_btn.place(relx=1, y=32, x=-80)
 
     def clear_loading_failure(self):
-        self.status_label.configure(text="Loading", text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"])
+        self.status_label.configure(
+            text="Loading",
+            text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"]
+        )
         self.reload_btn.place_forget()
 
     def set_loading_completed(self):
@@ -173,7 +182,7 @@ class AddedPlayList(PlayList):
             index = -1
         for video in self.videos:
             video.resolution_select_menu.set(video.resolution_select_menu.cget("values")[index])
-            video.choose_download_option(video.resolution_select_menu.cget("values")[index])
+            video.choose_download_type(video.resolution_select_menu.get())
 
     def kill(self):
         for video in self.videos:
@@ -236,18 +245,23 @@ class AddedPlayList(PlayList):
 
     # configure widgets colors
     def set_accent_color(self):
-        super().set_accent_color()
+        self.resolution_select_menu.configure(
+            button_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"],
+            button_hover_color=ThemeManager.theme_settings["root"]["accent_color"]["hover"],
+            border_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"],
+            dropdown_hover_color=ThemeManager.theme_settings["root"]["accent_color"]["hover"]
+        )
         self.download_btn.configure(border_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"])
         self.reload_btn.configure(text_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"])
 
         self.download_btn.configure(border_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"])
         self.reload_btn.configure(text_color=ThemeManager.theme_settings["root"]["accent_color"]["normal"])
+        super().set_accent_color()
 
     def reset_widgets_colors(self):
         super().reset_widgets_colors()
 
     def set_widgets_colors(self):
-        super().set_widgets_colors()
         self.sub_frame.configure(
             fg_color=ThemeManager.theme_settings["video_object"]["fg_color"]["normal"]
         )
@@ -264,6 +278,12 @@ class AddedPlayList(PlayList):
         self.videos_status_label.configure(
             text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"]
         )
+        self.resolution_select_menu.configure(
+            dropdown_fg_color=ThemeManager.theme_settings["video_object"]["fg_color"]["normal"],
+            text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"],
+            fg_color=ThemeManager.theme_settings["video_object"]["fg_color"]["normal"],
+        )
+        super().set_widgets_colors()
 
     def on_mouse_enter_self(self, _event):
         super().on_mouse_enter_self(_event)

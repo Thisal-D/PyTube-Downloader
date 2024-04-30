@@ -1,10 +1,10 @@
 import threading
 import time
+from .GeneralSettings import GeneralSettings
 
 
 class LoadManager:
     active_load_count = 0
-    max_concurrent_loads = 1
     queued_loads = []
     active_loads = []
 
@@ -13,8 +13,7 @@ class LoadManager:
         def check_and_enqueue_loads():
             while True:
                 # print(f"@loadManager.py > Active loads : {LoadManager.active_load_count}")
-                # print(f"@loadManager.py > Queued loads : {len(LoadManager.queued_loads)}")
-                if (LoadManager.max_concurrent_loads > LoadManager.active_load_count and
+                if (GeneralSettings.general_settings["simultaneous_loads"] > LoadManager.active_load_count and
                         len(LoadManager.queued_loads) > 0):
                     try:
                         LoadManager.queued_loads[0].load_video()
@@ -25,7 +24,3 @@ class LoadManager:
                 time.sleep(1)
 
         threading.Thread(target=check_and_enqueue_loads, daemon=True).start()
-
-    @staticmethod
-    def set_max_concurrent_loads(count: int):
-        LoadManager.max_concurrent_loads = count

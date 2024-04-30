@@ -1,4 +1,4 @@
-from typing import Any, List, Callable, Literal, Union
+from typing import Any, List, Callable, Literal
 import customtkinter as ctk
 from functions import validate_color
 from .AccentColorButton import AccentColorButton
@@ -113,7 +113,7 @@ class AppearancePanel(ctk.CTkFrame):
             command=self.apply_custom_accent_color
         )
 
-        self.custom_accent_color_warning_text = ctk.CTkTextbox(
+        self.custom_accent_color_alert_text = ctk.CTkTextbox(
             master=self,
             text_color=ThemeManager.theme_settings["settings_panel"]["warning_color"]["normal"],
             width=560,
@@ -159,7 +159,7 @@ class AppearancePanel(ctk.CTkFrame):
             "hover": button.hover_color,
             "default": True
         }
-        self.theme_settings_change_callback(ThemeManager.theme_settings, "accent_color")
+        self.theme_settings_change_callback("accent_color")
         self.release_all_accent_color_buttons()
         button.set_pressed()
         self.custom_accent_color_apply_btn.configure(state="normal")
@@ -172,28 +172,28 @@ class AppearancePanel(ctk.CTkFrame):
             "default": False
         }
         self.release_all_accent_color_buttons()
-        self.theme_settings_change_callback(ThemeManager.theme_settings, "accent_color")
+        self.theme_settings_change_callback("accent_color")
         self.custom_accent_color_apply_btn.configure(state="disabled")
 
-    def apply_theme_mode(self, theme_mode: Union[Literal["Dark", "Light"], Any]):
+    def apply_theme_mode(self, theme_mode: Literal["Dark", "Light", None]):
         ThemeManager.theme_settings["root"]["theme_mode"] = theme_mode.lower()
-        self.theme_settings_change_callback(ThemeManager.theme_settings, "theme_mode")
+        self.theme_settings_change_callback("theme_mode")
 
     def sync_theme_with_os(self):
         self.system_theme_check_box.configure(command=self.disable_sync_theme_with_os)
         self.theme_combo_box.configure(state="disabled")
         ThemeManager.theme_settings["root"]["theme_mode"] = "system"
-        self.theme_settings_change_callback(ThemeManager.theme_settings, "theme_mode")
+        self.theme_settings_change_callback("theme_mode")
 
     def disable_sync_theme_with_os(self):
         self.system_theme_check_box.configure(command=self.sync_theme_with_os)
         self.theme_combo_box.configure(state="normal")
         ThemeManager.theme_settings["root"]["theme_mode"] = ctk.get_appearance_mode().lower()
-        self.theme_settings_change_callback(ThemeManager.theme_settings, "theme_mode")
+        self.theme_settings_change_callback("theme_mode")
         
     def apply_opacity(self, opacity_value: float):
         ThemeManager.theme_settings["opacity"] = opacity_value
-        self.theme_settings_change_callback(ThemeManager.theme_settings, "opacity")
+        self.theme_settings_change_callback("opacity")
 
     def validate_custom_accent_color(self, _event):
         text = self.custom_accent_color_entry.get()
@@ -247,7 +247,7 @@ class AppearancePanel(ctk.CTkFrame):
         self.set_accent_color()
 
     def reset_widgets_colors(self):
-        self.custom_accent_color_warning_text.tag_config(
+        self.custom_accent_color_alert_text.tag_config(
             "normal", 
             foreground=ThemeManager.get_color_based_on_theme(ThemeManager.theme_settings["settings_panel"]["text_color"])
         )
@@ -279,7 +279,7 @@ class AppearancePanel(ctk.CTkFrame):
         self.custom_accent_color_entry.place(y=270, x=270)
         self.custom_accent_color_display_btn.place(y=270, x=420)
         self.custom_accent_color_apply_btn.place(y=272, x=470)
-        self.custom_accent_color_warning_text.place(y=300, x=50)
+        self.custom_accent_color_alert_text.place(y=300, x=50)
         
         self.opacity_label.place(y=430, x=100)
         self.dash4_label.place(y=430, x=240)
@@ -287,8 +287,8 @@ class AppearancePanel(ctk.CTkFrame):
 
     # set default values to widgets
     def configure_values(self):
-        self.custom_accent_color_warning_text.bind("<Key>", lambda e: "break")
-        self.custom_accent_color_warning_text.insert(
+        self.custom_accent_color_alert_text.bind("<Key>", lambda e: "break")
+        self.custom_accent_color_alert_text.insert(
             "end",
             """*Please enter custom accent colors for normal and hover states in one of the following formats:
         - Hexadecimal format: #RRGGBB or #RGB (e.g., #0f0f0f, #0f0f0ff or #fff, #f0f ) 
@@ -298,17 +298,17 @@ class AppearancePanel(ctk.CTkFrame):
                         : #0f0f0f, #0f0f0ff
                         : green, lightgreen"""
         )
-        self.custom_accent_color_warning_text.tag_add("red", "2.31", "2.33")
-        self.custom_accent_color_warning_text.tag_add("green", "2.33", "2.35")
-        self.custom_accent_color_warning_text.tag_add("blue", "2.35", "2.37")
-        self.custom_accent_color_warning_text.tag_add("red", "2.42", "2.43")
-        self.custom_accent_color_warning_text.tag_add("green", "2.43", "2.44")
-        self.custom_accent_color_warning_text.tag_add("blue", "2.44", "2.45")
-        self.custom_accent_color_warning_text.tag_add("normal", "5.0", "7.43")
+        self.custom_accent_color_alert_text.tag_add("red", "2.31", "2.33")
+        self.custom_accent_color_alert_text.tag_add("green", "2.33", "2.35")
+        self.custom_accent_color_alert_text.tag_add("blue", "2.35", "2.37")
+        self.custom_accent_color_alert_text.tag_add("red", "2.42", "2.43")
+        self.custom_accent_color_alert_text.tag_add("green", "2.43", "2.44")
+        self.custom_accent_color_alert_text.tag_add("blue", "2.44", "2.45")
+        self.custom_accent_color_alert_text.tag_add("normal", "5.0", "7.43")
 
-        self.custom_accent_color_warning_text.tag_config("red", foreground="#ff0000")
-        self.custom_accent_color_warning_text.tag_config("green", foreground="#00ff00")
-        self.custom_accent_color_warning_text.tag_config("blue", foreground="#0000ff")
+        self.custom_accent_color_alert_text.tag_config("red", foreground="#ff0000")
+        self.custom_accent_color_alert_text.tag_config("green", foreground="#00ff00")
+        self.custom_accent_color_alert_text.tag_config("blue", foreground="#0000ff")
 
         if ThemeManager.theme_settings["root"]["accent_color"]["default"]:
             for button in self.accent_color_buttons:

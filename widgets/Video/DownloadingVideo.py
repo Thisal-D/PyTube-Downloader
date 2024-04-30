@@ -6,7 +6,11 @@ import os
 from tkinter import PhotoImage
 from typing import Literal, List, Union, Any
 from pytube import request as pytube_request
-from services import DownloadManager
+from services import (
+    DownloadManager,
+    GeneralSettings,
+    ThemeManager
+)
 from functions import (
     pass_command,
     get_converted_size,
@@ -14,7 +18,6 @@ from functions import (
     get_available_file_name,
     create_download_directory
 )
-from services import ThemeManager
 
 
 class DownloadingVideo(Video):
@@ -40,9 +43,7 @@ class DownloadingVideo(Video):
             # state callback functions @ only use if mode is video
             mode: Literal["video", "playlist"] = "video",
             video_download_status_callback: callable = None,
-            video_download_progress_callback: callable = None,
-            # download method and directory
-            download_directory: str = ""):
+            video_download_progress_callback: callable = None):
 
         # download status track and callback
         self.download_state: Literal["waiting", "downloading", "failed", "completed", "removed"] = "waiting"
@@ -69,7 +70,6 @@ class DownloadingVideo(Video):
         self.re_download_btn: Union[ctk.CTkButton, None] = None
         self.pause_resume_btn: Union[ctk.CTkButton, None] = None
         # download file info
-        self.download_directory: str = download_directory
         self.bytes_downloaded: int = 0
         self.file_size: int = 0
         self.converted_file_size: str = "0 B"
@@ -91,7 +91,7 @@ class DownloadingVideo(Video):
         threading.Thread(target=self.start_download_video, daemon=True).start()
 
     def start_download_video(self):
-        if DownloadManager.max_concurrent_downloads > DownloadManager.active_download_count:
+        if GeneralSettings.general_settings["simultaneous_downloads"] > DownloadManager.active_download_count:
             DownloadManager.active_download_count += 1
             DownloadManager.active_downloads.append(self)
             threading.Thread(target=self.download_video, daemon=True).start()
@@ -114,22 +114,40 @@ class DownloadingVideo(Video):
 
     def display_status(self):
         if self.download_state == "failed":
-            self.status_label.configure(text_color=ThemeManager.theme_settings["video_object"]["error_color"]["normal"], text="Failed")
+            self.status_label.configure(
+                text_color=ThemeManager.theme_settings["video_object"]["error_color"]["normal"],
+                text="Failed"
+            )
         elif self.download_state == "waiting":
-            self.status_label.configure(text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"], text="Waiting")
+            self.status_label.configure(
+                text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"],
+                text="Waiting"
+            )
         elif self.download_state == "paused":
-            self.status_label.configure(text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"], text="Paused")
+            self.status_label.configure(
+                text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"],
+                text="Paused"
+            )
         elif self.download_state == "downloading":
-            self.status_label.configure(text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"], text="Downloading")
+            self.status_label.configure(
+                text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"],
+                text="Downloading"
+            )
         elif self.download_state == "pausing":
-            self.status_label.configure(text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"], text="Pausing")
+            self.status_label.configure(
+                text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"],
+                text="Pausing"
+            )
         elif self.download_state == "completed":
-            self.status_label.configure(text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"], text="Downloaded")
+            self.status_label.configure(
+                text_color=ThemeManager.theme_settings["video_object"]["text_color"]["normal"],
+                text="Downloaded"
+            )
 
     def download_video(self):
-        if not os.path.exists(self.download_directory):
+        if not os.path.exists(GeneralSettings.general_settings["download_directory"]):
             try:
-                create_download_directory(self.download_directory)
+                create_download_directory(GeneralSettings.general_settings["download_directory"])
             except Exception as error:
                 print("@2 : ", error)
                 self.set_download_failed()
@@ -138,7 +156,8 @@ class DownloadingVideo(Video):
         stream = None
         self.bytes_downloaded = 0
         self.download_file_name = (
-                f"{self.download_directory}\\" + f"{get_valid_file_name(f"{self.channel} - {self.video_title}")}"
+                f"{GeneralSettings.general_settings["download_directory"]}\\" +
+                f"{get_valid_file_name(f"{self.channel} - {self.video_title}")}"
             )
         try:
             self.download_type_label.configure(text=f"{self.download_type} : {self.download_quality}")

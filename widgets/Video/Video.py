@@ -53,6 +53,7 @@ class Video(ctk.CTkFrame):
         self.set_accent_color()
         self.reset_widgets_colors()
         self.place_widgets()
+        self.bind_widget_events()
         # self append to theme manger
         ThemeManager.bind_widget(self)
 
@@ -180,7 +181,6 @@ class Video(ctk.CTkFrame):
             fg_color=ThemeManager.theme_settings["video_object"]["error_color"]["normal"],
             text_color=ThemeManager.theme_settings["video_object"]["remove_btn_text_color"]["normal"]
         )
-        self.bind_widget_events()
 
     def on_mouse_enter_self(self, event):
         self.configure(
