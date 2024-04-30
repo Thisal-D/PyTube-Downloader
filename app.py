@@ -797,13 +797,13 @@ class App(ctk.CTk):
         self.deiconify()
 
     def minimize_to_tray(self):
+        self.iconify()
         self.tray_menu = TrayMenu(
             open_command=self.restore_from_tray,
             quit_command=self.show_close_confirmation_dialog,
         )
-        self.iconify()
         self.withdraw()
-        self.tray_menu.run()
+        threading.Thread(target=self.tray_menu.run, daemon=True).start()
 
     def run(self):
         self.protocol("WM_DELETE_WINDOW", self.minimize_to_tray)
@@ -816,8 +816,8 @@ class App(ctk.CTk):
 
     @staticmethod
     def initiate_services():
-        threading.Thread(target=ThemeManager.theme_tracker).start()
-        threading.Thread(target=LoadingIndicatorController.start).start()
+        threading.Thread(target=ThemeManager.theme_tracker, daemon=True).start()
+        threading.Thread(target=LoadingIndicatorController.start, daemon=True).start()
         # loading and downloading handle
-        threading.Thread(target=LoadManager.manage_load_queue).start()
-        threading.Thread(target=DownloadManager.manage_download_queue).start()
+        threading.Thread(target=LoadManager.manage_load_queue, daemon=True).start()
+        threading.Thread(target=DownloadManager.manage_download_queue, daemon=True).start()

@@ -7,7 +7,7 @@ from functions import (
     get_general_settings,
     accessible
 )
-from services import ThemeManager
+
 
 # get the theme settings
 # get the general settings
