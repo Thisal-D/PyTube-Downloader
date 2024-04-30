@@ -88,7 +88,7 @@ class AddedVideo(Video):
 
     def retrieve_video_data(self):
         try:
-            self.video = pytube.YouTube(self.video_url, use_oauth=True, allow_oauth_cache=True)
+            self.video = pytube.YouTube(self.video_url)
             self.video_title = str(self.video.title)
             self.channel = str(self.video.author)
             self.length = int(self.video.length)
