@@ -1,33 +1,34 @@
 from app import App
 import customtkinter as ctk
 from widgets import AlertWindow
-from functions import (
-    get_theme_settings,
-    get_general_settings,
-    accessible
+from settings import (
+    ThemeSettings,
+    GeneralSettings
 )
-
-
-# get the theme settings
-# get the general settings
-app_theme_settings = get_theme_settings()
-app_general_settings = get_general_settings()
+from services import (
+    DownloadManager,
+    LoadManager,
+    ThemeManager,
+    LoadingIndicateManager
+)
+from utils import FileUtility
+# configure settings
+GeneralSettings.initialize("data\\general.json")
+ThemeSettings.initialize("data\\theme.json")
+# configure services
+DownloadManager.initialize()
+LoadManager.initialize()
+ThemeManager.initialize()
+LoadingIndicateManager.initialize()
 
 # Initialize app.
-app = App(
-    # settings
-    general_settings=app_general_settings,
-    theme_settings=app_theme_settings,
-)
-# initiate services
-app.initiate_services()
-# run services
-app.run_services()
-# Check directory access during startup.
+app = App()
+
+# Check directory accessibility during startup.
 # If accessible, nothing happens if not, show an error message.
-DIRECTORIES = ["temp", app_general_settings["download_directory"]]
+DIRECTORIES = ["temp", GeneralSettings.settings["download_directory"]]
 for directory in DIRECTORIES:
-    if not accessible(directory):
+    if not FileUtility.is_accessible(directory):
         AlertWindow(
             master=app,
             alert_msg="Please run this application as an administrator...!",
@@ -35,18 +36,19 @@ for directory in DIRECTORIES:
             ok_button_callback=app.on_app_closing,
             callback=app.on_app_closing
         )
-# set the theme mode, dark or light or system, by getting from settings
-ctk.set_appearance_mode(app_theme_settings["root"]["theme_mode"])
+
+# set the theme mode, dark or light or system, by getting from data
+ctk.set_appearance_mode(ThemeSettings.settings["root"]["theme_mode"])
 # deactivate the automatic scale
 ctk.deactivate_automatic_dpi_awareness()
 # place the app at the last placed geometry
-app.geometry(app_general_settings["geometry"])
+app.geometry(GeneralSettings.settings["window_geometry"])
 # set minimum window size to 900x500
 app.minsize(900, 500)
 # configure alpha
-app.attributes("-alpha", app_theme_settings["opacity"])
+app.attributes("-alpha", ThemeSettings.settings["opacity"])
 # set the title icon
-app.iconbitmap("src\\icon.ico")
+app.iconbitmap("assets\\icon.ico")
 # set the app title
 app.title("PyTube Downloader")
 # Create the main widgets of the application
