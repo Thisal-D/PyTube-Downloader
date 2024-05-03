@@ -29,10 +29,10 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 
 ![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/72489e71-95a6-4fa8-8da4-591a7d6e7adb)
 ![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6f4ce65d-93d5-4451-9bce-5b68ad276faa)
-![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/66318196-3d48-4c13-9ac4-93bbbce52248)
-![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/cb8f9332-025e-40ba-91d8-d66c35cc2d42)
-![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3517839d-1774-4b3d-b02d-d6c3cff94811)
-![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/154d93da-3b39-49b5-b98a-a658907ac283)
+![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/154d93da-3b39-49b5-b98a-a658907ac283)
+![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/66318196-3d48-4c13-9ac4-93bbbce52248)
+![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/cb8f9332-025e-40ba-91d8-d66c35cc2d42)
+![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3517839d-1774-4b3d-b02d-d6c3cff94811)
 
 ---
 
