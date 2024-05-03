@@ -4,7 +4,7 @@
         "status": "disable"
     },
     "download_directory": false,
-    "window_geometry": "900x500+0+0",
+    "window_geometry": "1024x760+0+0",
     "max_simultaneous_downloads": 1,
     "max_simultaneous_loads": 1,
     "update_delay": 0.7
