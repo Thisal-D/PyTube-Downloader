@@ -27,12 +27,12 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 
 ### Dark Theme
 
-![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/be798646-ccc8-4691-8084-c2f4969e5069)
-![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/262aa64c-1a42-43a9-b932-620ebc2faa52)
-![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7230212f-0948-43f2-80f3-3850b71c36f0)
-![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/72a1bffd-e4a2-4fef-ba3f-903f1875b6d2)
-![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/78e3ff84-962e-4b69-8b12-9a93fbea4978)
-![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/bb01e14e-6ca8-4be0-ba07-c43e64af400a)
+![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/c6d3e150-5bce-4b09-92e4-9b50cc79fe60)
+![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/94514353-77d4-40a7-b5ad-5be92b85d51f)
+![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/dec274cc-2cb5-47d7-8b6b-50cb22d11e5e)
+![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7debce8e-d0a5-4334-a86f-061d239b8cda)
+![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/ef67a9ab-f10f-43a5-baef-3ac475db788d)
+![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/bfe8b0d0-8843-4171-8981-5ff8b5bf489e)
 
 ---
 
