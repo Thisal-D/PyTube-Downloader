@@ -36,7 +36,6 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 
 ---
 
-
 ## Technologies Used
 
 - **Programming Language:** 
