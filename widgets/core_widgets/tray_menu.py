@@ -24,7 +24,7 @@ class TrayMenu:
             open_command (Callable, optional): The function to execute when "Open" menu item is clicked.
             quit_command (Callable, optional): The function to execute when "Quit" menu item is clicked.
         """
-        self.tray_image = Image.open("assets/icon.ico")
+        self.tray_image = Image.open("assets/main icon/icon.ico")
         self.tray_menu = (
             pystray.MenuItem("Open", open_command),
             pystray.MenuItem("Quit", quit_command)
