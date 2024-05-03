@@ -1,18 +1,20 @@
-from .Video import AddedVideo
-from .Video import DownloadingVideo
-from .Video import DownloadedVideo
+from .video import AddedVideo
+from .video import DownloadingVideo
+from .video import DownloadedVideo
 
-from .PlayList import AddedPlayList
-from .PlayList import DownloadingPlayList
-from .PlayList import DownloadedPlayList
+from .play_list import AddedPlayList
+from .play_list import DownloadingPlayList
+from .play_list import DownloadedPlayList
 
-from .Components import AccentColorButton
-from .Components import AppearancePanel
-from .Components import NetworkPanel
-from .Components import DownloadsPanel
-from .Components import NavigationPanel
+from .components import AccentColorButton
+from .components import AppearancePanel
+from .components import NetworkPanel
+from .components import DownloadsPanel
+from .components import AboutPanel
+from .components import NavigationPanel
+from .components import contributor_profile_widget
 
-from .CoreWidgets import SettingPanel
-from .CoreWidgets import AlertWindow
-from .CoreWidgets import ContextMenu
-from .CoreWidgets import TrayMenu
+from .core_widgets import SettingPanel
+from .core_widgets import AlertWindow
+from .core_widgets import ContextMenu
+from .core_widgets import TrayMenu
