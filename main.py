@@ -48,7 +48,7 @@ app.minsize(900, 500)
 # configure alpha
 app.attributes("-alpha", ThemeSettings.settings["opacity"])
 # set the title icon
-app.iconbitmap("assets\\icon.ico")
+app.iconbitmap("assets\\main icon\\icon.ico")
 # set the app title
 app.title("PyTube Downloader")
 # Create the main widgets of the application

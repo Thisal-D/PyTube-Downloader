@@ -26,13 +26,13 @@ class AlertWindow(ctk.CTkToplevel):
         self.callback = callback
 
         self.resizable(False, False)
-        self.iconbitmap("assets\\icon.ico")
+        self.iconbitmap("assets\\main icon\\icon.ico")
         self.title("PytubeDownloader")
         self.transient(master)
         self.attributes('-topmost', True)
         self.grab_set()
 
-        self.info_image = ctk.CTkImage(Image.open("assets\\info.png"), size=(60, 60))
+        self.info_image = ctk.CTkImage(Image.open("assets\\ui images\\info.png"), size=(60, 60))
         self.info_image_label = ctk.CTkLabel(
             master=self,
             text="",
