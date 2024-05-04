@@ -11,7 +11,8 @@ from services import (
 )
 from settings import (
     ThemeSettings,
-    GeneralSettings
+    GeneralSettings,
+    ScaleSettings
 )
 from utils import (
     ImageUtility,
@@ -39,7 +40,7 @@ class AddedVideo(Video):
         self.support_download_types: Union[List[Dict[str, int]], None] = None
         # download info
         self.download_quality: Literal["128kbps", "360p", "720p"] = "720p"
-        self.download_type: Literal["Audio", "video"] = "video"
+        self.download_type: Literal["Audio", "Video"] = "Video"
         # callback utils
         self.video_download_button_click_callback: Callable = video_download_button_click_callback
         self.video_load_status_callback: Callable = video_load_status_callback
@@ -93,7 +94,7 @@ class AddedVideo(Video):
             self.set_waiting()
 
     def get_thumbnails(self) -> Tuple[tk.PhotoImage, tk.PhotoImage]:
-        thumbnail_size = (113, 64)
+        thumbnail_size = (int(113 * GeneralSettings.settings["scale_r"]), int(64 * GeneralSettings.settings["scale_r"]))
         thumbnail_save_directory = "temp/thumbnails/"
         thumbnail_url = self.video.thumbnail_url
         # Generate download path to thumbnail based on url
@@ -168,8 +169,8 @@ class AddedVideo(Video):
         self.download_quality = e.replace(" ", "").split("|")[0]
         if "kbps" in self.download_quality:
             self.download_type = "Audio"
-        else:
-            self.download_type = "video"
+        elif "p" in self.download_quality:
+            self.download_type = "Video"
 
     def set_waiting(self):
         self.load_state = "waiting"
@@ -205,6 +206,8 @@ class AddedVideo(Video):
             LoadManager.active_load_count -= 1
         
     def set_loading_failed(self):
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["AddedVideo"][str(scale)]
         if self.load_state != "removed":
             if self in LoadManager.active_loads:
                 LoadManager.active_loads.remove(self)
@@ -219,7 +222,7 @@ class AddedVideo(Video):
                 text_color=ThemeSettings.settings["video_object"]["error_color"]["normal"],
                 text="Failed"
             )
-            self.reload_btn.place(relx=1, y=22, x=-80)
+            self.reload_btn.place(relx=1, y=y[3], x=-80 * scale)
 
     def set_video_data(self):
         if self.load_state != "removed":
@@ -246,38 +249,43 @@ class AddedVideo(Video):
 
     # create widgets
     def create_widgets(self):
-
+        scale = GeneralSettings.settings["scale_r"]
         self.sub_frame = ctk.CTkFrame(
             master=self,
             height=self.height - 4,
-            width=250,
+            width=270 * scale,
         )
 
         self.resolution_select_menu = ctk.CTkComboBox(
             master=self.sub_frame,
-            values=["..........", "..........", ".........."]
+            values=["..........", "..........", ".........."],
+            dropdown_font=("Segoe UI", 13 * scale, "normal"),
+            font=("Segoe UI", 13 * scale, "normal"),
+            width=150 * scale, height=28 * scale
         )
 
         self.download_btn = ctk.CTkButton(
-            master=self.sub_frame, text="Download", width=80, height=25,
+            master=self.sub_frame, text="Download",
+            width=80 * scale, height=25 * scale,
             border_width=2,
             state="disabled",
             hover=False,
+            font=("arial", 12 * scale, "bold"),
             command=lambda: self.video_download_button_click_callback(self)
         )
 
         self.status_label = ctk.CTkLabel(
             master=self.sub_frame,
             text="",
-            height=15,
-            font=("arial", 12, "bold"),
+            height=15 * scale,
+            font=("arial", 12 * scale, "bold"),
         )
 
         self.reload_btn = ctk.CTkButton(
             master=self,
             text="⟳",
-            width=15, height=15,
-            font=("arial", 20, "normal"),
+            width=15 * scale, height=15 * scale,
+            font=("arial", 20 * scale, "normal"),
             command=self.reload_video,
             hover=False,
         )
@@ -370,10 +378,13 @@ class AddedVideo(Video):
     def place_widgets(self):
         super().place_widgets()
 
-        self.sub_frame.place(y=2, relx=1, x=-350)
-        self.resolution_select_menu.place(y=15, x=20)
-        self.download_btn.place(x=170, y=8)
-        self.status_label.place(x=210, anchor="n", y=44)
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["AddedVideo"][str(scale)]
+        self.sub_frame.place(y=2, relx=1, x=-370 * scale)
+
+        self.resolution_select_menu.place(y=y[0], x=20)
+        self.download_btn.place(x=190 * scale, y=y[1])
+        self.status_label.place(x=230 * scale, anchor="n", y=y[2])
 
     # static method
     active_load_count = 0

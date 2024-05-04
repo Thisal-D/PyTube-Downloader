@@ -1,7 +1,10 @@
 import customtkinter as ctk
 import pyautogui
 from services import ThemeManager
-from settings import ThemeSettings
+from settings import (
+    ThemeSettings,
+    GeneralSettings
+)
 
 
 class ContextMenu(ctk.CTkFrame):
@@ -19,7 +22,6 @@ class ContextMenu(ctk.CTkFrame):
             master=self,
             command=self.select_all,
             text="Select All",
-            width=width,
             corner_radius=0,
             text_color=ThemeSettings.settings["context_menu"]["text_color"],
             fg_color=ThemeSettings.settings["root"]["fg_color"]["hover"]
@@ -28,7 +30,6 @@ class ContextMenu(ctk.CTkFrame):
             master=self,
             command=self.cut,
             text="Cut",
-            width=width,
             corner_radius=0,
             text_color=ThemeSettings.settings["context_menu"]["text_color"],
             fg_color=ThemeSettings.settings["root"]["fg_color"]["hover"]
@@ -37,7 +38,6 @@ class ContextMenu(ctk.CTkFrame):
             master=self,
             command=self.copy,
             text="Copy",
-            width=width,
             corner_radius=0,
             text_color=ThemeSettings.settings["context_menu"]["text_color"],
             fg_color=ThemeSettings.settings["root"]["fg_color"]["hover"]
@@ -46,13 +46,15 @@ class ContextMenu(ctk.CTkFrame):
             master=self,
             command=self.paste,
             text="Paste",
-            width=width,
             corner_radius=0,
             text_color=ThemeSettings.settings["context_menu"]["text_color"],
             fg_color=ThemeSettings.settings["root"]["fg_color"]["hover"]
         )
-
+        self.width = width
+        self.height = height
         self.set_accent_color()
+        self.set_widgets_font()
+        self.set_widgets_sizes()
         self.place_widgets()
         ThemeManager.register_widget(self)
 
@@ -64,6 +66,40 @@ class ContextMenu(ctk.CTkFrame):
 
     def update_accent_color(self):
         self.set_accent_color()
+
+    def set_widgets_sizes(self):
+        self.copy_button.configure(
+            height=self.height / 4,
+            width=self.width
+        )
+        self.cut_button.configure(
+            height=self.height / 4,
+            width=self.width
+        )
+        self.select_all_button.configure(
+            height=self.height / 4,
+            width=self.width
+        )
+        self.paste_button.configure(
+            height=self.height / 4,
+            width=self.width
+        )
+
+    def set_widgets_font(self):
+        scale = GeneralSettings.settings["scale_r"]
+        font = ("Segoe UI", 12 * scale, "bold")
+        self.copy_button.configure(
+            font=font
+        )
+        self.cut_button.configure(
+            font=font
+        )
+        self.select_all_button.configure(
+            font=font
+        )
+        self.paste_button.configure(
+            font=font
+        )
 
     def set_accent_color(self):
         self.configure(

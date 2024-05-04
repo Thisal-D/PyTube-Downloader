@@ -11,7 +11,11 @@ from utils import (
     ImageUtility,
 )
 from services import ThemeManager
-from settings import ThemeSettings
+from settings import (
+    ThemeSettings,
+    ScaleSettings,
+    GeneralSettings
+)
 from .contributor_profile_widget import ContributorProfileWidget
 
 
@@ -105,6 +109,8 @@ class AboutPanel(ctk.CTkFrame):
 
         self.app_info: Dict = JsonUtility.read_from_file("data\\info.json")
         self.place_widgets()
+        self.set_widgets_fonts()
+        self.set_widgets_sizes()
         self.configure_values()
         self.set_accent_color()
         self.bind_events()
@@ -140,9 +146,15 @@ class AboutPanel(ctk.CTkFrame):
                 self.update_contributors_info(contributors_data)
 
         # place forget the loading label
-        self.contributors_status_label.place_forget()
+        self.contributors_status_label.grid_forget()
         # place frame for show  contributors info
-        self.contributors_frame.place(x=160, y=200, relwidth=1)
+        self.contributors_frame.grid(
+            row=3,
+            column=2,
+            pady=(16 * GeneralSettings.settings["scale_r"], 0),
+            sticky="we",
+            columnspan=10,
+        )
 
         # iterate through contributors
         profile_images_directory = "assets//profile images//"
@@ -233,20 +245,49 @@ class AboutPanel(ctk.CTkFrame):
         ...
 
     def place_widgets(self):
-        self.name_title_label.place(x=50, y=50)
-        self.dash1_label.place(x=140, y=50)
-        self.name_label.place(x=170, y=50)
+        scale = GeneralSettings.settings["scale_r"]
+        pady = 16 * scale
+        self.name_title_label.grid(row=0, column=0, padx=(100, 0), pady=(50, 0), sticky="w")
+        self.dash1_label.grid(row=0, column=1, padx=(30, 30), pady=(50, 0), sticky="w")
+        self.name_label.grid(row=0, column=2, pady=(50, 0), sticky="w")
 
-        self.version_title_label.place(x=50, y=100)
-        self.dash2_label.place(x=140, y=100)
-        self.version_label.place(x=170, y=100)
+        self.version_title_label.grid(row=1, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
+        self.dash2_label.grid(row=1, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
+        self.version_label.grid(row=1, column=2, pady=(pady, 0), sticky="w")
 
-        self.site_title_label.place(x=50, y=150)
-        self.dash3_label.place(x=140, y=150)
-        self.site_button.place(x=165, y=150)
+        self.site_title_label.grid(row=2, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
+        self.dash3_label.grid(row=2, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
+        self.site_button.grid(row=2, column=2, pady=(pady, 0), sticky="w")
 
-        self.contributors_title_label.place(x=50, y=200)
-        self.dash4_label.place(x=140, y=200)
-        self.contributors_status_label.place(x=170, y=200)
+        self.contributors_title_label.grid(row=3, column=0, padx=(100, 0), pady=(pady, 0), sticky="nw")
+        self.dash4_label.grid(row=3, column=1, padx=(30, 30), pady=(pady, 0), sticky="nw")
+        self.contributors_status_label.grid(row=3, column=2, pady=(pady, 0), sticky="w")
 
-        self.disclaimer_label.place(x=50, rely=1, y=-60)
+        self.disclaimer_label.place(x=100, rely=1, y=-60 * scale)
+
+    def set_widgets_sizes(self):
+        scale = GeneralSettings.settings["scale_r"]
+        self.contributors_frame.configure(height=200 * scale, width=500 * scale)
+        self.contributors_frame._scrollbar.grid_forget()
+
+    def set_widgets_fonts(self):
+        scale = GeneralSettings.settings["scale_r"]
+        title_font = ("Segoe UI", 13 * scale, "bold")
+        self.name_title_label.configure(font=title_font)
+        self.dash1_label.configure(font=title_font)
+        self.name_label.configure(font=title_font)
+
+        self.version_title_label.configure(font=title_font)
+        self.dash2_label.configure(font=title_font)
+        self.version_label.configure(font=title_font)
+
+        self.site_title_label.configure(font=title_font)
+        self.dash3_label.configure(font=title_font)
+        self.site_button.configure(font=title_font)
+
+        self.contributors_title_label.configure(font=title_font)
+        self.dash4_label.configure(font=title_font)
+        self.contributors_status_label.configure(font=title_font)
+
+        value_font = ("Segoe UI", 13 * scale, "normal")
+        self.disclaimer_label.configure(font=value_font)

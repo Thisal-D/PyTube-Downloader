@@ -10,7 +10,10 @@ from widgets import (
 from services import (
     ThemeManager
 )
-from settings import ThemeSettings
+from settings import (
+    ThemeSettings,
+    GeneralSettings
+)
 
 
 class SettingPanel(ctk.CTkFrame):
@@ -19,7 +22,8 @@ class SettingPanel(ctk.CTkFrame):
             master: Any = None,
             # changes callbacks
             theme_settings_change_callback: Callable = None,
-            general_settings_change_callback: Callable = None):
+            general_settings_change_callback: Callable = None,
+            restart_callback: Callable = None):
         super().__init__(
             master=master,
             fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"]
@@ -28,6 +32,8 @@ class SettingPanel(ctk.CTkFrame):
         self.appearance_panel = AppearancePanel(
             master=self,
             theme_settings_change_callback=theme_settings_change_callback,
+            general_settings_change_callback=general_settings_change_callback,
+            restart_callback=restart_callback
         )
 
         self.network_panel = NetworkPanel(
@@ -50,7 +56,8 @@ class SettingPanel(ctk.CTkFrame):
             master=self,
             navigation_panels=self.panels,
             navigation_button_on_click_callback=self.place_panel,
-            navigation_buttons_text=self.nav_buttons
+            navigation_buttons_text=self.nav_buttons,
+            width=200,
         )
 
         self.vertical_line = ctk.CTkFrame(
@@ -58,8 +65,9 @@ class SettingPanel(ctk.CTkFrame):
             width=2
         )
 
-        (ThemeManager.register_widget(self))
+        ThemeManager.register_widget(self)
         self.set_accent_color()
+        self.set_widgets_sizes()
         self.place_widgets()
 
     def place_widgets(self) -> None:
@@ -73,6 +81,10 @@ class SettingPanel(ctk.CTkFrame):
                 panel.pack_forget()
             else:
                 selected_panel.pack(side="right", fill="both", expand=True)
+
+    def set_widgets_sizes(self):
+        scale = GeneralSettings.settings["scale_r"]
+        self.navigation_panel.configure(width=400 * scale)
 
     def set_accent_color(self):
         self.vertical_line.configure(fg_color=ThemeSettings.settings["root"]["accent_color"]["hover"])

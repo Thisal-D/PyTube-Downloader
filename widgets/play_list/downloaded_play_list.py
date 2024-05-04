@@ -4,6 +4,7 @@ from widgets.video.downloading_video import DownloadingVideo
 from typing import Literal, List, Any
 from utils import GuiUtils
 import threading
+from settings import GeneralSettings
 
 
 class DownloadedPlayList(PlayList):
@@ -43,7 +44,7 @@ class DownloadedPlayList(PlayList):
         for downloading_video in self.downloading_videos:
             video = DownloadedVideo(
                 master=self.playlist_item_frame,
-                height=70,
+                height=70 * GeneralSettings.settings["scale_r"],
                 width=self.playlist_item_frame.winfo_width() - 20,
                 # video info
                 thumbnails=downloading_video.thumbnails,

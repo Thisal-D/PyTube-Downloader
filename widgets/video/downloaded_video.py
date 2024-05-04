@@ -6,7 +6,7 @@ import os
 from utils import (
     ValueConvertUtility
 )
-from settings import ThemeSettings
+from settings import ThemeSettings, GeneralSettings, ScaleSettings
 
 
 class DownloadedVideo(Video):
@@ -26,7 +26,7 @@ class DownloadedVideo(Video):
             # download info
             download_path: str = "",
             download_quality: Literal["128kbps", "360p", "720p"] = "720p",
-            download_type: Literal["Audio", "video"] = "video",
+            download_type: Literal["Audio", "Video"] = "Video",
             # mode
             mode: Literal["video", "playlist"] = 'video',
             # state callbacks
@@ -37,7 +37,7 @@ class DownloadedVideo(Video):
         # download info
         self.download_path: str = download_path
         self.download_quality: Literal["128kbps", "360p", "720p"] = download_quality
-        self.download_type: Literal["Audio", "video"] = download_type
+        self.download_type: Literal["Audio", "Video"] = download_type
         # widgets
         self.download_type_label: Union[ctk.CTkLabel, None] = None
         self.file_size_label: Union[ctk.CTkLabel, None] = None
@@ -67,25 +67,26 @@ class DownloadedVideo(Video):
 
     def create_widgets(self):
         super().create_widgets()
+        scale = GeneralSettings.settings["scale_r"]
 
         self.download_type_label = ctk.CTkLabel(
             master=self,
             text=f"{self.download_type} : {self.download_quality}",
-            height=15,
-            font=("arial", 12, "bold"),
+            height=15 * scale,
+            font=("arial", 12 * scale, "bold"),
         )
 
         self.file_size_label = ctk.CTkLabel(
             master=self,
             text=ValueConvertUtility.convert_size(self.file_size, 2),
-            font=("arial", 12, "normal"),
+            font=("arial", 12 * scale, "normal"),
             height=15,
         )
 
         self.download_path_btn = ctk.CTkButton(
             master=self,
             text="📂",
-            font=("arial", 30, "bold"),
+            font=("arial", 30 * scale, "bold"),
             cursor="hand2",
             command=lambda: os.startfile("\\".join(self.download_path.split("\\")[0:-1])),
             hover=False,
@@ -96,9 +97,14 @@ class DownloadedVideo(Video):
     # place widgets
     def place_widgets(self):
         super().place_widgets()
-        self.download_type_label.place(y=14, relx=1, x=-300)
-        self.file_size_label.place(y=40, relx=1, x=-300)
-        self.download_path_btn.place(y=12, relx=1, x=-150)
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["DownloadedVideo"][str(scale)]
+
+        scale = GeneralSettings.settings["scale_r"]
+
+        self.download_type_label.place(y=y[0], relx=1, x=-300 * scale)
+        self.download_path_btn.place(y=y[1], relx=1, x=-150 * scale)
+        self.file_size_label.place(y=y[2], relx=1, x=-300 * scale)
 
     # configure widgets sizes and place location depend on root width
     def configure_widget_sizes(self, e):

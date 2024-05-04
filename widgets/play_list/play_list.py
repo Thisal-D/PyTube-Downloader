@@ -3,7 +3,7 @@ import webbrowser
 import customtkinter as ctk
 from typing import Any, Union
 from services import ThemeManager
-from settings import ThemeSettings
+from settings import ThemeSettings, GeneralSettings, ScaleSettings
 
 
 class PlayList(ctk.CTkFrame):
@@ -53,18 +53,22 @@ class PlayList(ctk.CTkFrame):
         ThemeManager.register_widget(self)
 
     def hide_videos(self):
+        scale = GeneralSettings.settings["scale_r"]
+
         self.view_btn.configure(
             command=self.view_videos,
             text=">",
-            font=('arial', 18, 'bold')
+            font=('arial', 18 * scale, 'bold')
         )
         self.playlist_item_frame.pack_forget()
 
     def view_videos(self):
+        scale = GeneralSettings.settings["scale_r"]
+
         self.view_btn.configure(
             command=self.hide_videos,
             text="V",
-            font=('arial', 13, 'bold')
+            font=('arial', 13 * scale, 'bold')
         )
         self.playlist_item_frame.pack(padx=10, fill="x", pady=2)
 
@@ -81,6 +85,8 @@ class PlayList(ctk.CTkFrame):
         self.destroy()
 
     def create_widgets(self):
+        scale = GeneralSettings.settings["scale_r"]
+
         self.playlist_info_widget = ctk.CTkFrame(
             master=self,
             border_width=1,
@@ -90,7 +96,7 @@ class PlayList(ctk.CTkFrame):
 
         self.view_btn = ctk.CTkButton(
             master=self.playlist_info_widget,
-            font=('arial', 18, 'bold'),
+            font=('arial', 18 * scale, 'bold'),
             text=">",
             width=1,
             height=1,
@@ -103,13 +109,13 @@ class PlayList(ctk.CTkFrame):
         self.title_label = tk.Label(
             master=self.playlist_info_widget,
             anchor="w",
-            font=('arial', 10, 'bold'),
+            font=('arial', int(10 * scale), 'bold'),
             text=f"Title : {self.playlist_title}"
         )
 
         self.channel_btn = tk.Button(
             master=self.playlist_info_widget,
-            font=('arial', 9, 'bold'),
+            font=('arial', int(9 * scale), 'bold'),
             anchor="w",
             bd=0,
             command=lambda: webbrowser.open(self.channel_url),
@@ -121,7 +127,7 @@ class PlayList(ctk.CTkFrame):
 
         self.url_label = tk.Label(
             master=self.playlist_info_widget, anchor="w",
-            font=('arial', 11, "italic underline"),
+            font=('arial', int(11 * scale), "italic underline"),
             text=self.playlist_url,
         )
 
@@ -129,16 +135,17 @@ class PlayList(ctk.CTkFrame):
             master=self.playlist_info_widget,
             command=self.kill,
             text="X",
-            font=("arial", 12, "bold"),
-            width=12, height=20,
+            font=("arial", 12 * scale, "bold"),
+            width=20 * scale,
+            height=20 * scale,
             border_spacing=0,
             hover=False,
         )
 
         self.playlist_video_count_label = ctk.CTkLabel(
             master=self.playlist_info_widget,
-            width=15, height=15,
-            font=("arial", 13, "bold"),
+            width=15 * scale, height=15 * scale,
+            font=("arial", 13 * scale, "bold"),
             justify="right",
             text=f"{self.playlist_video_count}"
         )
@@ -325,13 +332,18 @@ class PlayList(ctk.CTkFrame):
 
     # place widgets
     def place_widgets(self):
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["PlayList"][str(scale)]
+
         self.playlist_info_widget.pack(fill="x")
-        self.view_btn.place(y=55, x=10)
-        self.title_label.place(x=50, y=10, height=20, width=-420, relwidth=1)
-        self.channel_btn.place(x=50, y=34, height=20, width=-420, relwidth=1)
-        self.url_label.place(x=50, y=54, height=20, width=-420, relwidth=1)
-        self.playlist_video_count_label.place(relx=1, x=-40, rely=1, y=-25)
-        self.remove_btn.place(relx=1, x=-25, y=3)
+
+        self.view_btn.place(y=y[0], x=10 * scale)
+        self.title_label.place(x=50 * scale, y=y[1], height=20 * scale, width=-420 * scale, relwidth=1)
+        self.channel_btn.place(x=50 * scale, y=y[2], height=20 * scale, width=-420 * scale, relwidth=1)
+        self.url_label.place(x=50 * scale, y=y[3], height=20 * scale, width=-420 * scale, relwidth=1)
+
+        self.playlist_video_count_label.place(relx=1, x=-40 * scale, rely=1, y=-25 * scale)
+        self.remove_btn.place(relx=1, x=-23 * scale, y=3 * scale)
 
     # configure widgets sizes and place location depend on root width
     def configure_widget_sizes(self, e):

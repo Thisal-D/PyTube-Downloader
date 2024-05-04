@@ -5,7 +5,7 @@ from widgets.play_list import PlayList
 from widgets.video.downloading_video import DownloadingVideo
 from widgets.video.added_video import AddedVideo
 from utils import GuiUtils
-from settings import ThemeSettings
+from settings import ThemeSettings, GeneralSettings, ScaleSettings
 
 
 class DownloadingPlayList(PlayList):
@@ -66,7 +66,7 @@ class DownloadingPlayList(PlayList):
         for added_video in self.added_videos:
             video = DownloadingVideo(
                 master=self.playlist_item_frame,
-                height=70,
+                height=70 * GeneralSettings.settings["scale_r"],
                 width=self.playlist_item_frame.winfo_width() - 20,
                 channel_url=added_video.channel_url,
                 video_url=added_video.video_url,
@@ -168,7 +168,10 @@ class DownloadingPlayList(PlayList):
         self.download_percentage_label.configure(text=f"{round(progress * 100, 2)} %")
 
     def indicate_downloading_failure(self):
-        self.re_download_btn.place(relx=1, y=32, x=-80)
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["DownloadingPlayList"][str(scale)]
+
+        self.re_download_btn.place(relx=1, y=y[3], x=-80 * scale)
         self.status_label.configure(
             text="Failed", text_color=ThemeSettings.settings["video_object"]["error_color"]["normal"]
         )
@@ -195,6 +198,7 @@ class DownloadingPlayList(PlayList):
     # create widgets
     def create_widgets(self):
         super().create_widgets()
+        scale = GeneralSettings.settings["scale_r"]
 
         self.sub_frame = ctk.CTkFrame(
             self,
@@ -203,26 +207,27 @@ class DownloadingPlayList(PlayList):
 
         self.download_progress_bar = ctk.CTkProgressBar(
             master=self.sub_frame,
-            height=8
+            height=8 * scale
         )
 
         self.download_percentage_label = ctk.CTkLabel(
             master=self.sub_frame,
             text="",
-            font=("arial", 12, "bold"),
+            font=("arial", 12 * scale, "bold"),
         )
 
         self.status_label = ctk.CTkLabel(
             master=self.sub_frame,
             text="",
-            font=("arial", 12, "bold"),
+            font=("arial", 12 * scale, "bold"),
         )
 
         self.re_download_btn = ctk.CTkButton(
             self,
             text="⟳",
-            width=15, height=15,
-            font=("arial", 20, "normal"),
+            width=15 * scale,
+            height=15 * scale,
+            font=("arial", 20 * scale, "normal"),
             command=self.re_download_videos,
             hover=False
         )
@@ -234,8 +239,8 @@ class DownloadingPlayList(PlayList):
                  f"Downloading : {len(self.downloading_videos)} |   "
                  f"Paused : {len(self.paused_videos)} |   "
                  f"Downloaded : {len(self.completed_videos)}",
-            height=15,
-            font=("arial", 11, "bold"),
+            height=15 * scale,
+            font=("arial", 11 * scale, "bold"),
         )
 
     # configure widgets colors depend on root width
@@ -289,18 +294,22 @@ class DownloadingPlayList(PlayList):
     # place widgets
     def place_widgets(self):
         super().place_widgets()
-        self.title_label.place(x=50, y=10, height=20, width=-20, relwidth=0.5)
-        self.channel_btn.place(x=50, y=34, height=20, width=-20, relwidth=0.5)
-        self.url_label.place(x=50, y=54, height=20, width=-20, relwidth=0.5)
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["DownloadingPlayList"][str(scale)]
 
-        self.sub_frame.place(relx=0.5, y=2, x=50)
-        self.download_percentage_label.place(relx=0.5, anchor="n", y=4)
-        self.download_percentage_label.configure(height=20)
-        self.download_progress_bar.place(relwidth=1, y=28)
-        self.status_label.place(relx=0.775, anchor="n", y=40)
-        self.status_label.configure(height=20)
-        self.videos_status_label.place(rely=1, y=-18, relx=0.5, anchor="n")
+        self.title_label.place(width=-20 * scale, relwidth=0.5)
+        self.channel_btn.place(width=-20 * scale, relwidth=0.5)
+        self.url_label.place(width=-20 * scale, relwidth=0.5)
+
+        self.sub_frame.place(relx=0.5, y=2, x=50 * scale)
+        self.download_percentage_label.place(relx=0.5, anchor="n", y=y[0])
+        self.download_percentage_label.configure(height=20 * scale)
+        self.download_progress_bar.place(relwidth=1, y=y[1])
+        self.status_label.place(relx=0.775, anchor="n", y=y[2])
+        self.status_label.configure(height=20 * scale)
+        self.videos_status_label.place(rely=1, y=-18 * scale, relx=0.5, anchor="n")
 
     # configure widgets sizes and place location depend on root width
     def configure_widget_sizes(self, e):
-        self.sub_frame.configure(width=self.winfo_width() / 2 - 150)
+        scale = GeneralSettings.settings["scale_r"]
+        self.sub_frame.configure(width=self.winfo_width() / 2 - 150 * scale)

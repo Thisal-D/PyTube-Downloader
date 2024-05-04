@@ -8,7 +8,8 @@ from typing import Literal, List, Union, Any
 from pytube import request as pytube_request
 from settings import (
     GeneralSettings,
-    ThemeSettings
+    ThemeSettings,
+    ScaleSettings
 )
 from services import (
     DownloadManager
@@ -28,7 +29,7 @@ class DownloadingVideo(Video):
             height: int = 0,
             # download quality & type
             download_quality: Literal["128kbps", "360p", "720p"] = "720p",
-            download_type: Literal["video", "Audio"] = "video",
+            download_type: Literal["Video", "Audio"] = "Video",
             # video details
             video_title: str = "-------",
             channel: str = "-------",
@@ -55,7 +56,7 @@ class DownloadingVideo(Video):
         self.video_download_progress_callback: callable = video_download_progress_callback
         # selected download quality and type
         self.download_quality: Literal["128kbps", "360p", "720p"] = download_quality
-        self.download_type: Literal["video", "Audio"] = download_type
+        self.download_type: Literal["Video", "Audio"] = download_type
         self.video_stream_data: property = video_stream_data
         # playlist or video
         self.mode: Literal["video", "playlist"] = mode
@@ -91,12 +92,15 @@ class DownloadingVideo(Video):
         threading.Thread(target=self.start_download_video, daemon=True).start()
 
     def start_download_video(self):
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["DownloadingVideo"][str(scale)]
+
         if GeneralSettings.settings["max_simultaneous_downloads"] > DownloadManager.active_download_count:
             DownloadManager.active_download_count += 1
             DownloadManager.active_downloads.append(self)
             threading.Thread(target=self.download_video, daemon=True).start()
             self.set_pause_btn()
-            self.pause_resume_btn.place(y=22, relx=1, x=-80)
+            self.pause_resume_btn.place(y=y[6], relx=1, x=-80 * scale)
             self.net_speed_label.configure(text="0.0 B/s")
             self.download_progress_bar.set(0)
             self.download_percentage_label.configure(text="0.0 %")
@@ -161,7 +165,7 @@ class DownloadingVideo(Video):
             )
         try:
             self.download_type_label.configure(text=f"{self.download_type} : {self.download_quality}")
-            if self.download_type == "video":
+            if self.download_type == "Video":
                 stream = self.video_stream_data.get_by_resolution(self.download_quality)
                 self.download_file_name += ".mp4"
             else:
@@ -255,6 +259,9 @@ class DownloadingVideo(Video):
             self.video_download_progress_callback()
 
     def set_download_failed(self):
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["DownloadingVideo"][str(scale)]
+
         if self.download_state != "removed":
             self.download_state = "failed"
             self.display_status()
@@ -264,7 +271,7 @@ class DownloadingVideo(Video):
                 DownloadManager.active_downloads.remove(self)
                 DownloadManager.active_download_count -= 1
             self.pause_resume_btn.place_forget()
-            self.re_download_btn.place(y=22, relx=1, x=-80)
+            self.re_download_btn.place(y=y[7], relx=1, x=-80 * scale)
 
     def set_waiting(self):
         DownloadManager.queued_downloads.append(self)
@@ -306,6 +313,7 @@ class DownloadingVideo(Video):
     # create widgets
     def create_widgets(self):
         super().create_widgets()
+        scale = GeneralSettings.settings["scale_r"]
 
         self.sub_frame = ctk.CTkFrame(
             self,
@@ -314,45 +322,45 @@ class DownloadingVideo(Video):
 
         self.download_progress_bar = ctk.CTkProgressBar(
             master=self.sub_frame,
-            height=8
+            height=8 * scale
         )
 
         self.download_progress_label = ctk.CTkLabel(
             master=self.sub_frame,
             text="",
-            font=("arial", 12, "bold"),
+            font=("arial", 12 * scale, "bold"),
         )
 
         self.download_percentage_label = ctk.CTkLabel(
             master=self.sub_frame,
             text="",
-            font=("arial", 12, "bold"),
+            font=("arial", 12 * scale, "bold"),
         )
 
         self.download_type_label = ctk.CTkLabel(
             master=self.sub_frame,
             text="",
-            font=("arial", 12, "normal"),
+            font=("arial", 12 * scale, "normal"),
         )
 
         self.net_speed_label = ctk.CTkLabel(
             master=self.sub_frame,
             text="",
-            font=("arial", 12, "normal"),
+            font=("arial", 12 * scale, "normal"),
         )
 
         self.status_label = ctk.CTkLabel(
             master=self.sub_frame,
             text="",
-            font=("arial", 12, "bold"),
+            font=("arial", 12 * scale, "bold"),
         )
 
         self.re_download_btn = ctk.CTkButton(
             master=self,
             text="⟳",
-            width=15,
-            height=15,
-            font=("arial", 20, "normal"),
+            width=15 * scale,
+            height=15 * scale,
+            font=("arial", 20 * scale, "normal"),
             command=self.re_download_video,
             hover=False
         )
@@ -360,9 +368,9 @@ class DownloadingVideo(Video):
         self.pause_resume_btn = ctk.CTkButton(
             master=self,
             text="⏸",
-            width=15,
-            height=15,
-            font=("arial", 20, "normal"),
+            width=15 * scale,
+            height=15 * scale,
+            font=("arial", 20 * scale, "normal"),
             command=self.pause_downloading,
             hover=False
         )
@@ -456,25 +464,30 @@ class DownloadingVideo(Video):
 
     # place widgets
     def place_widgets(self):
-        self.remove_btn.place(relx=1, x=-24, y=4)
-        self.thumbnail_btn.place(x=5, y=1, relheight=1, height=-4, width=int((self.height - 4) / 9 * 16))
-        self.video_title_label.place(x=130, y=4, height=20, relwidth=0.5, width=-150)
-        self.channel_btn.place(x=130, y=24, height=20, relwidth=0.5, width=-150)
-        self.url_label.place(x=130, y=44, height=20, relwidth=0.5, width=-150)
-        self.len_label.place(rely=1, y=-10, x=117, anchor="e")
+        super().place_widgets()
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["DownloadingVideo"][str(scale)]
+
+        self.video_title_label.place(relwidth=0.5, width=-150 * scale)
+        self.channel_btn.place(relwidth=0.5, width=-150 * scale)
+        self.url_label.place(relwidth=0.5, width=-150 * scale)
+
         self.sub_frame.place(relx=0.5, y=2)
-        self.download_progress_label.place(relx=0.25, anchor="n", y=4)
-        self.download_progress_label.configure(height=20)
-        self.download_percentage_label.place(relx=0.115, anchor="n", y=40)
-        self.download_percentage_label.configure(height=20)
-        self.download_progress_bar.place(relwidth=1, y=30)
-        self.download_type_label.place(relx=0.75, anchor="n", y=4)
-        self.download_type_label.configure(height=20)
-        self.net_speed_label.place(relx=0.445, anchor="n", y=40)
-        self.net_speed_label.configure(height=20)
-        self.status_label.place(relx=0.775, anchor="n", y=40)
-        self.status_label.configure(height=20)
+
+        self.download_progress_label.place(relx=0.25, anchor="n", y=y[0])
+        self.download_progress_label.configure(height=20 * scale)
+        self.download_type_label.place(relx=0.75, anchor="n", y=y[1])
+        self.download_type_label.configure(height=20 * scale)
+        self.download_progress_bar.place(relwidth=1, y=y[2] * scale)
+        self.download_percentage_label.place(relx=0.115, anchor="n", y=y[3])
+        self.download_percentage_label.configure(height=20 * scale)
+        self.net_speed_label.place(relx=0.445, anchor="n", y=y[4])
+        self.net_speed_label.configure(height=20 * scale)
+
+        self.status_label.place(relx=0.775, anchor="n", y=y[5])
+        self.status_label.configure(height=20 * scale)
 
     # configure widgets sizes and place location depend on root width
     def configure_widget_sizes(self, e):
-        self.sub_frame.configure(width=self.master.winfo_width() / 2 - 100)
+        scale = GeneralSettings.settings["scale_r"]
+        self.sub_frame.configure(width=self.master.winfo_width() / 2 - 100 * scale)

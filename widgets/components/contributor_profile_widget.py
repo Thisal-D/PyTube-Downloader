@@ -4,7 +4,10 @@ from typing import Tuple, Any, Union
 from PIL import Image
 import webbrowser
 from services import ThemeManager
-from settings import ThemeSettings
+from settings import (
+    ThemeSettings,
+    GeneralSettings
+)
 
 
 class ContributorProfileWidget:
@@ -18,14 +21,18 @@ class ContributorProfileWidget:
             profile_images_paths: Tuple[str, str] = None):
 
         self.profile_images = (
-            ctk.CTkImage(Image.open(profile_images_paths[0]), size=(width, height)),
-            ctk.CTkImage(Image.open(profile_images_paths[1]), size=(width, height))
+            ctk.CTkImage(
+                Image.open(profile_images_paths[0]),
+                size=(width * GeneralSettings.settings["scale_r"], height * GeneralSettings.settings["scale_r"])
+            ),
+            ctk.CTkImage(
+                Image.open(profile_images_paths[1]),
+                size=(width * GeneralSettings.settings["scale_r"], height * GeneralSettings.settings["scale_r"])
+            )
         )
 
         self.profile_pic_button = ctk.CTkButton(
             master=master,
-            width=width,
-            height=height,
             hover=False,
             text="",
             command=lambda: webbrowser.open(profile_url),
@@ -57,7 +64,12 @@ class ContributorProfileWidget:
             master=master,
             height=1,
         )
-        
+
+        self.width = width
+        self.height = height
+
+        self.set_widgets_fonts()
+        self.set_widgets_sizes()
         self.bind_events()
         self.set_accent_color()
         ThemeManager.register_widget(self)
@@ -83,7 +95,22 @@ class ContributorProfileWidget:
         
     def reset_widgets_colors(self):
         ...
-        
+
+    def set_widgets_sizes(self):
+        scale = GeneralSettings.settings["scale_r"]
+        self.profile_pic_button.configure(
+            width=self.width * scale,
+            height=self.height * scale
+        )
+
+    def set_widgets_fonts(self):
+        scale = GeneralSettings.settings["scale_r"]
+        title_font = ("Segoe UI", 13 * scale, "bold")
+        self.user_name_button.configure(font=title_font)
+
+        value_font = ("Segoe UI", 13 * scale, "normal")
+        self.profile_url_button.configure(font=value_font)
+
     def grid(
             self,
             row: int = 0,
@@ -92,9 +119,9 @@ class ContributorProfileWidget:
                 Union[int, Tuple[int, int]],
                 Union[int, Tuple[int, int]],
                 Union[int, Tuple[int, int]]] = None) -> None:
-        
-        self.profile_pic_button.grid(row=row, column=0, padx=padx[0], pady=pady, sticky="w")
-        self.user_name_button.grid(row=row, column=1, padx=padx[1], pady=pady, sticky="w")
-        self.profile_url_button.grid(row=row, column=2, padx=padx[2], pady=pady, sticky="w")
-        self.hr.grid(columnspan=3, row=row+1, column=0, sticky="ew", padx=50)
+        scale = GeneralSettings.settings["scale_r"]
+        self.profile_pic_button.grid(row=row, column=0, padx=padx[0] * scale, pady=pady * scale, sticky="w")
+        self.user_name_button.grid(row=row, column=1, padx=padx[1] * scale, pady=pady * scale, sticky="w")
+        self.profile_url_button.grid(row=row, column=2, padx=padx[2] * scale, pady=pady * scale, sticky="w")
+        self.hr.grid(columnspan=3, row=row+1, column=0, sticky="ew", padx=50 * scale)
         

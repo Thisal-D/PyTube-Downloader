@@ -5,7 +5,7 @@ from typing import Literal, Union, Any, List
 from .play_list import PlayList
 from widgets import AddedVideo
 from utils import GuiUtils
-from settings import ThemeSettings
+from settings import ThemeSettings, ScaleSettings, GeneralSettings
 
 
 class AddedPlayList(PlayList):
@@ -75,7 +75,7 @@ class AddedPlayList(PlayList):
             video = AddedVideo(
                 master=self.playlist_item_frame,
                 width=self.playlist_item_frame.winfo_width() - 20,
-                height=70,
+                height=70 * GeneralSettings.settings["scale_r"],
                 video_url=video_url,
                 video_download_button_click_callback=self.video_download_button_click_callback,
                 mode="playlist",
@@ -152,11 +152,14 @@ class AddedPlayList(PlayList):
             threading.Thread(target=self.load_playlist, daemon=True).start()
 
     def indicate_loading_failure(self):
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["AddedPlayList"][str(scale)]
+
         self.status_label.configure(
             text="Failed",
             text_color=ThemeSettings.settings["video_object"]["error_color"]["normal"]
         )
-        self.reload_btn.place(relx=1, y=32, x=-80)
+        self.reload_btn.place(relx=1, y=y[3], x=-80 * scale)
 
     def clear_loading_failure(self):
         self.status_label.configure(
@@ -193,23 +196,29 @@ class AddedPlayList(PlayList):
     # create widgets
     def create_widgets(self):
         super().create_widgets()
+        scale = GeneralSettings.settings["scale_r"]
 
         self.sub_frame = ctk.CTkFrame(
             master=self.playlist_info_widget,
             height=self.height - 4,
-            width=340,
+            width=340 * scale,
         )
 
         self.resolution_select_menu = ctk.CTkComboBox(
             master=self.sub_frame,
-            values=["..........", "..........", ".........."]
+            values=["..........", "..........", ".........."],
+            dropdown_font=("Segoe UI", 13 * scale, "normal"),
+            font=("Segoe UI", 13 * scale, "normal"),
+            width=150 * scale,
+            height=28 * scale
         )
 
         self.download_btn = ctk.CTkButton(
             master=self.sub_frame,
             text="Download",
-            width=80,
-            height=25,
+            width=80 * scale,
+            height=25 * scale,
+            font=("arial", 12 * scale, "bold"),
             border_width=2,
             state="disabled",
             hover=False,
@@ -220,14 +229,15 @@ class AddedPlayList(PlayList):
             master=self.sub_frame,
             text="Loading",
             height=15,
-            font=("arial", 13, "bold"),
+            font=("arial", 13 * scale, "bold"),
         )
 
         self.reload_btn = ctk.CTkButton(
             self.playlist_info_widget,
             text="⟳",
-            width=15, height=15,
-            font=("arial", 22, "normal"),
+            width=15 * scale,
+            height=15 * scale,
+            font=("arial", 22 * scale, "normal"),
             command=self.reload_playlist,
             hover=False,
         )
@@ -239,8 +249,8 @@ class AddedPlayList(PlayList):
                  f"Loading : {len(self.loading_videos)} |   "
                  f"Loaded : {len(self.completed_videos)}",
 
-            height=15,
-            font=("arial", 11, "bold"),
+            height=15 * scale,
+            font=("arial", 11 * scale, "bold"),
         )
 
     # configure widgets colors
@@ -334,16 +344,18 @@ class AddedPlayList(PlayList):
 
     # place widgets
     def place_widgets(self):
-        self.playlist_info_widget.pack(fill="x")
-        self.view_btn.place(y=55, x=10)
-        self.title_label.place(x=50, y=10, height=20, width=-460, relwidth=1)
-        self.channel_btn.place(x=50, y=34, height=20, width=-460, relwidth=1)
-        self.url_label.place(x=50, y=54, height=20, width=-460, relwidth=1)
-        self.playlist_video_count_label.place(relx=1, x=-40, rely=1, y=-25)
-        self.remove_btn.place(relx=1, x=-25, y=3)
+        super().place_widgets()
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["AddedPlayList"][str(scale)]
 
-        self.sub_frame.place(y=2, relx=1, x=-390)
-        self.resolution_select_menu.place(y=22, x=0)
-        self.download_btn.place(x=160, y=8)
-        self.status_label.place(x=200, anchor="n", y=40)
-        self.videos_status_label.place(rely=1, y=-18, relx=0.5, anchor="n")
+        self.title_label.place(width=-460 * scale)
+        self.channel_btn.place(width=-460 * scale)
+        self.url_label.place(width=-460 * scale)
+
+        self.sub_frame.place(y=2, relx=1, x=-390 * scale)
+
+        self.resolution_select_menu.place(y=y[0], x=0)
+        self.download_btn.place(x=160 * scale, y=y[1])
+        self.status_label.place(x=200 * scale, anchor="n", y=y[2])
+
+        self.videos_status_label.place(rely=1, y=-18 * scale, relx=0.5, anchor="n")

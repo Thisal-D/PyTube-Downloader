@@ -8,7 +8,11 @@ from utils import (
 )
 from widgets.components import ThumbnailButton
 from services import ThemeManager
-from settings import ThemeSettings
+from settings import (
+    ThemeSettings,
+    GeneralSettings,
+    ScaleSettings
+)
 
 
 class Video(ctk.CTkFrame):
@@ -91,9 +95,10 @@ class Video(ctk.CTkFrame):
 
     # create widgets
     def create_widgets(self):
+        scale = GeneralSettings.settings["scale_r"]
         self.thumbnail_btn = ThumbnailButton(
             master=self,
-            font=("arial", 14, "bold"),
+            font=("arial", int(14 * scale), "bold"),
             state="disabled",
             command=lambda: webbrowser.open(self.video_url),
         )
@@ -102,19 +107,19 @@ class Video(ctk.CTkFrame):
             master=self,
             width=1,
             height=1,
-            font=("arial", 11, "bold"),
+            font=("arial", int(10 * scale), "bold"),
             text=ValueConvertUtility.convert_time(self.length)
         )
 
         self.video_title_label = tk.Label(
             master=self,
             anchor="w",
-            font=('arial', 10, 'normal'),
+            font=('arial', int(10 * scale), 'normal'),
             text=f"Title : {self.video_title}"
         )
 
         self.channel_btn = tk.Button(
-            master=self, font=('arial', 9, 'bold'),
+            master=self, font=('arial', int(10 * scale), 'bold'),
             anchor="w",
             bd=0,
             command=lambda: webbrowser.open(self.channel_url),
@@ -126,7 +131,7 @@ class Video(ctk.CTkFrame):
 
         self.url_label = tk.Label(
             master=self, anchor="w",
-            font=('arial', 10, "italic underline"),
+            font=('arial', int(10 * scale), "italic underline"),
             text=self.video_url
         )
 
@@ -134,9 +139,9 @@ class Video(ctk.CTkFrame):
             master=self,
             command=self.kill,
             text="X",
-            font=("arial", 12, "bold"),
-            width=12,
-            height=20,
+            font=("arial", int(12 * scale), "bold"),
+            width=20 * scale,
+            height=20 * scale,
             border_spacing=0,
             hover=False,
         )
@@ -279,12 +284,37 @@ class Video(ctk.CTkFrame):
 
     # place widgets
     def place_widgets(self):
-        self.remove_btn.place(relx=1, x=-25, y=3)
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["Video"][str(scale)]
+        thumbnail_width = int((self.height - 4) / 9 * 16)
+        self.remove_btn.place(relx=1, x=-23 * scale, y=3 * scale)
         self.thumbnail_btn.place(x=5, y=1, relheight=1, height=-4, width=int((self.height - 4) / 9 * 16))
-        self.len_label.place(rely=1, y=-10, x=117, anchor="e")
-        self.video_title_label.place(x=130, y=4, height=20, relwidth=1, width=-480)
-        self.channel_btn.place(x=130, y=24, height=20, relwidth=1, width=-480)
-        self.url_label.place(x=130, y=44, height=20, relwidth=1, width=-480)
+        self.len_label.place(
+            rely=1, y=-10 * scale,
+            x=thumbnail_width - self.len_label.winfo_reqwidth(),
+            anchor="e"
+        )
+        self.video_title_label.place(
+            x=thumbnail_width + 10 * scale,
+            y=y[0],
+            height=20 * scale,
+            relwidth=1,
+            width=-500 * scale
+        )
+        self.channel_btn.place(
+            x=thumbnail_width + 10 * scale,
+            y=y[1],
+            height=20 * scale,
+            relwidth=1,
+            width=-500 * scale
+        )
+        self.url_label.place(
+            x=thumbnail_width + 10 * scale,
+            y=y[2],
+            height=20 * scale,
+            relwidth=1,
+            width=-500 * scale
+        )
     
     # configure widgets sizes and place location depend on root width
     def configure_widget_sizes(self, event):
