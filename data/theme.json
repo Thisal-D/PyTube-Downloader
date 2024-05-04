@@ -49,8 +49,8 @@
     },
     "root": {
         "accent_color": {
-            "normal": "#ff6363",
-            "hover": "#ff7676",
+            "normal": "#7a14ff",
+            "hover": "#903efb",
             "default": true
         },
         "fg_color": {
@@ -76,8 +76,8 @@
                 "normal": "#ff9f00"
             },
             "2": {
-                "hover": "#284CEA",
-                "normal": "#57A1EB"
+                "hover": "#00ff80",
+                "normal": "#00ff45"
             },
             "3": {
                 "hover": "#ff45e8",
