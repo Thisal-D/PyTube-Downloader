@@ -12,7 +12,7 @@ from services import (
 )
 from settings import (
     ThemeSettings,
-    GeneralSettings
+    GeneralSettings,
 )
 from utils import (
     FileUtility
@@ -71,15 +71,11 @@ class App(ctk.CTk):
     def create_widgets(self):
         self.url_entry = ctk.CTkEntry(
             master=self,
-            height=40,
             placeholder_text="Enter Youtube URL"
         )
 
         self.video_radio_btn = ctk.CTkRadioButton(
             master=self, text="Video",
-            radiobutton_width=16,
-            radiobutton_height=16,
-            width=60,
             height=18,
             command=lambda: self.select_download_mode("video")
         )
@@ -88,18 +84,12 @@ class App(ctk.CTk):
         self.playlist_radio_btn = ctk.CTkRadioButton(
             master=self,
             text="Playlist",
-            radiobutton_width=16,
-            radiobutton_height=16,
-            width=60,
-            height=18,
             command=lambda: self.select_download_mode("playlist")
         )
 
         self.add_url_btn = ctk.CTkButton(
             master=self,
             text="Add +",
-            height=40,
-            width=100,
             border_width=2,
             command=self.add_video_playlist
         )
@@ -115,21 +105,18 @@ class App(ctk.CTk):
         self.navigate_added_frame_btn = ctk.CTkButton(
             master=self,
             text="Added",
-            height=40,
             command=lambda: self.place_frame(self.added_content_scroll_frame, "added")
         )
 
         self.navigate_downloading_frame_btn = ctk.CTkButton(
             master=self,
             text="Downloading",
-            height=40,
             command=lambda: self.place_frame(self.downloading_content_scroll_frame, "downloading")
         )
 
         self.navigate_downloaded_frame_btn = ctk.CTkButton(
             master=self,
             text="Downloaded",
-            height=40,
             command=lambda: self.place_frame(self.downloaded_content_scroll_frame, "downloaded")
         )
 
@@ -151,7 +138,8 @@ class App(ctk.CTk):
         self.settings_panel = SettingPanel(
             master=self,
             theme_settings_change_callback=self.update_theme_settings,
-            general_settings_change_callback=self.update_general_settings
+            general_settings_change_callback=self.update_general_settings,
+            restart_callback=self.restart
         )
 
         self.settings_btn = ctk.CTkButton(
@@ -159,27 +147,14 @@ class App(ctk.CTk):
             text="⚡",
             border_spacing=0,
             hover=False,
-            width=30,
-            height=40,
             command=self.open_settings
         )
 
         self.context_menu = ContextMenu(
             master=self,
-            width=100,
-            height=120,
+            width=100 * GeneralSettings.settings["scale_r"],
+            height=120 * GeneralSettings.settings["scale_r"],
         )
-
-    def place_widgets(self):
-        self.settings_btn.place(x=-5, y=4)
-        self.url_entry.place(x=43, y=4)
-        self.add_url_btn.place(y=4)
-        self.video_radio_btn.place(y=5)
-        self.playlist_radio_btn.place(y=25)
-        self.navigate_added_frame_btn.place(y=50, x=10)
-        self.navigate_downloading_frame_btn.place(y=50)
-        self.navigate_downloaded_frame_btn.place(y=50)
-        self.place_frame(self.added_content_scroll_frame, "added")
 
     def place_forget_frames(self):
         self.added_content_scroll_frame.place_forget()
@@ -210,13 +185,86 @@ class App(ctk.CTk):
 
     def place_frame(self, frame: ctk.CTkScrollableFrame, frame_name: str):
         self.place_forget_frames()
-        frame.place(y=90, x=10)
+        frame.place(y=90 * GeneralSettings.settings["scale_r"], x=10)
         self.place_label(frame_name)
 
+    def place_widgets(self):
+        scale = GeneralSettings.settings["scale_r"]
+        self.settings_btn.place(x=-5, y=4)
+        self.url_entry.place(x=43 * scale, y=4)
+        self.add_url_btn.place(y=4)
+        self.video_radio_btn.place(y=5)
+        self.playlist_radio_btn.place(y=25 * scale)
+        self.navigate_added_frame_btn.place(y=50 * scale, x=10)
+        self.navigate_downloading_frame_btn.place(y=50 * scale)
+        self.navigate_downloaded_frame_btn.place(y=50 * scale)
+        self.place_frame(self.added_content_scroll_frame, "added")
+
+    def set_widgets_fonts(self):
+        scale = GeneralSettings.settings["scale_r"]
+        self.url_entry.configure(
+            font=ctk.CTkFont(
+                family="Segoe UI",
+                size=int(16 * scale),
+                weight="normal",
+                slant="italic",
+                underline=True
+            )
+        )
+
+        self.video_radio_btn.configure(font=("Segoe UI", 12 * scale, "bold"))
+        self.playlist_radio_btn.configure(font=("Segoe UI", 12 * scale, "bold"))
+        self.add_url_btn.configure(font=("Segoe UI", 15 * scale, "bold"))
+
+        font_style_1 = ctk.CTkFont(
+            family="Comic Sans MS",
+            size=int(16 * scale),
+            weight="bold",
+            slant="italic"
+        )
+        self.added_frame_info_label.configure(font=font_style_1)
+        self.downloading_frame_info_label.configure(font=font_style_1)
+        self.downloaded_frame_info_label.configure(font=font_style_1)
+
+        font_style_2 = ("Segoe UI", 15 * scale, "bold")
+        self.navigate_added_frame_btn.configure(font=font_style_2)
+        self.navigate_downloading_frame_btn.configure(font=font_style_2)
+        self.navigate_downloaded_frame_btn.configure(font=font_style_2)
+        self.settings_btn.configure(font=("arial", 25 * scale, "normal"))
+
+    def set_widgets_sizes(self):
+        scale = GeneralSettings.settings["scale_r"]
+        self.url_entry.configure(height=40 * scale)
+        self.video_radio_btn.configure(
+            radiobutton_width=16 * scale, radiobutton_height=16 * scale,
+            width=60 * scale, height=18 * scale
+        )
+        self.playlist_radio_btn.configure(
+            radiobutton_width=16 * scale, radiobutton_height=16 * scale,
+            width=60 * scale, height=18 * scale
+        )
+        self.add_url_btn.configure(
+            height=40 * scale,
+            width=100 * scale,
+        )
+        self.navigate_added_frame_btn.configure(
+            height=40 * scale
+        )
+        self.navigate_downloading_frame_btn.configure(
+            height=40 * scale
+        )
+        self.navigate_downloaded_frame_btn.configure(
+            height=40 * scale
+        )
+        self.settings_btn.configure(
+            width=30 * scale, height=40 * scale,
+        )
+
     def configure_widgets_size(self):
+        scale = GeneralSettings.settings["scale_r"]
         root_width = self.winfo_width()
         root_height = self.winfo_height()
-        self.url_entry.configure(width=root_width - 250)
+        self.url_entry.configure(width=root_width - 250 * scale)
 
         btn_width = (root_width - 26) / 3
         self.navigate_added_frame_btn.configure(width=btn_width)
@@ -226,9 +274,9 @@ class App(ctk.CTk):
         self.navigate_downloading_frame_btn.place(x=btn_width + 10 + 3)
         self.navigate_downloaded_frame_btn.place(x=btn_width * 2 + 10 + 6)
 
-        self.video_radio_btn.place(x=self.winfo_width() - 190)
-        self.playlist_radio_btn.place(x=self.winfo_width() - 190)
-        self.add_url_btn.place(x=self.winfo_width() - 110)
+        self.video_radio_btn.place(x=self.winfo_width() - 190 * scale)
+        self.playlist_radio_btn.place(x=self.winfo_width() - 190 * scale)
+        self.add_url_btn.place(x=self.winfo_width() - 110 * scale)
 
         if self.added_frame_info_label_placed:
             self.place_label("added")
@@ -237,7 +285,7 @@ class App(ctk.CTk):
         elif self.downloaded_frame_info_label_placed:
             self.place_label("downloaded")
 
-        frame_height = root_height - 105
+        frame_height = root_height - 105 * scale
         frame_width = root_width - 40
         self.added_content_scroll_frame.configure(
             height=frame_height,
@@ -564,40 +612,6 @@ class App(ctk.CTk):
         self.downloaded_frame_info_label.bind("<Enter>", on_mouse_enter_downloaded_frame_info_label)
         self.downloaded_frame_info_label.bind("<Leave>", mouse_ot_downloaded_frame_info_label)
 
-    def set_widgets_fonts(self):
-        self.url_entry.configure(
-            font=ctk.CTkFont(
-                family="arial",
-                size=16,
-                weight="normal",
-                slant="italic",
-                underline=True
-            )
-        )
-
-        self.video_radio_btn.configure(font=("Monospace", 12, "bold"))
-        self.playlist_radio_btn.configure(font=("Monospace", 12, "bold"))
-        self.add_url_btn.configure(font=("arial", 15, "bold"))
-
-        font_style_1 = ctk.CTkFont(
-            family="arial",
-            size=16,
-            weight="bold",
-            slant="italic"
-        )
-        self.added_frame_info_label.configure(font=font_style_1)
-        self.downloading_frame_info_label.configure(font=font_style_1)
-        self.downloaded_frame_info_label.configure(font=font_style_1)
-        font_style_2 = ctk.CTkFont(
-            family="arial",
-            size=15,
-            weight="bold",
-        )
-        self.navigate_added_frame_btn.configure(font=font_style_2)
-        self.navigate_downloading_frame_btn.configure(font=font_style_2)
-        self.navigate_downloaded_frame_btn.configure(font=font_style_2)
-        self.settings_btn.configure(font=("arial", 25, "normal"))
-
     def select_download_mode(self, download_mode):
         self.selected_download_mode = download_mode
         if download_mode == "playlist":
@@ -612,7 +626,7 @@ class App(ctk.CTk):
         if self.selected_download_mode == "video":
             AddedVideo(
                 master=self.added_content_scroll_frame,
-                height=70,
+                height=70 * GeneralSettings.settings["scale_r"],
                 width=self.added_content_scroll_frame.winfo_width(),
                 # video url
                 video_url=yt_url,
@@ -623,7 +637,7 @@ class App(ctk.CTk):
         else:
             AddedPlayList(
                 master=self.added_content_scroll_frame,
-                height=85,
+                height=85 * GeneralSettings.settings["scale_r"],
                 width=self.added_content_scroll_frame.winfo_width(),
 
                 playlist_download_button_click_callback=self.download_playlist,
@@ -636,7 +650,7 @@ class App(ctk.CTk):
         self.downloading_frame_info_label.place_forget()
         DownloadingVideo(
             master=self.downloading_content_scroll_frame,
-            height=70,
+            height=70 * GeneralSettings.settings["scale_r"],
             width=self.downloading_content_scroll_frame.winfo_width(),
             # video info
             channel_url=video.channel_url,
@@ -657,7 +671,7 @@ class App(ctk.CTk):
         self.downloading_frame_info_label.place_forget()
         DownloadingPlayList(
             master=self.downloading_content_scroll_frame,
-            height=85,
+            height=85 * GeneralSettings.settings["scale_r"],
             width=self.downloading_content_scroll_frame.winfo_width(),
             # video info
             channel_url=playlist.channel_url,
@@ -677,7 +691,7 @@ class App(ctk.CTk):
         self.downloaded_frame_info_label.place_forget()
         DownloadedVideo(
             master=self.downloaded_content_scroll_frame,
-            height=70,
+            height=70 * GeneralSettings.settings["scale_r"],
             width=self.downloaded_content_scroll_frame.winfo_width(),
 
             thumbnails=video.thumbnails,
@@ -698,7 +712,7 @@ class App(ctk.CTk):
         self.downloaded_frame_info_label.place_forget()
         DownloadedPlayList(
             master=self.downloaded_content_scroll_frame,
-            height=85,
+            height=85 * GeneralSettings.settings["scale_r"],
             width=self.downloaded_content_scroll_frame.winfo_width(),
             # playlist url
             channel_url=playlist.channel_url,
@@ -766,17 +780,53 @@ class App(ctk.CTk):
     def clear_temporally_saved_files(self):
         FileUtility.delete_files("temp\\thumbnails", ["this directory is necessary"])
 
-    def on_app_closing(self):
+    def on_app_closing(self, restart: bool = False):
         GeneralSettings.settings['window_geometry'] = self.geometry()
         GeneralSettings.save_settings()
         self.clear_temporally_saved_files()
         self.destroy()
-        os._exit(0)
 
     def cancel_app_closing(self):
         self.bind_events()
 
+    def restart(self):
+        self.on_app_closing(restart=True)
+        app = App()
+        scale = GeneralSettings.settings["scale_r"]
+
+        # set the theme mode, dark or light or system, by getting from data
+        ctk.set_appearance_mode(ThemeSettings.settings["root"]["theme_mode"])
+        # deactivate the automatic scale
+        ctk.deactivate_automatic_dpi_awareness()
+        # place the app at the last placed geometry
+        app.geometry(GeneralSettings.settings["window_geometry"])
+        # set minimum window size to 900x500
+        app.minsize(900 * scale, 500 * scale)
+        # configure alpha
+        app.attributes("-alpha", ThemeSettings.settings["opacity"])
+        # set the title icon
+        app.iconbitmap("assets\\main icon\\icon.ico")
+        # set the app title
+        app.title("PyTube Downloader")
+        # Create the main widgets of the application
+        app.create_widgets()
+        # set widgets sizes
+        app.set_widgets_sizes()
+        # place main widgets
+        app.place_widgets()
+        # configure colors for main widgets
+        app.set_widgets_colors()
+        # configure theme color
+        app.set_accent_color()
+        # configure fonts for main widgets
+        app.set_widgets_fonts()
+        # app event bind
+        app.bind_events()
+        # just rut the app
+        app.run()
+
     def show_close_confirmation_dialog(self):
+        scale = GeneralSettings.settings["scale_r"]
         self.restore_from_tray()
         AlertWindow(
             master=self,
@@ -785,7 +835,9 @@ class App(ctk.CTk):
             cancel_button_text="cancel",
             ok_button_callback=self.on_app_closing,
             cancel_button_callback=self.cancel_app_closing,
-            callback=self.cancel_app_closing
+            callback=self.cancel_app_closing,
+            width=int(450 * scale),
+            height=int(130 * scale),
         )
 
     def restore_from_tray(self):
