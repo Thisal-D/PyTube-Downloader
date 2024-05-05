@@ -44,7 +44,7 @@ class NavigationPanel(ctk.CTkFrame):
         self.navigation_button_on_click_callback = navigation_button_on_click_callback
         ThemeManager.register_widget(self)
         self.width = width
-        self.set_accent_color()
+        self.set_widgets_accent_color()
         self.set_widgets_sizes()
         self.set_widgets_fonts()
         self.place_widgets()
@@ -77,10 +77,10 @@ class NavigationPanel(ctk.CTkFrame):
         for navigation_button in self.navigation_buttons:
             navigation_button.configure(height=34 * scale, width=self.width * scale)
 
-    def update_accent_color(self) -> None:
-        self.set_accent_color()
+    def update_widgets_accent_color(self) -> None:
+        self.set_widgets_accent_color()
 
-    def set_accent_color(self):
+    def set_widgets_accent_color(self):
         for i, navigation_button in enumerate(self.navigation_buttons):
             if not self.navigation_buttons_clicked_state[i]:
                 navigation_button.configure(
@@ -91,5 +91,5 @@ class NavigationPanel(ctk.CTkFrame):
                     fg_color=ThemeSettings.settings["root"]["accent_color"]["normal"]
                 )
 
-    def reset_widgets_colors(self):
-        ...
+    def update_widgets_colors(self):
+        """Update colors for the widgets."""

@@ -52,7 +52,7 @@ class ContextMenu(ctk.CTkFrame):
         )
         self.width = width
         self.height = height
-        self.set_accent_color()
+        self.set_widgets_accent_color()
         self.set_widgets_font()
         self.set_widgets_sizes()
         self.place_widgets()
@@ -64,8 +64,8 @@ class ContextMenu(ctk.CTkFrame):
         self.copy_button.pack(fill="x", padx=2)
         self.paste_button.pack(fill="x", padx=2, pady=(0, 2))
 
-    def update_accent_color(self):
-        self.set_accent_color()
+    def update_widgets_accent_color(self):
+        self.set_widgets_accent_color()
 
     def set_widgets_sizes(self):
         self.copy_button.configure(
@@ -101,7 +101,7 @@ class ContextMenu(ctk.CTkFrame):
             font=font
         )
 
-    def set_accent_color(self):
+    def set_widgets_accent_color(self):
         self.configure(
             border_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
         )
@@ -118,8 +118,8 @@ class ContextMenu(ctk.CTkFrame):
             hover_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
         )
         
-    def reset_widgets_colors(self):
-        ...
+    def update_widgets_colors(self):
+        """Update colors for the widgets."""
         
     def select_all(self):
         pyautogui.hotkey("ctrl", "a")

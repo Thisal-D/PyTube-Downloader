@@ -81,10 +81,6 @@ class DownloadedPlayList(PlayList):
                     text=self.playlist_video_count
                 )
 
-    # configure widgets colors
-    def set_accent_color(self):
-        super().set_accent_color()
-
     def kill(self):
         for video in self.videos:
             video.video_status_callback = GuiUtils.do_nothing

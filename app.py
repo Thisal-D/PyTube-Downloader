@@ -626,7 +626,7 @@ class App(ctk.CTk):
         if self.selected_download_mode == "video":
             AddedVideo(
                 master=self.added_content_scroll_frame,
-                height=70 * GeneralSettings.settings["scale_r"],
+                height=int(70 * GeneralSettings.settings["scale_r"]),
                 width=self.added_content_scroll_frame.winfo_width(),
                 # video url
                 video_url=yt_url,
@@ -637,7 +637,7 @@ class App(ctk.CTk):
         else:
             AddedPlayList(
                 master=self.added_content_scroll_frame,
-                height=85 * GeneralSettings.settings["scale_r"],
+                height=int(85 * GeneralSettings.settings["scale_r"]),
                 width=self.added_content_scroll_frame.winfo_width(),
 
                 playlist_download_button_click_callback=self.download_playlist,
@@ -650,7 +650,7 @@ class App(ctk.CTk):
         self.downloading_frame_info_label.place_forget()
         DownloadingVideo(
             master=self.downloading_content_scroll_frame,
-            height=70 * GeneralSettings.settings["scale_r"],
+            height=int(70 * GeneralSettings.settings["scale_r"]),
             width=self.downloading_content_scroll_frame.winfo_width(),
             # video info
             channel_url=video.channel_url,
@@ -671,7 +671,7 @@ class App(ctk.CTk):
         self.downloading_frame_info_label.place_forget()
         DownloadingPlayList(
             master=self.downloading_content_scroll_frame,
-            height=85 * GeneralSettings.settings["scale_r"],
+            height=int(85 * GeneralSettings.settings["scale_r"]),
             width=self.downloading_content_scroll_frame.winfo_width(),
             # video info
             channel_url=playlist.channel_url,
@@ -691,7 +691,7 @@ class App(ctk.CTk):
         self.downloaded_frame_info_label.place_forget()
         DownloadedVideo(
             master=self.downloaded_content_scroll_frame,
-            height=70 * GeneralSettings.settings["scale_r"],
+            height=int(70 * GeneralSettings.settings["scale_r"]),
             width=self.downloaded_content_scroll_frame.winfo_width(),
 
             thumbnails=video.thumbnails,
@@ -761,7 +761,7 @@ class App(ctk.CTk):
         if updated == "theme_mode":
             ctk.set_appearance_mode(ThemeSettings.settings["root"]["theme_mode"])
         if updated == "opacity":
-            self.attributes("-alpha", ThemeSettings.settings["opacity"])
+            self.attributes("-alpha", ThemeSettings.settings["opacity_r"])
         ThemeSettings.save_settings()
 
     @staticmethod

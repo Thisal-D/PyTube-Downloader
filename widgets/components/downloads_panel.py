@@ -59,11 +59,11 @@ class DownloadsPanel(ctk.CTkFrame):
 
         self.general_settings_change_callback = general_settings_change_callback
         self.configure_values()
-        self.set_accent_color()
+        self.set_widgets_accent_color()
         self.set_widgets_sizes()
         self.set_widgets_fonts()
         self.place_widgets()
-        self.bind_events()
+        self.bind_widgets_events()
         ThemeManager.register_widget(self)
 
     def apply_general_settings(self):
@@ -88,10 +88,10 @@ class DownloadsPanel(ctk.CTkFrame):
             self.download_path_entry.insert(0, directory)
             self.download_path_validate("event")
 
-    def bind_events(self):
+    def bind_widgets_events(self):
         self.download_path_entry.bind("<KeyRelease>", self.download_path_validate)
 
-    def set_accent_color(self):
+    def set_widgets_accent_color(self):
         self.download_path_choose_button.configure(
             text_color=ThemeSettings.settings["root"]["accent_color"]["normal"]
         )
@@ -103,11 +103,11 @@ class DownloadsPanel(ctk.CTkFrame):
             border_color=ThemeSettings.settings["root"]["accent_color"]["normal"]
         )
 
-    def update_accent_color(self):
-        self.set_accent_color()
+    def update_widgets_accent_color(self):
+        self.set_widgets_accent_color()
 
-    def reset_widgets_colors(self):
-        ...
+    def update_widgets_colors(self):
+        """Update colors for the widgets."""
 
     def place_widgets(self):
         scale = GeneralSettings.settings["scale_r"]
