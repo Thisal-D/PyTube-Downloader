@@ -50,8 +50,8 @@
     },
     "root": {
         "accent_color": {
-            "normal": "#ff9f00",
-            "hover": "#ffac1a",
+            "normal": "#412ff0",
+            "hover": "#5f4ff1",
             "default": true
         },
         "fg_color": {
