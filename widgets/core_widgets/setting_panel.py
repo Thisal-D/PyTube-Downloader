@@ -66,7 +66,7 @@ class SettingPanel(ctk.CTkFrame):
         )
 
         ThemeManager.register_widget(self)
-        self.set_accent_color()
+        self.set_widgets_accent_color()
         self.set_widgets_sizes()
         self.place_widgets()
 
@@ -86,11 +86,11 @@ class SettingPanel(ctk.CTkFrame):
         scale = GeneralSettings.settings["scale_r"]
         self.navigation_panel.configure(width=400 * scale)
 
-    def set_accent_color(self):
+    def set_widgets_accent_color(self):
         self.vertical_line.configure(fg_color=ThemeSettings.settings["root"]["accent_color"]["hover"])
 
-    def update_accent_color(self):
-        self.set_accent_color()
+    def update_widgets_accent_color(self):
+        self.set_widgets_accent_color()
 
-    def reset_widgets_colors(self):
-        ...
+    def update_widgets_colors(self):
+        """Update colors for the widgets."""
