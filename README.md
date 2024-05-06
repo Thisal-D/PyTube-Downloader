@@ -22,6 +22,7 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 - **Automatic Download With Predefined Settings** Users can set predefined download settings such as preferred video quality, audio format, download location, and more. Once a YouTube URL is added, the video will load and then start to download automatically according to these predefined settings.
 - **System Tray Icon Mode:** Access the application conveniently from the system tray, providing quick access to essential features and controls without cluttering the desktop. Users can easily minimize the application to the system tray for unobtrusive operation.
 - **Theme Customization:** Personalize your experience with the ability to switch between dark and light themes. Additionally, customize the accent color to suit your preferences, creating a visually pleasing interface tailored to your style.
+- **Scaling Preferences:** Users can scale the application interface from 100% to 200%, adjusting the size of widgets and elements for better readability and usability.
 
 ---
 

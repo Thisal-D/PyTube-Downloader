@@ -27,7 +27,7 @@ class DownloadedVideo(Video):
             download_path: str = "",
             download_quality: Literal["128kbps", "360p", "720p"] = "720p",
             download_type: Literal["Audio", "Video"] = "Video",
-            # download mode
+            # mode
             mode: Literal["video", "playlist"] = 'video',
             # state callbacks
             video_status_callback: Callable = None):
@@ -42,7 +42,7 @@ class DownloadedVideo(Video):
         self.download_type_label: Union[ctk.CTkLabel, None] = None
         self.file_size_label: Union[ctk.CTkLabel, None] = None
         self.download_path_btn: Union[ctk.CTkButton, None] = None
-        # status callbacks
+        # state callbacks
         self.video_status_callback = video_status_callback
         self.mode = mode
 
@@ -67,65 +67,79 @@ class DownloadedVideo(Video):
 
     def create_widgets(self):
         super().create_widgets()
+        scale = GeneralSettings.settings["scale_r"]
 
         self.download_type_label = ctk.CTkLabel(
             master=self,
-            text=f"{self.download_type} : {self.download_quality}"
+            text=f"{self.download_type} : {self.download_quality}",
+            height=15 * scale,
+            font=("arial", 12 * scale, "bold"),
         )
+
         self.file_size_label = ctk.CTkLabel(
             master=self,
             text=ValueConvertUtility.convert_size(self.file_size, 2),
+            font=("arial", 12 * scale, "normal"),
+            height=15,
         )
+
         self.download_path_btn = ctk.CTkButton(
             master=self,
             text="📂",
+            font=("arial", 30 * scale, "bold"),
             cursor="hand2",
             command=lambda: os.startfile("\\".join(self.download_path.split("\\")[0:-1])),
             hover=False,
+            height=15,
+            width=30
         )
 
-    def set_widgets_fonts(self):
-        super().set_widgets_fonts()
+    # place widgets
+    def place_widgets(self):
+        super().place_widgets()
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["DownloadedVideo"][str(scale)]
 
         scale = GeneralSettings.settings["scale_r"]
 
-        self.download_type_label.configure(font=("arial", 12 * scale, "bold"))
-        self.file_size_label.configure(font=("arial", 12 * scale, "normal"))
-        self.download_path_btn.configure(font=("arial", 30 * scale, "bold"))
+        self.download_type_label.place(y=y[0], relx=1, x=-300 * scale)
+        self.download_path_btn.place(y=y[1], relx=1, x=-150 * scale)
+        self.file_size_label.place(y=y[2], relx=1, x=-300 * scale)
 
-    def set_widgets_sizes(self):
-        super().set_widgets_sizes()
+    # configure widgets sizes and place location depend on root width
+    def configure_widget_sizes(self, e):
+        ...
 
-        scale = GeneralSettings.settings["scale_r"]
-
-        self.download_type_label.configure(height=15 * scale)
-        self.file_size_label.configure(height=15 * scale)
-        self.download_path_btn.configure(height=15 * scale, width=30 * scale)
-
-    def set_widgets_accent_color(self):
-        super().set_widgets_accent_color()
-
+    # configure widgets colors
+    def set_accent_color(self):
+        super().set_accent_color()
         self.download_path_btn.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
+
+    def reset_widgets_colors(self):
+        super().reset_widgets_colors()
 
     def set_widgets_colors(self):
         super().set_widgets_colors()
-
-        self.download_type_label.configure(text_color=ThemeSettings.settings["video_object"]["text_color"]["normal"])
-        self.file_size_label.configure(text_color=ThemeSettings.settings["video_object"]["text_color"]["normal"])
-        self.download_path_btn.configure(fg_color=ThemeSettings.settings["video_object"]["fg_color"]["normal"])
+        self.download_type_label.configure(
+            text_color=ThemeSettings.settings["video_object"]["text_color"]["normal"]
+        )
+        self.file_size_label.configure(
+            text_color=ThemeSettings.settings["video_object"]["text_color"]["normal"]
+        )
+        self.download_path_btn.configure(
+            fg_color=ThemeSettings.settings["video_object"]["fg_color"]["normal"]
+        )
 
     def on_mouse_enter_self(self, event):
         super().on_mouse_enter_self(event)
-
         self.download_path_btn.configure(fg_color=ThemeSettings.settings["video_object"]["fg_color"]["hover"])
 
     def on_mouse_leave_self(self, event):
         super().on_mouse_leave_self(event)
-
         self.download_path_btn.configure(fg_color=ThemeSettings.settings["video_object"]["fg_color"]["normal"])
 
-    def bind_widgets_events(self):
-        super().bind_widgets_events()
+    def bind_widget_events(self):
+        super().bind_widget_events()
 
         def on_mouse_enter_download_path_btn(event):
             self.download_path_btn.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["hover"])
@@ -133,16 +147,5 @@ class DownloadedVideo(Video):
 
         def on_mouse_leave_download_path_btn(_event):
             self.download_path_btn.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
-
         self.download_path_btn.bind("<Enter>", on_mouse_enter_download_path_btn)
         self.download_path_btn.bind("<Leave>", on_mouse_leave_download_path_btn)
-
-    def place_widgets(self):
-        super().place_widgets()
-
-        scale = GeneralSettings.settings["scale_r"]
-        y = ScaleSettings.settings["DownloadedVideo"][str(scale)]
-
-        self.download_type_label.place(y=y[0], relx=1, x=-300 * scale)
-        self.download_path_btn.place(y=y[1], relx=1, x=-150 * scale)
-        self.file_size_label.place(y=y[2], relx=1, x=-300 * scale)

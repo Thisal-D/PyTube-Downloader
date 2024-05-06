@@ -7,20 +7,6 @@ from settings import ThemeSettings, GeneralSettings, ScaleSettings
 
 
 class PlayList(ctk.CTkFrame):
-    """
-    A custom Tkinter frame for displaying information about a playlist.
-
-    Args:
-        master (Optional): The parent widget.
-        width (int): The width of the frame.
-        height (int): The height of the frame.
-        channel_url (str): The URL of the channel.
-        playlist_url (str): The URL of the playlist.
-        playlist_title (str): The title of the playlist.
-        channel (str): The name of the channel.
-        playlist_video_count (int): The number of videos in the playlist.
-    """
-    
     def __init__(
             self,
             master: Any = None,
@@ -37,19 +23,16 @@ class PlayList(ctk.CTkFrame):
             master=master,
             width=width,
         )
-        
-        # Initialize attributes
+
         self.height: int = height
         self.width: int = width
-        
         # playlist info
         self.channel_url: str = channel_url
         self.channel: str = channel
         self.playlist_url: str = playlist_url
         self.playlist_title: str = playlist_title
         self.playlist_video_count = playlist_video_count
-        
-        # Initialize widgets
+        # widgets
         self.playlist_info_widget: Union[ctk.CTkFrame, None] = None
         self.view_btn: Union[ctk.CTkButton, None] = None
         self.title_label: Union[tk.Label, None] = None
@@ -58,40 +41,38 @@ class PlayList(ctk.CTkFrame):
         self.remove_btn: Union[ctk.CTkButton, None] = None
         self.playlist_video_count_label: Union[ctk.CTkLabel, None] = None
         self.playlist_item_frame: Union[ctk.CTkFrame, None] = None
-        
-        # Create and configure widgets
+        # self.on_mouse_state: Literal["enter", "leave"] = "leave"
+        # initialize the object
         self.create_widgets()
-        self.set_widgets_sizes()
-        self.set_widgets_fonts()
         self.set_widgets_colors()
-        self.set_tk_widgets_colors()
-        self.set_widgets_accent_color()
+        self.reset_widgets_colors()
+        self.set_accent_color()
         self.place_widgets()
-        self.bind_widgets_events()
-
-        # Register to Theme Manager for accent color updates & widgets colors updates
+        self.bind_widget_events()
+        # self append to theme manger
         ThemeManager.register_widget(self)
 
     def hide_videos(self):
-        """Hide the videos in the playlist."""
+        scale = GeneralSettings.settings["scale_r"]
+
         self.view_btn.configure(
             command=self.view_videos,
             text=">",
-            font=('arial', 18 * GeneralSettings.settings["scale_r"], 'bold')
+            font=('arial', 18 * scale, 'bold')
         )
         self.playlist_item_frame.pack_forget()
 
     def view_videos(self):
-        """View the videos in the playlist."""
+        scale = GeneralSettings.settings["scale_r"]
+
         self.view_btn.configure(
             command=self.hide_videos,
             text="V",
-            font=('arial', 13 * GeneralSettings.settings["scale_r"], 'bold')
+            font=('arial', 13 * scale, 'bold')
         )
         self.playlist_item_frame.pack(padx=10, fill="x", pady=2)
 
     def set_playlist_data(self):
-        """Set the data of the playlist."""
         self.playlist_video_count_label.configure(text=f"{self.playlist_video_count}")
         self.title_label.configure(text=f"Title : {self.playlist_title}")
         self.channel_btn.configure(text=f"Channel : {self.channel}")
@@ -99,66 +80,84 @@ class PlayList(ctk.CTkFrame):
         self.channel_btn.configure(state="normal")
 
     def kill(self):
-        """Destroy the playlist widget."""
         ThemeManager.unregister_widget(self)
         self.pack_forget()
         self.destroy()
 
     def create_widgets(self):
-        """Create widgets for the playlist."""
-        self.playlist_info_widget = ctk.CTkFrame(master=self)
+        scale = GeneralSettings.settings["scale_r"]
+
+        self.playlist_info_widget = ctk.CTkFrame(
+            master=self,
+            border_width=1,
+            height=self.height,
+            width=self.width
+        )
+
         self.view_btn = ctk.CTkButton(
             master=self.playlist_info_widget,
+            font=('arial', 18 * scale, 'bold'),
             text=">",
+            width=1,
+            height=1,
             hover=False,
             command=self.view_videos,
             state="disabled",
             cursor="hand2",
         )
-        self.title_label = tk.Label(master=self.playlist_info_widget, anchor="w", text=f"Title : {self.playlist_title}")
-        self.channel_btn = tk.Button(
+
+        self.title_label = tk.Label(
             master=self.playlist_info_widget,
             anchor="w",
+            font=('arial', int(10 * scale), 'bold'),
+            text=f"Title : {self.playlist_title}"
+        )
+
+        self.channel_btn = tk.Button(
+            master=self.playlist_info_widget,
+            font=('arial', int(9 * scale), 'bold'),
+            anchor="w",
+            bd=0,
             command=lambda: webbrowser.open(self.channel_url),
             relief="sunken",
             state="disabled",
             cursor="hand2",
             text=f"Channel : {self.channel}"
         )
-        self.url_label = tk.Label(master=self.playlist_info_widget, anchor="w", text=self.playlist_url)
-        self.remove_btn = ctk.CTkButton(master=self.playlist_info_widget, command=self.kill, text="X", hover=False)
+
+        self.url_label = tk.Label(
+            master=self.playlist_info_widget, anchor="w",
+            font=('arial', int(11 * scale), "italic underline"),
+            text=self.playlist_url,
+        )
+
+        self.remove_btn = ctk.CTkButton(
+            master=self.playlist_info_widget,
+            command=self.kill,
+            text="X",
+            font=("arial", 12 * scale, "bold"),
+            width=20 * scale,
+            height=20 * scale,
+            border_spacing=0,
+            hover=False,
+        )
+
         self.playlist_video_count_label = ctk.CTkLabel(
             master=self.playlist_info_widget,
+            width=15 * scale, height=15 * scale,
+            font=("arial", 13 * scale, "bold"),
             justify="right",
             text=f"{self.playlist_video_count}"
         )
-        self.playlist_item_frame = ctk.CTkFrame(master=self)
 
-    def set_widgets_fonts(self):
-        """Set fonts for the widgets."""
-        scale = GeneralSettings.settings["scale_r"]
+        self.playlist_item_frame = ctk.CTkFrame(
+            master=self,
+        )
 
-        self.view_btn.configure(font=('arial', 18 * scale, 'bold'),)
-        self.title_label.configure(font=('arial', int(10 * scale), 'bold'))
-        self.channel_btn.configure(font=('arial', int(10 * scale), 'bold'))
-        self.url_label.configure(font=('arial', int(11 * scale), "italic underline"))
-        self.remove_btn.configure(font=("arial", 12 * scale, "bold"),)
-        self.playlist_video_count_label.configure(font=("arial", 13 * scale, "bold"))
+        self.bind("<Configure>", self.configure_widget_sizes)
 
-    def set_widgets_sizes(self):
-        """Set sizes for the widgets."""
-        scale = GeneralSettings.settings["scale_r"]
-
-        self.playlist_info_widget.configure(border_width=1, height=self.height, width=self.width)
-        self.view_btn.configure(width=1, height=1)
-        self.title_label.configure(height=1)
-        self.channel_btn.configure(bd=0, height=1)
-        self.url_label.configure(height=1)
-        self.remove_btn.configure(width=22 * scale, height=22 * scale, border_spacing=0)
-        self.playlist_video_count_label.configure(width=15 * scale, height=15 * scale)
-
-    def set_widgets_accent_color(self):
-        """Set accent color for the widgets."""
+    # configure widgets colors
+    def set_accent_color(self):
         self.playlist_info_widget.configure(
             border_color=ThemeSettings.settings["root"]["accent_color"]["normal"]
         )
@@ -167,12 +166,10 @@ class PlayList(ctk.CTkFrame):
             fg=ThemeSettings.settings["root"]["accent_color"]["normal"]
         )
 
-    def update_widgets_accent_color(self):
-        """Update accent color for the widgets."""
-        self.set_widgets_accent_color()
+    def update_accent_color(self):
+        self.set_accent_color()
 
-    def set_tk_widgets_colors(self):
-        """Set colors for the Tk widgets."""
+    def reset_widgets_colors(self):
         self.title_label.configure(
             bg=ThemeManager.get_color_based_on_theme_mode(ThemeSettings.settings["video_object"]["fg_color"]["normal"]),
             fg=ThemeManager.get_color_based_on_theme_mode(
@@ -194,12 +191,7 @@ class PlayList(ctk.CTkFrame):
             )
         )
 
-    def update_widgets_colors(self):
-        """Update colors for the widgets."""
-        self.set_tk_widgets_colors()
-
     def set_widgets_colors(self):
-        """Set colors for the widgets."""
         self.configure(
             fg_color=self.master.cget("fg_color")
         )
@@ -227,7 +219,7 @@ class PlayList(ctk.CTkFrame):
         )
 
     def on_mouse_enter_self(self, event):
-        """Handle mouse enter event for the widget."""
+        # self.on_mouse_state = "enter"
         self.playlist_info_widget.configure(
             fg_color=ThemeSettings.settings["video_object"]["fg_color"]["hover"],
             border_color=ThemeSettings.settings["root"]["accent_color"]["hover"]
@@ -245,7 +237,7 @@ class PlayList(ctk.CTkFrame):
             bg=ThemeManager.get_color_based_on_theme_mode(ThemeSettings.settings["video_object"]["fg_color"]["hover"])
         )
 
-        # disable due to ui performance down
+        # disable due to ui performance
         """def on_mouse_enter_videos():
             video_object: AddedVideo
             for video_object in self.playlist_item_frame.winfo_children():
@@ -259,7 +251,7 @@ class PlayList(ctk.CTkFrame):
         threading.Thread(target=on_mouse_enter_videos).start()"""
 
     def on_mouse_leave_self(self, event):
-        """Handle mouse leave event for the widget."""
+        # self.on_mouse_state = "leave"
         self.playlist_info_widget.configure(
             fg_color=ThemeSettings.settings["video_object"]["fg_color"]["normal"],
             border_color=ThemeSettings.settings["root"]["accent_color"]["normal"]
@@ -277,7 +269,7 @@ class PlayList(ctk.CTkFrame):
             bg=ThemeManager.get_color_based_on_theme_mode(ThemeSettings.settings["video_object"]["fg_color"]["normal"])
         )
 
-        # disable due to ui performance down
+        # disable due to ui performance
         """def on_mouse_leave_videos():
             video_object: AddedVideo
             for video_object in self.playlist_item_frame.winfo_children():
@@ -290,8 +282,7 @@ class PlayList(ctk.CTkFrame):
                         break
         threading.Thread(target=on_mouse_leave_videos).start()"""
 
-    def bind_widgets_events(self):
-        """Bind events for the widgets."""
+    def bind_widget_events(self):
         self.playlist_info_widget.bind("<Enter>", self.on_mouse_enter_self)
         self.playlist_info_widget.bind("<Leave>", self.on_mouse_leave_self)
         for child_widgets in self.playlist_info_widget.winfo_children() + self.playlist_item_frame.winfo_children():
@@ -341,14 +332,19 @@ class PlayList(ctk.CTkFrame):
 
     # place widgets
     def place_widgets(self):
-        """Place the widgets."""
         scale = GeneralSettings.settings["scale_r"]
         y = ScaleSettings.settings["PlayList"][str(scale)]
 
         self.playlist_info_widget.pack(fill="x")
+
         self.view_btn.place(y=y[0], x=10 * scale)
-        self.title_label.place(x=50 * scale, y=y[1], width=-420 * scale, relwidth=1)
-        self.channel_btn.place(x=50 * scale, y=y[2], width=-420 * scale, relwidth=1)
-        self.url_label.place(x=50 * scale, y=y[3], width=-420 * scale, relwidth=1)
+        self.title_label.place(x=50 * scale, y=y[1], height=20 * scale, width=-420 * scale, relwidth=1)
+        self.channel_btn.place(x=50 * scale, y=y[2], height=20 * scale, width=-420 * scale, relwidth=1)
+        self.url_label.place(x=50 * scale, y=y[3], height=20 * scale, width=-420 * scale, relwidth=1)
+
         self.playlist_video_count_label.place(relx=1, x=-40 * scale, rely=1, y=-25 * scale)
-        self.remove_btn.place(relx=1, x=-25 * scale, y=3 * scale)
+        self.remove_btn.place(relx=1, x=-23 * scale, y=3 * scale)
+
+    # configure widgets sizes and place location depend on root width
+    def configure_widget_sizes(self, e):
+        ...

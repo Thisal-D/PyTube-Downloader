@@ -13,6 +13,7 @@ from utils import (
 from services import ThemeManager
 from settings import (
     ThemeSettings,
+    ScaleSettings,
     GeneralSettings
 )
 from .contributor_profile_widget import ContributorProfileWidget
@@ -95,7 +96,6 @@ class AboutPanel(ctk.CTkFrame):
             text="Loading..."
         )
         self.contributors_frame = ctk.CTkScrollableFrame(
-            scrollbar_fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"],
             fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"],
             master=self
         )
@@ -112,8 +112,8 @@ class AboutPanel(ctk.CTkFrame):
         self.set_widgets_fonts()
         self.set_widgets_sizes()
         self.configure_values()
-        self.set_widgets_accent_color()
-        self.bind_widgets_events()
+        self.set_accent_color()
+        self.bind_events()
         ThemeManager.register_widget(self)
         
     def configure_values(self):
@@ -227,22 +227,22 @@ class AboutPanel(ctk.CTkFrame):
         # save info to json
         JsonUtility.write_to_file("data\\info.json", self.app_info)
 
-    def bind_widgets_events(self):
+    def bind_events(self):
         self.site_button.bind("<Enter>", lambda event: self.site_button.configure(
             text_color=ThemeSettings.settings["root"]["accent_color"]["hover"]))
         self.site_button.bind("<Leave>", lambda event: self.site_button.configure(
             text_color=ThemeSettings.settings["root"]["accent_color"]["normal"]))
 
-    def set_widgets_accent_color(self):
+    def set_accent_color(self):
         self.name_label.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
         self.version_label.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
         self.site_button.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
 
-    def update_widgets_accent_color(self):
-        self.set_widgets_accent_color()
+    def update_accent_color(self):
+        self.set_accent_color()
 
-    def update_widgets_colors(self):
-        """Update colors for the widgets."""
+    def reset_widgets_colors(self):
+        ...
 
     def place_widgets(self):
         scale = GeneralSettings.settings["scale_r"]

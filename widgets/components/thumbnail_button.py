@@ -39,7 +39,7 @@ class ThumbnailButton(tk.Button):
         )
 
     def run_loading_animation_thread(self):
-        self.configure(image=None)
+        self.configure(image="")
         self.loading_animation_running = True
         if self.loading_animation_state != "disabled":
             self.loading_animation_state = "enabled"

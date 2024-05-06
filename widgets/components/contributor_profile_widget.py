@@ -70,11 +70,11 @@ class ContributorProfileWidget:
 
         self.set_widgets_fonts()
         self.set_widgets_sizes()
-        self.bind_widgets_events()
-        self.set_widgets_accent_color()
+        self.bind_events()
+        self.set_accent_color()
         ThemeManager.register_widget(self)
 
-    def bind_widgets_events(self):
+    def bind_events(self):
         self.profile_pic_button.bind(
             "<Enter>",
             lambda event_: self.profile_pic_button.configure(image=self.profile_images[1])
@@ -85,16 +85,16 @@ class ContributorProfileWidget:
             lambda event_: self.profile_pic_button.configure(image=self.profile_images[0])
         )
 
-    def set_widgets_accent_color(self):
+    def set_accent_color(self):
         self.hr.configure(
             bg=ThemeSettings.settings["root"]["accent_color"]["normal"]
         )
         
-    def update_widgets_accent_color(self):
-        self.set_widgets_accent_color()
+    def update_accent_color(self):
+        self.set_accent_color()
         
-    def update_widgets_colors(self):
-        """Update colors for the widgets."""
+    def reset_widgets_colors(self):
+        ...
 
     def set_widgets_sizes(self):
         scale = GeneralSettings.settings["scale_r"]

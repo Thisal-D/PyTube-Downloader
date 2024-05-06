@@ -166,9 +166,8 @@ class AppearancePanel(ctk.CTkFrame):
         self.opacity_change_slider = ctk.CTkSlider(
             master=self,
             command=self.apply_opacity,
-            from_=60,
-            number_of_steps=320,
-            to=100,
+            from_=0.6,
+            to=1,
         )
 
         # callbacks for settings changes
@@ -178,9 +177,9 @@ class AppearancePanel(ctk.CTkFrame):
 
         self.set_widgets_fonts()
         self.set_widgets_sizes()
-        self.set_widgets_accent_color()
+        self.set_accent_color()
         self.place_widgets()
-        self.bind_widgets_events()
+        self.bind_events()
         self.set_widgets_values()
 
         # Register widget with ThemeManager
@@ -252,7 +251,6 @@ class AppearancePanel(ctk.CTkFrame):
         Apply selected opacity value.
         """
         ThemeSettings.settings["opacity"] = opacity_value
-        ThemeSettings.settings["opacity_r"] = opacity_value / 100
         self.theme_settings_change_callback("opacity")
 
     def change_scale(self, scale_value: int):
@@ -270,7 +268,7 @@ class AppearancePanel(ctk.CTkFrame):
         scale = GeneralSettings.settings["scale_r"]
         AlertWindow(
             master=self.master.master,
-            alert_msg="Restart required for changes to take effect..!",
+            alert_msg="Restart Required..!",
             width=int(450 * scale),
             height=int(130 * scale),
             ok_button_text="ok",
@@ -308,7 +306,7 @@ class AppearancePanel(ctk.CTkFrame):
             )
             self.custom_accent_color_apply_btn.configure(state="disabled")
 
-    def set_widgets_accent_color(self):
+    def set_accent_color(self):
         """
         Set accent color for widgets.
         """
@@ -347,14 +345,22 @@ class AppearancePanel(ctk.CTkFrame):
             hover_color=ThemeSettings.settings["root"]["accent_color"]["hover"]
         )
 
-    def update_widgets_accent_color(self):
+    def update_accent_color(self):
         """
         Update accent color.
         """
-        self.set_widgets_accent_color()
+        self.set_accent_color()
 
-    def update_widgets_colors(self):
-        """Update colors for the widgets."""
+    def reset_widgets_colors(self):
+        """
+        Reset colors of widgets.
+        """
+        self.custom_accent_color_alert_text.tag_config(
+            "normal",
+            foreground=ThemeManager.get_color_based_on_theme_mode(
+                ThemeSettings.settings["settings_panel"]["text_color"]
+            )
+        )
 
     def place_widgets(self):
         """
@@ -454,6 +460,17 @@ class AppearancePanel(ctk.CTkFrame):
                     - Hexadecimal: #0f0f0f, #0f0f0ff
                     - Color names: green, lightgreen"""
         )
+        self.custom_accent_color_alert_text.tag_add("red", "2.31", "2.33")
+        self.custom_accent_color_alert_text.tag_add("green", "2.33", "2.35")
+        self.custom_accent_color_alert_text.tag_add("blue", "2.35", "2.37")
+        self.custom_accent_color_alert_text.tag_add("red", "2.42", "2.43")
+        self.custom_accent_color_alert_text.tag_add("green", "2.43", "2.44")
+        self.custom_accent_color_alert_text.tag_add("blue", "2.44", "2.45")
+        self.custom_accent_color_alert_text.tag_add("normal", "5.0", "7.43")
+
+        self.custom_accent_color_alert_text.tag_config("red", foreground="#ff0000")
+        self.custom_accent_color_alert_text.tag_config("green", foreground="#00ff00")
+        self.custom_accent_color_alert_text.tag_config("blue", foreground="#0000ff")
 
         if ThemeSettings.settings["root"]["accent_color"]["default"]:
             for button in self.accent_color_buttons:
@@ -484,7 +501,7 @@ class AppearancePanel(ctk.CTkFrame):
         self.scale_change_slider.set(GeneralSettings.settings["scale"])
         self.scale_value_label.configure(text=f"{GeneralSettings.settings["scale"]} %")
 
-    def bind_widgets_events(self):
+    def bind_events(self):
         """
         Bind events to widgets.
         """

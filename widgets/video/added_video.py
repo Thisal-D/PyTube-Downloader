@@ -27,9 +27,9 @@ class AddedVideo(Video):
             master: Any,
             width: int = 0,
             height: int = 0,
-            # video url
+            # video info
             video_url: str = "",
-            # callback functions for buttons
+            # callback utils for buttons
             video_download_button_click_callback: Callable = None,
             # state callbacks only use if mode is play list
             mode: Literal["video", "playlist"] = "video",
@@ -63,7 +63,6 @@ class AddedVideo(Video):
             height=height,
             video_url=video_url
         )
-
         self.load_video()
 
     def reload_video(self):
@@ -153,13 +152,13 @@ class AddedVideo(Video):
             self.length = int(self.video.length)
             self.video_stream_data = self.video.streams
             self.channel_url = str(self.video.channel_url)
-            # self.thumbnails = self.get_thumbnails()
+            self.thumbnails = self.get_thumbnails()
             self.support_download_types = (
                 DownloadInfoUtility.sort_download_qualities(
                     DownloadInfoUtility.get_supported_download_types(self.video_stream_data)
                 )
             )
-            self.set_loading_completed()
+            self.set_load_completed()
             self.set_video_data()
             self.download_automatically()
         except Exception as error:
@@ -196,7 +195,7 @@ class AddedVideo(Video):
             self.choose_download_type(self.resolution_select_menu.get())
             self.video_download_button_click_callback(self)
 
-    def set_loading_completed(self):
+    def set_load_completed(self):
         if self.load_state != "removed":
             self.load_state = "completed"
             if self.mode == "playlist":
@@ -207,6 +206,8 @@ class AddedVideo(Video):
             LoadManager.active_load_count -= 1
         
     def set_loading_failed(self):
+        scale = GeneralSettings.settings["scale_r"]
+        y = ScaleSettings.settings["AddedVideo"][str(scale)]
         if self.load_state != "removed":
             if self in LoadManager.active_loads:
                 LoadManager.active_loads.remove(self)
@@ -221,16 +222,11 @@ class AddedVideo(Video):
                 text_color=ThemeSettings.settings["video_object"]["error_color"]["normal"],
                 text="Failed"
             )
-            self.reload_btn.place(
-                relx=1,
-                y=ScaleSettings.settings["AddedVideo"][str(GeneralSettings.settings["scale_r"])][3],
-                x=-80 * GeneralSettings.settings["scale_r"]
-            )
+            self.reload_btn.place(relx=1, y=y[3], x=-80 * scale)
 
     def set_video_data(self):
         if self.load_state != "removed":
             super().set_video_data()
-
             self.resolution_select_menu.configure(
                 values=DownloadInfoUtility.generate_download_options(self.support_download_types)
             )
@@ -253,53 +249,50 @@ class AddedVideo(Video):
 
     # create widgets
     def create_widgets(self):
-        super().create_widgets()
+        scale = GeneralSettings.settings["scale_r"]
+        self.sub_frame = ctk.CTkFrame(
+            master=self,
+            height=self.height - 4,
+            width=270 * scale,
+        )
 
-        self.sub_frame = ctk.CTkFrame(master=self)
         self.resolution_select_menu = ctk.CTkComboBox(
             master=self.sub_frame,
             values=["..........", "..........", ".........."],
-            width=150 * GeneralSettings.settings["scale_r"],
-            height=28 * GeneralSettings.settings["scale_r"],
+            dropdown_font=("Segoe UI", 13 * scale, "normal"),
+            font=("Segoe UI", 13 * scale, "normal"),
+            width=150 * scale, height=28 * scale
         )
+
         self.download_btn = ctk.CTkButton(
-            master=self.sub_frame,
-            text="Download",
+            master=self.sub_frame, text="Download",
+            width=80 * scale, height=25 * scale,
+            border_width=2,
             state="disabled",
             hover=False,
-            command=lambda: self.video_download_button_click_callback(self),
+            font=("arial", 12 * scale, "bold"),
+            command=lambda: self.video_download_button_click_callback(self)
         )
-        self.status_label = ctk.CTkLabel(master=self.sub_frame, text="")
-        self.reload_btn = ctk.CTkButton(master=self, text="⟳", command=self.reload_video, hover=False)
 
-    def set_widgets_fonts(self):
-        super().set_widgets_fonts()
-
-        scale = GeneralSettings.settings["scale_r"]
-
-        self.resolution_select_menu.configure(
-            font=("Segoe UI", 13 * scale, "normal"),
-            dropdown_font=("Segoe UI", 13 * scale, "normal")
+        self.status_label = ctk.CTkLabel(
+            master=self.sub_frame,
+            text="",
+            height=15 * scale,
+            font=("arial", 12 * scale, "bold"),
         )
-        self.download_btn.configure(font=("arial", 12 * scale, "bold"))
-        self.status_label.configure(font=("arial", 12 * scale, "bold"))
-        self.reload_btn.configure(font=("arial", 20 * scale, "normal"))
 
-    def set_widgets_sizes(self):
-        super().set_widgets_sizes()
-
-        scale = GeneralSettings.settings["scale_r"]
-
-        self.sub_frame.configure(height=self.height - 4, width=270 * scale)
-        self.download_btn.configure(width=80 * scale, height=25 * scale, border_width=2)
-        self.resolution_select_menu.configure(width=150 * scale, height=28 * scale)
-        self.status_label.configure(height=15 * scale)
-        self.reload_btn.configure(width=15 * scale, height=15 * scale)
+        self.reload_btn = ctk.CTkButton(
+            master=self,
+            text="⟳",
+            width=15 * scale, height=15 * scale,
+            font=("arial", 20 * scale, "normal"),
+            command=self.reload_video,
+            hover=False,
+        )
+        super().create_widgets()
 
     # configure widgets colors
-    def set_widgets_accent_color(self):
-        super().set_widgets_accent_color()
-
+    def set_accent_color(self):
         self.download_btn.configure(border_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
         self.reload_btn.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
         self.resolution_select_menu.configure(
@@ -308,10 +301,9 @@ class AddedVideo(Video):
             border_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
             dropdown_hover_color=ThemeSettings.settings["root"]["accent_color"]["hover"]
         )
+        super().set_accent_color()
 
     def set_widgets_colors(self):
-        super().set_widgets_colors()
-
         self.reload_btn.configure(
             fg_color=ThemeSettings.settings["video_object"]["fg_color"]["normal"]
         )
@@ -330,21 +322,21 @@ class AddedVideo(Video):
             text_color=ThemeSettings.settings["video_object"]["text_color"]["normal"],
             fg_color=ThemeSettings.settings["video_object"]["fg_color"]["normal"],
         )
+        super().set_widgets_colors()
 
     def on_mouse_enter_self(self, event):
         super().on_mouse_enter_self(event)
-
         self.sub_frame.configure(fg_color=ThemeSettings.settings["video_object"]["fg_color"]["hover"])
         self.reload_btn.configure(fg_color=ThemeSettings.settings["video_object"]["fg_color"]["hover"])
 
     def on_mouse_leave_self(self, event):
         super().on_mouse_leave_self(event)
-
         self.sub_frame.configure(fg_color=ThemeSettings.settings["video_object"]["fg_color"]["normal"])
         self.reload_btn.configure(fg_color=ThemeSettings.settings["video_object"]["fg_color"]["normal"])
 
-    def bind_widgets_events(self):
-        super().bind_widgets_events()
+    def bind_widget_events(self):
+        super().bind_widget_events()
+        super().bind_widget_events()
 
         def on_mouse_enter_download_btn(event):
             self.on_mouse_enter_self(event)
@@ -369,11 +361,15 @@ class AddedVideo(Video):
 
         def on_mouse_enter_reload_btn(event):
             self.on_mouse_enter_self(event)
-            self.reload_btn.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["hover"],)
+            self.reload_btn.configure(
+                text_color=ThemeSettings.settings["root"]["accent_color"]["hover"],
+            )
 
         def on_mouse_leave_reload_btn(event):
             self.on_mouse_leave_self(event)
-            self.reload_btn.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
+            self.reload_btn.configure(
+                text_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
+            )
 
         self.reload_btn.bind("<Enter>", on_mouse_enter_reload_btn)
         self.reload_btn.bind("<Leave>", on_mouse_leave_reload_btn)
@@ -384,9 +380,14 @@ class AddedVideo(Video):
 
         scale = GeneralSettings.settings["scale_r"]
         y = ScaleSettings.settings["AddedVideo"][str(scale)]
-
         self.sub_frame.place(y=2, relx=1, x=-370 * scale)
 
         self.resolution_select_menu.place(y=y[0], x=20)
         self.download_btn.place(x=190 * scale, y=y[1])
         self.status_label.place(x=230 * scale, anchor="n", y=y[2])
+
+    # static method
+    active_load_count = 0
+    max_concurrent_loads = 1
+    queued_loads = []
+    active_loads = []

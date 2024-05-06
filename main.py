@@ -51,7 +51,7 @@ app.geometry(GeneralSettings.settings["window_geometry"])
 # set minimum window size to 900x500
 app.minsize(900 * scale, 500 * scale)
 # configure alpha
-app.attributes("-alpha", ThemeSettings.settings["opacity_r"])
+app.attributes("-alpha", ThemeSettings.settings["opacity"])
 # set the title icon
 app.iconbitmap("assets\\main icon\\icon.ico")
 # set the app title
