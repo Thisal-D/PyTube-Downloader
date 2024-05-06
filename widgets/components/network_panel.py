@@ -141,7 +141,7 @@ class NetworkPanel(ctk.CTkFrame):
         self.simultaneous_download_count_valid: bool = True
 
         self.general_settings_change_callback = general_settings_change_callback
-        self.set_widgets_accent_color()
+        self.set_accent_color()
         self.set_widgets_fonts()
         self.set_widgets_sizes()
         self.place_widgets()
@@ -196,8 +196,6 @@ class NetworkPanel(ctk.CTkFrame):
         self.set_apply_button_state()
 
     def set_apply_button_state(self):
-        print((self.simultaneous_download_count_changed, self.simultaneous_load_count_changed,
-                 self.automatic_download_state_changed, self.automatic_download_quality_changed))
         if (any((self.simultaneous_download_count_changed, self.simultaneous_load_count_changed,
                  self.automatic_download_state_changed, self.automatic_download_quality_changed)) and
                 all((self.simultaneous_load_count_valid, self.simultaneous_download_count_valid))):
@@ -227,10 +225,10 @@ class NetworkPanel(ctk.CTkFrame):
 
         self.automatic_download_quality_combo_box.set(GeneralSettings.settings["automatic_download"]["quality"])
 
-    def update_widgets_accent_color(self):
-        self.set_widgets_accent_color()
+    def update_accent_color(self):
+        self.set_accent_color()
 
-    def set_widgets_accent_color(self):
+    def set_accent_color(self):
         self.apply_changes_button.configure(
             fg_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
             hover_color=ThemeSettings.settings["root"]["accent_color"]["hover"]
@@ -317,5 +315,5 @@ class NetworkPanel(ctk.CTkFrame):
         button_font = ("Segoe UI", 13 * scale, "bold")
         self.apply_changes_button.configure(font=button_font)
 
-    def update_widgets_colors(self):
-        """Update colors for the widgets."""
+    def reset_widgets_colors(self):
+        ...

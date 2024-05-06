@@ -626,7 +626,7 @@ class App(ctk.CTk):
         if self.selected_download_mode == "video":
             AddedVideo(
                 master=self.added_content_scroll_frame,
-                height=int(70 * GeneralSettings.settings["scale_r"]),
+                height=70 * GeneralSettings.settings["scale_r"],
                 width=self.added_content_scroll_frame.winfo_width(),
                 # video url
                 video_url=yt_url,
@@ -637,7 +637,7 @@ class App(ctk.CTk):
         else:
             AddedPlayList(
                 master=self.added_content_scroll_frame,
-                height=int(85 * GeneralSettings.settings["scale_r"]),
+                height=85 * GeneralSettings.settings["scale_r"],
                 width=self.added_content_scroll_frame.winfo_width(),
 
                 playlist_download_button_click_callback=self.download_playlist,
@@ -650,7 +650,7 @@ class App(ctk.CTk):
         self.downloading_frame_info_label.place_forget()
         DownloadingVideo(
             master=self.downloading_content_scroll_frame,
-            height=int(70 * GeneralSettings.settings["scale_r"]),
+            height=70 * GeneralSettings.settings["scale_r"],
             width=self.downloading_content_scroll_frame.winfo_width(),
             # video info
             channel_url=video.channel_url,
@@ -671,7 +671,7 @@ class App(ctk.CTk):
         self.downloading_frame_info_label.place_forget()
         DownloadingPlayList(
             master=self.downloading_content_scroll_frame,
-            height=int(85 * GeneralSettings.settings["scale_r"]),
+            height=85 * GeneralSettings.settings["scale_r"],
             width=self.downloading_content_scroll_frame.winfo_width(),
             # video info
             channel_url=playlist.channel_url,
@@ -691,7 +691,7 @@ class App(ctk.CTk):
         self.downloaded_frame_info_label.place_forget()
         DownloadedVideo(
             master=self.downloaded_content_scroll_frame,
-            height=int(70 * GeneralSettings.settings["scale_r"]),
+            height=70 * GeneralSettings.settings["scale_r"],
             width=self.downloaded_content_scroll_frame.winfo_width(),
 
             thumbnails=video.thumbnails,
@@ -761,7 +761,7 @@ class App(ctk.CTk):
         if updated == "theme_mode":
             ctk.set_appearance_mode(ThemeSettings.settings["root"]["theme_mode"])
         if updated == "opacity":
-            self.attributes("-alpha", ThemeSettings.settings["opacity_r"])
+            self.attributes("-alpha", ThemeSettings.settings["opacity"])
         ThemeSettings.save_settings()
 
     @staticmethod
@@ -780,7 +780,7 @@ class App(ctk.CTk):
     def clear_temporally_saved_files(self):
         FileUtility.delete_files("temp\\thumbnails", ["this directory is necessary"])
 
-    def on_app_closing(self, restart: bool = False):
+    def on_app_closing(self):
         GeneralSettings.settings['window_geometry'] = self.geometry()
         GeneralSettings.save_settings()
         self.clear_temporally_saved_files()
@@ -790,40 +790,11 @@ class App(ctk.CTk):
         self.bind_events()
 
     def restart(self):
-        self.on_app_closing(restart=True)
-        app = App()
-        scale = GeneralSettings.settings["scale_r"]
-
-        # set the theme mode, dark or light or system, by getting from data
-        ctk.set_appearance_mode(ThemeSettings.settings["root"]["theme_mode"])
-        # deactivate the automatic scale
-        ctk.deactivate_automatic_dpi_awareness()
-        # place the app at the last placed geometry
-        app.geometry(GeneralSettings.settings["window_geometry"])
-        # set minimum window size to 900x500
-        app.minsize(900 * scale, 500 * scale)
-        # configure alpha
-        app.attributes("-alpha", ThemeSettings.settings["opacity"])
-        # set the title icon
-        app.iconbitmap("assets\\main icon\\icon.ico")
-        # set the app title
-        app.title("PyTube Downloader")
-        # Create the main widgets of the application
-        app.create_widgets()
-        # set widgets sizes
-        app.set_widgets_sizes()
-        # place main widgets
-        app.place_widgets()
-        # configure colors for main widgets
-        app.set_widgets_colors()
-        # configure theme color
-        app.set_accent_color()
-        # configure fonts for main widgets
-        app.set_widgets_fonts()
-        # app event bind
-        app.bind_events()
-        # just rut the app
-        app.run()
+        self.on_app_closing()
+        if os.path.exists("PyTube Downloader.exe"):
+            os.startfile("PyTube Downloader.exe")
+        if os.path.exists("main.py"):
+            os.startfile("main.py")
 
     def show_close_confirmation_dialog(self):
         scale = GeneralSettings.settings["scale_r"]
