@@ -107,18 +107,18 @@ class FileUtility:
             return original_file_name
     
     @staticmethod
-    def delete_files(temp_directory: str, files_to_keep: List[str] = None) -> None:
+    def delete_files(directory: str, files_to_keep: List[str] = None) -> None:
         """
         Delete files in the specified directory, except those listed in files_to_keep.
 
         Args:
-            temp_directory (str): The path to the directory containing the files to delete.
+            directory (str): The path to the directory containing the files to delete.
             files_to_keep (List[str], optional): A list of file names to exclude from deletion. Default is None.
         """
-        for file_name in os.listdir(temp_directory):
+        for file_name in os.listdir(directory):
             try:
                 if files_to_keep is None or file_name not in files_to_keep:
-                    os.remove(os.path.join(temp_directory, file_name))
+                    os.remove(os.path.join(directory, file_name))
             except Exception as error:
                 print(f"Error while deleting file {file_name}: {error}")
                 pass

@@ -11,8 +11,7 @@ from services import (
     ThemeManager
 )
 from settings import (
-    ThemeSettings,
-    GeneralSettings
+    AppearanceSettings,
 )
 
 
@@ -24,15 +23,15 @@ class SettingPanel(ctk.CTkFrame):
             theme_settings_change_callback: Callable = None,
             general_settings_change_callback: Callable = None,
             restart_callback: Callable = None):
+        
         super().__init__(
             master=master,
-            fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"]
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
 
         self.appearance_panel = AppearancePanel(
             master=self,
             theme_settings_change_callback=theme_settings_change_callback,
-            general_settings_change_callback=general_settings_change_callback,
             restart_callback=restart_callback
         )
 
@@ -51,13 +50,13 @@ class SettingPanel(ctk.CTkFrame):
         )
 
         self.panels = [self.appearance_panel, self.network_panel, self.downloads_panel, self.about_panel]
-        self.nav_buttons = ["Appearance", "Network", "Downloads", "About"]
+        self.nav_buttons_text = ["Appearance", "Network", "Downloads", "About"]
         self.navigation_panel = NavigationPanel(
             master=self,
             navigation_panels=self.panels,
             navigation_button_on_click_callback=self.place_panel,
-            navigation_buttons_text=self.nav_buttons,
-            width=200,
+            navigation_buttons_text=self.nav_buttons_text,
+            width=200 * AppearanceSettings.settings["scale_r"],
         )
 
         self.vertical_line = ctk.CTkFrame(
@@ -66,7 +65,7 @@ class SettingPanel(ctk.CTkFrame):
         )
 
         ThemeManager.register_widget(self)
-        self.set_accent_color()
+        self.set_widgets_accent_color()
         self.set_widgets_sizes()
         self.place_widgets()
 
@@ -83,14 +82,14 @@ class SettingPanel(ctk.CTkFrame):
                 selected_panel.pack(side="right", fill="both", expand=True)
 
     def set_widgets_sizes(self):
-        scale = GeneralSettings.settings["scale_r"]
-        self.navigation_panel.configure(width=400 * scale)
+        scale = AppearanceSettings.settings["scale_r"]
+        self.navigation_panel.configure(width=int(400 * scale))
 
-    def set_accent_color(self):
-        self.vertical_line.configure(fg_color=ThemeSettings.settings["root"]["accent_color"]["hover"])
+    def set_widgets_accent_color(self):
+        self.vertical_line.configure(fg_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
 
-    def update_accent_color(self):
-        self.set_accent_color()
+    def update_widgets_accent_color(self):
+        self.set_widgets_accent_color()
 
-    def reset_widgets_colors(self):
-        ...
+    def update_widgets_colors(self):
+        """Update colors for the widgets."""

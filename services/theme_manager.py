@@ -2,7 +2,7 @@ import customtkinter as ctk
 import time
 from typing import List, Dict, Tuple, Any, Literal
 import threading
-from settings import ThemeSettings
+from settings import AppearanceSettings
 
 
 class ThemeManager:
@@ -33,22 +33,22 @@ class ThemeManager:
     @staticmethod
     def update_accent_color() -> None:
         """Updates accent color callback the change to registered widgets."""
-        ThemeManager.update_widget_accent_colors()
+        ThemeManager.update_widgets_accent_color()
 
     @staticmethod
     def update_widgets_colors() -> None:
         for widget in ThemeManager.registered_widgets:
             try:
-                widget.reset_widgets_colors()
+                widget.update_widgets_colors()
             except Exception as error:
                 print(f"theme_manager.py : {error}")
 
     @staticmethod
-    def update_widget_accent_colors() -> None:
+    def update_widgets_accent_color() -> None:
         """Updates accent color in all registered widgets."""
         for widget in ThemeManager.registered_widgets:
             try:
-                widget.update_accent_color()
+                widget.update_widgets_accent_color()
             except Exception as error:
                 print(f"theme_manager.py : {error}")
 

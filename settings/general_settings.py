@@ -24,7 +24,7 @@ class GeneralSettings:
         settings = JsonUtility.read_from_file(file_path)
 
         if settings.get("download_directory") is False:
-            settings["download_directory"] = f"c:\\users\\{os.getlogin()}\\downloads\\PyTube Downloader\\"
+            settings["download_directory"] = f"C:\\users\\{os.getlogin()}\\downloads\\PyTube Downloader\\"
 
         GeneralSettings.settings = settings
         GeneralSettings.file_path = file_path

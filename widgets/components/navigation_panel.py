@@ -2,8 +2,8 @@ import customtkinter as ctk
 from typing import Any, List, Callable
 from services import ThemeManager
 from settings import (
-    ThemeSettings,
-    ScaleSettings,
+    AppearanceSettings,
+    WidgetPositionSettings,
     GeneralSettings
 )
 
@@ -19,8 +19,8 @@ class NavigationPanel(ctk.CTkFrame):
 
         super().__init__(
             master=master,
-            fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"],
-            width=width * GeneralSettings.settings["scale_r"]
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
+            width=width
         )
 
         self.navigation_buttons = []
@@ -32,7 +32,7 @@ class NavigationPanel(ctk.CTkFrame):
                     corner_radius=0,
                     text=button_text,
                     hover=False,
-                    text_color=ThemeSettings.settings["settings_panel"]["nav_text_color"]
+                    text_color=AppearanceSettings.settings["settings_panel"]["nav_text_color"]
                 )
             )
             self.navigation_buttons[-1].configure(
@@ -44,7 +44,7 @@ class NavigationPanel(ctk.CTkFrame):
         self.navigation_button_on_click_callback = navigation_button_on_click_callback
         ThemeManager.register_widget(self)
         self.width = width
-        self.set_accent_color()
+        self.set_widgets_accent_color()
         self.set_widgets_sizes()
         self.set_widgets_fonts()
         self.place_widgets()
@@ -55,41 +55,41 @@ class NavigationPanel(ctk.CTkFrame):
         for i, navigation_button in enumerate(self.navigation_buttons):
             if clicked_button is navigation_button:
                 self.navigation_buttons_clicked_state[i] = True
-                navigation_button.configure(fg_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
+                navigation_button.configure(fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
             else:
                 self.navigation_buttons_clicked_state[i] = False
-                navigation_button.configure(fg_color=ThemeSettings.settings["root"]["accent_color"]["hover"])
+                navigation_button.configure(fg_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
         self.navigation_button_on_click_callback(navigation_panel)
 
     def place_widgets(self):
-        self.navigation_buttons[0].pack(pady=(50 * GeneralSettings.settings["scale_r"], 0))
+        self.navigation_buttons[0].pack(pady=(50 * AppearanceSettings.settings["scale_r"], 0))
         for navigation_button in self.navigation_buttons[1::]:
             navigation_button.pack()
 
     def set_widgets_fonts(self):
-        scale = GeneralSettings.settings["scale_r"]
-        button_font = ("Comic Sans MS", 14 * scale, "bold")
+        scale = AppearanceSettings.settings["scale_r"]
+        button_font = ("Comic Sans MS", int(14 * scale), "bold")
         for navigation_button in self.navigation_buttons:
             navigation_button.configure(font=button_font)
 
     def set_widgets_sizes(self):
-        scale = GeneralSettings.settings["scale_r"]
+        scale = AppearanceSettings.settings["scale_r"]
         for navigation_button in self.navigation_buttons:
-            navigation_button.configure(height=34 * scale, width=self.width * scale)
+            navigation_button.configure(height=int(34 * scale), width=self.width)
 
-    def update_accent_color(self) -> None:
-        self.set_accent_color()
+    def update_widgets_accent_color(self) -> None:
+        self.set_widgets_accent_color()
 
-    def set_accent_color(self):
+    def set_widgets_accent_color(self):
         for i, navigation_button in enumerate(self.navigation_buttons):
             if not self.navigation_buttons_clicked_state[i]:
                 navigation_button.configure(
-                    fg_color=ThemeSettings.settings["root"]["accent_color"]["hover"]
+                    fg_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
                 )
             else:
                 navigation_button.configure(
-                    fg_color=ThemeSettings.settings["root"]["accent_color"]["normal"]
+                    fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
                 )
 
-    def reset_widgets_colors(self):
-        ...
+    def update_widgets_colors(self):
+        """Update colors for the widgets."""

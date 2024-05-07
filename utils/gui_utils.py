@@ -12,3 +12,4 @@ class GuiUtils:
         when no action is desired.
         """
         pass
+

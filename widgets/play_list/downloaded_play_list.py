@@ -1,16 +1,18 @@
 from widgets.play_list import PlayList
 from widgets.video.downloaded_video import DownloadedVideo
 from widgets.video.downloading_video import DownloadingVideo
-from typing import Literal, List, Any
+import customtkinter as ctk
+from typing import Literal, List
 from utils import GuiUtils
 import threading
-from settings import GeneralSettings
+from settings import AppearanceSettings
 
 
 class DownloadedPlayList(PlayList):
     def __init__(
             self,
-            master: Any = None,
+            root: ctk.CTk = None,
+            master: ctk.CTkScrollableFrame = None,
             width: int = 0,
             height: int = 0,
             # playlist info
@@ -27,6 +29,7 @@ class DownloadedPlayList(PlayList):
         self.videos: List[DownloadedVideo] = []
 
         super().__init__(
+            root=root,
             master=master,
             width=width,
             height=height,
@@ -43,8 +46,9 @@ class DownloadedPlayList(PlayList):
     def display_downloaded_widgets(self):
         for downloading_video in self.downloading_videos:
             video = DownloadedVideo(
+                root=self.root,
                 master=self.playlist_item_frame,
-                height=70 * GeneralSettings.settings["scale_r"],
+                height=70 * AppearanceSettings.settings["scale_r"],
                 width=self.playlist_item_frame.winfo_width() - 20,
                 # video info
                 thumbnails=downloading_video.thumbnails,
@@ -80,10 +84,6 @@ class DownloadedPlayList(PlayList):
                 self.playlist_video_count_label.configure(
                     text=self.playlist_video_count
                 )
-
-    # configure widgets colors
-    def set_accent_color(self):
-        super().set_accent_color()
 
     def kill(self):
         for video in self.videos:

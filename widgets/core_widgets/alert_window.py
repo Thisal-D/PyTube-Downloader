@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from PIL import Image
 from typing import Callable
-from settings import ThemeSettings, GeneralSettings
+from settings import AppearanceSettings, GeneralSettings
 
 
 class AlertWindow(ctk.CTkToplevel):
@@ -19,11 +19,11 @@ class AlertWindow(ctk.CTkToplevel):
 
         super().__init__(
             master=master,
-            fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"],
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             width=width,
             height=height)
 
-        scale = GeneralSettings.settings["scale_r"]
+        scale = AppearanceSettings.settings["scale_r"]
 
         self.master: ctk.CTk = master
         self.width = width
@@ -51,7 +51,7 @@ class AlertWindow(ctk.CTkToplevel):
         self.error_msg_label = ctk.CTkLabel(
             master=self,
             text=alert_msg,
-            text_color=ThemeSettings.settings["alert_window"]["msg_color"]["normal"],
+            text_color=AppearanceSettings.settings["alert_window"]["msg_color"]["normal"],
             font=("Arial", 13 * scale, "bold")
         )
         self.error_msg_label.pack(pady=(20 * scale, 15 * scale), padx=(0, 30 * scale))
@@ -59,12 +59,12 @@ class AlertWindow(ctk.CTkToplevel):
         if cancel_button_text is not None:
             self.cancel_button = ctk.CTkButton(
                 border_width=2,
-                border_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
+                border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 master=self,
-                hover_color=ThemeSettings.settings["root"]["accent_color"]["hover"],
+                hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
                 command=self.on_click_cancel_button,
                 text=cancel_button_text,
-                fg_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
+                fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 width=100 * scale,
                 height=28 * scale,
                 font=("Arial", 12 * scale, "bold")
@@ -74,12 +74,12 @@ class AlertWindow(ctk.CTkToplevel):
         if ok_button_text is not None:
             self.ok_button = ctk.CTkButton(
                 border_width=2,
-                border_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
+                border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 master=self,
-                hover_color=ThemeSettings.settings["root"]["accent_color"]["hover"],
+                hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
                 command=self.on_click_ok_button,
                 text=ok_button_text,
-                fg_color=ThemeSettings.settings["root"]["accent_color"]["normal"],
+                fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 width=100 * scale,
                 height=28 * scale,
                 font=("Arial", 12 * scale, "bold")
