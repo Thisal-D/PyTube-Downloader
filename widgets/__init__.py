@@ -12,9 +12,9 @@ from .components import NetworkPanel
 from .components import DownloadsPanel
 from .components import AboutPanel
 from .components import NavigationPanel
-from .components import contributor_profile_widget
+from .components import ContributorProfileWidget
 
 from .core_widgets import SettingPanel
 from .core_widgets import AlertWindow
-from .core_widgets import ContextMenu
 from .core_widgets import TrayMenu
+from .core_widgets import ContextMenu

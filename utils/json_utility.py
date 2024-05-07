@@ -31,7 +31,12 @@ class JsonUtility:
             data (dict): The JSON data to be written.
         """
         with open(file_path, "w") as json_file:
-            json.dump(obj=data, fp=json_file, indent=4, sort_keys=False)
+            try:
+                json.dump(obj=data, fp=json_file, indent=4, sort_keys=True)
+            except Exception as error:
+                print(f"json_utility.py L-37 : {error}")
+                json.dump(obj=data, fp=json_file, indent=4, sort_keys=False)
+                
 
     @staticmethod
     def convert_lists_to_tuples(data: dict) -> dict:

@@ -2,6 +2,7 @@ import os
 import threading
 import webbrowser
 from typing import Any, Dict
+import random
 import customtkinter as ctk
 from PIL import Image
 from utils import (
@@ -12,9 +13,7 @@ from utils import (
 )
 from services import ThemeManager
 from settings import (
-    ThemeSettings,
-    ScaleSettings,
-    GeneralSettings
+    AppearanceSettings,
 )
 from .contributor_profile_widget import ContributorProfileWidget
 
@@ -26,77 +25,79 @@ class AboutPanel(ctk.CTkFrame):
 
         super().__init__(
             master=master,
-            fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"]
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
 
         self.name_title_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text="Name"
         )
         self.dash1_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text=":"
         )
         self.name_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text=""
         )
 
         self.version_title_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text="Version"
         )
         self.dash2_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text=":"
         )
         self.version_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text=""
         )
 
         self.site_title_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text="Site"
         )
         self.dash3_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text=":"
         )
         self.site_button = ctk.CTkButton(
             master=self,
-            fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"],
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             hover=False,
-            width=1,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            anchor="w",
+            corner_radius=0,
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text=""
         )
 
         self.contributors_title_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text="Contributors"
         )
         self.dash4_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text=":"
         )
         self.contributors_status_label = ctk.CTkLabel(
             master=self,
-            text_color=ThemeSettings.settings["settings_panel"]["text_color"],
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             text="Loading..."
         )
         self.contributors_frame = ctk.CTkScrollableFrame(
-            fg_color=ThemeSettings.settings["root"]["fg_color"]["normal"],
+            scrollbar_fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             master=self
         )
 
@@ -104,7 +105,7 @@ class AboutPanel(ctk.CTkFrame):
             master=self,
             justify="left",
             text="",
-            text_color=ThemeSettings.settings["settings_panel"]["warning_color"]["normal"]
+            text_color=AppearanceSettings.settings["settings_panel"]["warning_color"]["normal"]
         )
 
         self.app_info: Dict = JsonUtility.read_from_file("data\\info.json")
@@ -112,8 +113,8 @@ class AboutPanel(ctk.CTkFrame):
         self.set_widgets_fonts()
         self.set_widgets_sizes()
         self.configure_values()
-        self.set_accent_color()
-        self.bind_events()
+        self.set_widgets_accent_color()
+        self.bind_widgets_events()
         ThemeManager.register_widget(self)
         
     def configure_values(self):
@@ -134,6 +135,12 @@ class AboutPanel(ctk.CTkFrame):
             }
 
     def configure_contributors_info(self):
+        # randomly choose to update info :D
+        if random.choice((False,) * 15 + (True,)*5):
+            # delete old profile images
+            FileUtility.delete_files("assets//profile images", ["this directory is necessary"])
+            self.app_info["contributors"] = {}
+            
         # retrieve contributors data from GitHub repo as list[dict]
         contributors_data = GitHubUtility.get_contributors_data()
         # if it success -> return Dict
@@ -144,17 +151,24 @@ class AboutPanel(ctk.CTkFrame):
             if len(self.app_info["contributors"]) != len(contributors_data):
                 # if contributors data is changed, call update_contributors_info function to update old data dict
                 self.update_contributors_info(contributors_data)
-
-        # place forget the loading label
-        self.contributors_status_label.grid_forget()
-        # place frame for show  contributors info
-        self.contributors_frame.grid(
-            row=3,
-            column=2,
-            pady=(16 * GeneralSettings.settings["scale_r"], 0),
-            sticky="we",
-            columnspan=10,
-        )
+        else:
+            if len(self.app_info["contributors"]) == 0:
+                self.contributors_status_label.configure(
+                    text="Failed to retrieve contributors data...!",
+                    text_color=AppearanceSettings.settings["settings_panel"]["warning_color"]["normal"]
+                )
+                
+        if len(self.app_info["contributors"]) != 0:
+            # place forget the loading label
+            self.contributors_status_label.grid_forget()
+            # place frame for show  contributors info
+            self.contributors_frame.grid(
+                row=3,
+                column=2,
+                pady=(16 * AppearanceSettings.settings["scale_r"], 0),
+                sticky="w",
+                columnspan=10,
+            )
 
         # iterate through contributors
         profile_images_directory = "assets//profile images//"
@@ -227,25 +241,25 @@ class AboutPanel(ctk.CTkFrame):
         # save info to json
         JsonUtility.write_to_file("data\\info.json", self.app_info)
 
-    def bind_events(self):
+    def bind_widgets_events(self):
         self.site_button.bind("<Enter>", lambda event: self.site_button.configure(
-            text_color=ThemeSettings.settings["root"]["accent_color"]["hover"]))
+            text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]))
         self.site_button.bind("<Leave>", lambda event: self.site_button.configure(
-            text_color=ThemeSettings.settings["root"]["accent_color"]["normal"]))
+            text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]))
 
-    def set_accent_color(self):
-        self.name_label.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
-        self.version_label.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
-        self.site_button.configure(text_color=ThemeSettings.settings["root"]["accent_color"]["normal"])
+    def set_widgets_accent_color(self):
+        self.name_label.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
+        self.version_label.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
+        self.site_button.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
 
-    def update_accent_color(self):
-        self.set_accent_color()
+    def update_widgets_accent_color(self):
+        self.set_widgets_accent_color()
 
-    def reset_widgets_colors(self):
-        ...
+    def update_widgets_colors(self):
+        """Update colors for the widgets."""
 
     def place_widgets(self):
-        scale = GeneralSettings.settings["scale_r"]
+        scale = AppearanceSettings.settings["scale_r"]
         pady = 16 * scale
         self.name_title_label.grid(row=0, column=0, padx=(100, 0), pady=(50, 0), sticky="w")
         self.dash1_label.grid(row=0, column=1, padx=(30, 30), pady=(50, 0), sticky="w")
@@ -258,20 +272,20 @@ class AboutPanel(ctk.CTkFrame):
         self.site_title_label.grid(row=2, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash3_label.grid(row=2, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.site_button.grid(row=2, column=2, pady=(pady, 0), sticky="w")
+        self.site_button.configure(width=20)
 
         self.contributors_title_label.grid(row=3, column=0, padx=(100, 0), pady=(pady, 0), sticky="nw")
         self.dash4_label.grid(row=3, column=1, padx=(30, 30), pady=(pady, 0), sticky="nw")
         self.contributors_status_label.grid(row=3, column=2, pady=(pady, 0), sticky="w")
-
         self.disclaimer_label.place(x=100, rely=1, y=-60 * scale)
 
     def set_widgets_sizes(self):
-        scale = GeneralSettings.settings["scale_r"]
+        scale = AppearanceSettings.settings["scale_r"]
         self.contributors_frame.configure(height=200 * scale, width=500 * scale)
         self.contributors_frame._scrollbar.grid_forget()
 
     def set_widgets_fonts(self):
-        scale = GeneralSettings.settings["scale_r"]
+        scale = AppearanceSettings.settings["scale_r"]
         title_font = ("Segoe UI", 13 * scale, "bold")
         self.name_title_label.configure(font=title_font)
         self.dash1_label.configure(font=title_font)

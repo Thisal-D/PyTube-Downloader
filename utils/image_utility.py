@@ -1,6 +1,5 @@
 from typing import Tuple
 from urllib import request
-
 from PIL import Image, ImageDraw
 
 

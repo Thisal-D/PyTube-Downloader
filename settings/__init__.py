@@ -1,3 +1,3 @@
-from .theme_settings import ThemeSettings
+from .appearance_settings import AppearanceSettings
 from .general_settings import GeneralSettings
-from .scale_settings import ScaleSettings
+from .widget_position_settings import WidgetPositionSettings
