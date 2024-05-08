@@ -4,3 +4,4 @@ pillow
 pytube
 pyautogui
 pystray
+pyperclip
