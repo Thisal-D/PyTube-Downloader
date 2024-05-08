@@ -19,7 +19,7 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 - **Format Selection:** Choose from various video and audio formats for downloading.
 - **Progress Tracking:** Track the download progress within the application.
 - **Simultaneous Downloads:** Download multiple YouTube videos simultaneously, saving time and increasing efficiency. Users have full control over the number of simultaneous downloads, allowing for a personalized downloading experience.
-- **System Tray Icon Mode:** Access the application conveniently from the system tray, providing quick access to essential features and controls without cluttering the desktop. Users can easily minimize the application to the system tray for unobtrusive operation.
+- **System Tray Icon Mode:** Users can easily minimize the application to the system tray for unobtrusive operation.
 - **Theme Customization:** Personalize your experience with the ability to switch between dark and light themes. Additionally, customize the accent color to suit your preferences, creating a visually pleasing interface tailored to your style.
 
 ---
