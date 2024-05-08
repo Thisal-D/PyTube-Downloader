@@ -19,17 +19,22 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 - **Format Selection:** Choose from various video and audio formats for downloading.
 - **Progress Tracking:** Track the download progress within the application.
 - **Simultaneous Downloads:** Download multiple YouTube videos simultaneously, saving time and increasing efficiency. Users have full control over the number of simultaneous downloads, allowing for a personalized downloading experience.
+- **System Tray Icon Mode:** Access the application conveniently from the system tray, providing quick access to essential features and controls without cluttering the desktop. Users can easily minimize the application to the system tray for unobtrusive operation.
 - **Theme Customization:** Personalize your experience with the ability to switch between dark and light themes. Additionally, customize the accent color to suit your preferences, creating a visually pleasing interface tailored to your style.
 
 ---
 
 ### Dark Theme
 
-![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6041696e-bdfd-43ca-b69b-3e2241b0a9bd)
-![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/adeaa30b-518d-49d3-a9f6-7ffdfe878665)
-![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/4a057cfd-6377-4753-8167-d7deff817661)
+![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/be798646-ccc8-4691-8084-c2f4969e5069)
+![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/262aa64c-1a42-43a9-b932-620ebc2faa52)
+![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7230212f-0948-43f2-80f3-3850b71c36f0)
+![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/72a1bffd-e4a2-4fef-ba3f-903f1875b6d2)
+![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/78e3ff84-962e-4b69-8b12-9a93fbea4978)
+![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/bb01e14e-6ca8-4be0-ba07-c43e64af400a)
 
 ---
+
 
 ## Technologies Used
 

@@ -4,18 +4,14 @@ import threading
 from typing import Literal, Dict
 from widgets import (
     AddedVideo, DownloadingVideo, DownloadedVideo,
-)
-from widgets import (
     AddedPlayList, DownloadingPlayList, DownloadedPlayList,
+    SettingPanel, ContextMenu, TrayMenu, AlertWindow
 )
-from widgets import (
-    SettingPanel
-)
-from Services import (
+from services import (
     LoadingIndicatorController,
     LoadManager,
     DownloadManager,
-    ThemeManager
+    ThemeManager,
 )
 from functions import (
     save_settings,
@@ -73,8 +69,11 @@ class App(ctk.CTk):
         self.downloading_frame_info_label_placed = False
         self.downloaded_frame_info_label_placed = False
 
+        self.context_menu = None
         self.settings_panel = None
         self.settings_btn = None
+
+        self.tray_menu = None
 
     def create_widgets(self):
         self.url_entry = ctk.CTkEntry(
@@ -158,7 +157,6 @@ class App(ctk.CTk):
 
         self.settings_panel = SettingPanel(
             master=self,
-            theme_settings=self.theme_settings,
             general_settings=self.general_settings,
             theme_settings_change_callback=self.update_theme_settings,
             general_settings_change_callback=self.update_general_settings
@@ -174,6 +172,12 @@ class App(ctk.CTk):
             command=self.open_settings
         )
 
+        self.context_menu = ContextMenu(
+            master=self,
+            width=100,
+            height=120,
+        )
+
     def place_widgets(self):
         self.settings_btn.place(x=-5, y=4)
         self.url_entry.place(x=43, y=4)
@@ -184,7 +188,6 @@ class App(ctk.CTk):
         self.navigate_downloading_frame_btn.place(y=50)
         self.navigate_downloaded_frame_btn.place(y=50)
         self.place_frame(self.added_content_scroll_frame, "added")
-        self.bind("<Configure>", self.run_geometry_tracker)
 
     def place_forget_frames(self):
         self.added_content_scroll_frame.place_forget()
@@ -618,9 +621,6 @@ class App(ctk.CTk):
                 video_url=yt_url,
                 # download btn callback
                 video_download_button_click_callback=self.download_video,
-                # color info
-                accent_color=self.theme_settings["root"]["accent_color"],
-                theme_settings=self.theme_settings["video_object"]
             ).pack(fill="x", pady=2)
 
         else:
@@ -631,10 +631,7 @@ class App(ctk.CTk):
 
                 playlist_download_button_click_callback=self.download_playlist,
                 video_download_button_click_callback=self.download_video,
-                playlist_url=yt_url,
-
-                accent_color=self.theme_settings["root"]["accent_color"],
-                theme_settings=self.theme_settings["video_object"]
+                playlist_url=yt_url
             ).pack(fill="x", pady=2)
 
     def download_video(self, video: AddedVideo):
@@ -657,9 +654,6 @@ class App(ctk.CTk):
             download_type=video.download_type,
             download_directory=self.general_settings['download_directory'],
             video_download_complete_callback=self.downloaded_video,
-
-            accent_color=self.theme_settings["root"]["accent_color"],
-            theme_settings=self.theme_settings["video_object"]
         ).pack(fill="x", pady=2)
 
     def download_playlist(self, playlist: AddedPlayList):
@@ -681,9 +675,6 @@ class App(ctk.CTk):
             download_directory=self.general_settings['download_directory'],
             # playlist download completed callback functions
             playlist_download_complete_callback=self.downloaded_playlist,
-            # color info
-            accent_color=self.theme_settings["root"]["accent_color"],
-            theme_settings=self.theme_settings["video_object"]
         ).pack(fill="x", pady=2)
 
     def downloaded_video(self, video: DownloadingVideo):
@@ -704,10 +695,7 @@ class App(ctk.CTk):
 
             download_path=video.download_file_name,
             download_quality=video.download_quality,
-            download_type=video.download_type,
-
-            theme_settings=self.theme_settings["video_object"],
-            accent_color=self.theme_settings["root"]["accent_color"],
+            download_type=video.download_type
         ).pack(fill="x", pady=2)
 
     def downloaded_playlist(self, playlist: DownloadingPlayList):
@@ -723,19 +711,50 @@ class App(ctk.CTk):
             playlist_title=playlist.playlist_title,
             playlist_video_count=playlist.playlist_video_count,
             playlist_url=playlist.playlist_url,
-            videos=playlist.videos,
-            # color info
-            accent_color=self.theme_settings["root"]["accent_color"],
-            theme_settings=self.theme_settings["video_object"],
+            videos=playlist.videos
         ).pack(fill="x", pady=2)
 
-    def update_theme_settings(self, theme_settings: Dict, updated: Literal["accent_color", "theme_mode"] = None):
+    def open_context_menu(self, _event):
+        pointer_x = self.winfo_pointerx() - self.winfo_rootx()
+        pointer_y = self.winfo_pointery() - self.winfo_rooty()
+
+        self.context_menu.place(x=pointer_x, y=pointer_y)
+
+    def close_context_menu(self, _event):
+        pointer_x = self.winfo_pointerx() - self.winfo_rootx()
+        pointer_y = self.winfo_pointery() - self.winfo_rooty()
+
+        if (pointer_x < self.url_entry.winfo_x() or pointer_y < self.url_entry.winfo_y() or
+                pointer_x > (self.url_entry.winfo_x() + self.url_entry.winfo_width()) or
+                pointer_y > (self.url_entry.winfo_y() + self.url_entry.winfo_height())):
+            self.context_menu.place_forget()
+
+    def close_context_menu_directly(self, _event):
+        self.context_menu.place_forget()
+
+    def bind_events(self):
+        self.url_entry.bind("<Button-3>", self.open_context_menu)
+        self.url_entry.bind("<Button-2>", self.open_context_menu)
+        self.bind("<Button-2>", self.close_context_menu)
+        self.bind("<Button-3>", self.close_context_menu)
+
+        self.url_entry.bind("<Button-1>", self.close_context_menu_directly)
+        self.bind("<Button-1>", self.close_context_menu_directly)
+        self.bind('<FocusOut>', self.close_context_menu_directly)
+        self.bind("<Configure>", self.run_geometry_tracker)
+
+    def update_theme_settings(
+            self,
+            theme_settings: Dict,
+            updated: Literal["accent_color", "theme_mode", "opacity"] = None):
         self.theme_settings = theme_settings
         if updated == "theme_mode":
             ctk.set_appearance_mode(theme_settings["root"]["theme_mode"])
         if updated == "accent_color":
             self.set_accent_color()
             ThemeManager.update_accent_color(theme_settings["root"]["accent_color"])
+        if updated == "opacity":
+            self.attributes("-alpha", theme_settings["opacity"])
         save_settings("settings/theme.json", self.theme_settings)
 
     def update_general_settings(self, general_settings):
@@ -758,18 +777,47 @@ class App(ctk.CTk):
         self.destroy()
         os._exit(0)
 
+    def cancel_app_closing(self):
+        self.bind_events()
+
+    def show_close_confirmation_dialog(self):
+        self.restore_from_tray()
+        AlertWindow(
+            master=self,
+            alert_msg="Are you sure you want to exit the application?",
+            ok_button_text="ok",
+            cancel_button_text="cancel",
+            ok_button_callback=self.on_app_closing,
+            cancel_button_callback=self.cancel_app_closing,
+            callback=self.cancel_app_closing
+        )
+
+    def restore_from_tray(self):
+        self.tray_menu.stop()
+        self.deiconify()
+
+    def minimize_to_tray(self):
+        self.iconify()
+        self.tray_menu = TrayMenu(
+            open_command=self.restore_from_tray,
+            quit_command=self.show_close_confirmation_dialog,
+        )
+        self.withdraw()
+        threading.Thread(target=self.tray_menu.run, daemon=True).start()
+
     def run(self):
-        self.protocol("WM_DELETE_WINDOW", self.on_app_closing)
+        self.protocol("WM_DELETE_WINDOW", self.minimize_to_tray)
         self.mainloop()
 
     def configure_services_values(self):
         DownloadManager.set_max_concurrent_downloads(self.general_settings["simultaneous_downloads"])
         LoadManager.set_max_concurrent_loads(self.general_settings["simultaneous_loads"])
+        ThemeManager.configure_theme_settings(self.theme_settings)
 
     @staticmethod
     def initiate_services():
-        threading.Thread(target=ThemeManager.theme_tracker).start()
-        threading.Thread(target=LoadingIndicatorController.start).start()
+        threading.Thread(target=ThemeManager.theme_tracker, daemon=True).start()
+        threading.Thread(target=LoadingIndicatorController.start, daemon=True).start()
         # loading and downloading handle
-        threading.Thread(target=LoadManager.manage_load_queue).start()
-        threading.Thread(target=DownloadManager.manage_download_queue).start()
+        threading.Thread(target=LoadManager.manage_load_queue, daemon=True).start()
+        threading.Thread(target=DownloadManager.manage_download_queue, daemon=True).start()
