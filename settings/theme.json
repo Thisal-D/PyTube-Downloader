@@ -1,41 +1,239 @@
 {
-        "app_btn_fg_color": [
-                "#eeeeee",
-                "#202020"
-        ],
-        "app_btn_fg_hover_color": [
-                "#cccccc",
-                "#252525"
-        ],
-        "app_fg_color": [
-                "#ffffff",
-                "#101010"
-        ],
-        "app_frame_fg_color": [
-                "#ffffff",
-                "#101010"
-        ],
-        "app_special_color": "#1f9bfd",
-        "app_theme_color": "#1f9bfd",
-        "app_theme_mode": "System",
-        "app_widget_fg_color": [
-                "#ffffff",
-                "#101010"
-        ],
-        "app_widget_text_color": [
-                "#404040",
-                "#aaaaaa"
-        ],
-        "default_theme_colors": [
-                "#1f9bfd",
-                "#5ffd66",
-                "#fa63ee",
-                "#f3465e",
-                "#f5ab55",
-                "#f1e85d",
-                "#adadad",
-                "#9d9d9d",
-                "#808080",
-                "#454545"
-        ]
+        "alert_window": {
+                "fg_color": {
+                        "normal": [
+                                "#ffffff",
+                                "#0a0c12"
+                        ]
+                },
+                "msg_color": {
+                        "normal": "#ee0000"
+                }
+        },
+        "navigation_button": {
+                "fg_color": {
+                        "hover": [
+                                "#f2f4f9",
+                                "#32373e"
+                        ],
+                        "normal": [
+                                "#e2e4e9",
+                                "#21262d"
+                        ]
+                }
+        },
+        "navigation_frame": {
+                "fg_color": {
+                        "hover": [
+                                "#ffffff",
+                                "#0a0c12"
+                        ],
+                        "normal": [
+                                "#ffffff",
+                                "#0a0c12"
+                        ]
+                }
+        },
+        "radio_btn": {
+                "text_color": {
+                        "hover": [
+                                "#606060",
+                                "#ffffff"
+                        ],
+                        "normal": [
+                                "#909090",
+                                "#939aa2"
+                        ]
+                }
+        },
+        "root": {
+                "accent_color": {
+                        "default": true,
+                        "hover": "#166afe",
+                        "normal": "#1578ff"
+                },
+                "fg_color": {
+                        "hover": [
+                                "#ffffff",
+                                "#0a0c12"
+                        ],
+                        "normal": [
+                                "#ffffff",
+                                "#0a0c12"
+                        ]
+                },
+                "theme_mode": "dark"
+        },
+        "settings_panel": {
+                "accent_colors": {
+                        "0": {
+                                "hover": "#166afe",
+                                "normal": "#1578ff"
+                        },
+                        "1": {
+                                "hover": "#ffac1a",
+                                "normal": "#ff9f00"
+                        },
+                        "2": {
+                                "hover": "#00ff80",
+                                "normal": "#00ff45"
+                        },
+                        "3": {
+                                "hover": "#ff45e8",
+                                "normal": "#ff32c3"
+                        },
+                        "4": {
+                                "hover": "#ffd100",
+                                "normal": "#ffbf00"
+                        },
+                        "5": {
+                                "hover": "#882dff",
+                                "normal": "#7a14ff"
+                        },
+                        "6": {
+                                "hover": "#32ff32",
+                                "normal": "#25dd22"
+                        },
+                        "7": {
+                                "hover": "#ff7676",
+                                "normal": "#ff6363"
+                        },
+                        "8": {
+                                "hover": "#d966ff",
+                                "normal": "#c94dff"
+                        },
+                        "9": {
+                                "hover": "#66ffaa",
+                                "normal": "#4dff87"
+                        },
+                        "a": {
+                                "hover": "#73ff73",
+                                "normal": "#5bff5b"
+                        },
+                        "b": {
+                                "hover": "#96ff73",
+                                "normal": "#7aff5b"
+                        },
+                        "c": {
+                                "hover": "#fffd73",
+                                "normal": "#ffea5b"
+                        },
+                        "d": {
+                                "hover": "#ffc573",
+                                "normal": "#ffa65b"
+                        },
+                        "e": {
+                                "hover": "#ff9f7a",
+                                "normal": "#ff895f"
+                        },
+                        "f": {
+                                "hover": "#ff6347",
+                                "normal": "#ff4500"
+                        }
+                },
+                "warning_color": {
+                        "hover": "#ff3131",
+                        "normal": "#f95568"
+                }
+        },
+        "url_adding_button": {
+                "fg_color": {
+                        "hover": [
+                                "#ffffff",
+                                "#272c33"
+                        ],
+                        "normal": [
+                                "#f4f6fd",
+                                "#161b22"
+                        ]
+                }
+        },
+        "url_entry": {
+                "border_color": {
+                        "hover": [
+                                "#d0d7de",
+                                "#40464e"
+                        ],
+                        "normal": [
+                                "#d0d7de",
+                                "#30363d"
+                        ]
+                },
+                "fg_color": {
+                        "hover": [
+                                "#f9faff",
+                                "#21262d"
+                        ],
+                        "normal": [
+                                "#f6f8fa",
+                                "#161b22"
+                        ]
+                },
+                "text_color": {
+                        "hover": [
+                                "#1f2328",
+                                "#ffffff"
+                        ],
+                        "normal": [
+                                "#636c76",
+                                "#939aa2"
+                        ]
+                }
+        },
+        "video_object": {
+                "btn_fg_color": {
+                        "hover": [
+                                "#ffffff",
+                                "#2c2e34"
+                        ],
+                        "normal": [
+                                "#dedede",
+                                "#1b1d23"
+                        ]
+                },
+                "btn_text_color": {
+                        "hover": [
+                                "#202020",
+                                "#ffffff"
+                        ],
+                        "normal": [
+                                "#505050",
+                                "#aaaaaa"
+                        ]
+                },
+                "error_color": {
+                        "hover": "#ff3131",
+                        "normal": "#ee0000"
+                },
+                "fg_color": {
+                        "hover": [
+                                "#ffffff",
+                                "#202020"
+                        ],
+                        "normal": [
+                                "#ededed",
+                                "#151515"
+                        ]
+                },
+                "remove_btn_text_color": {
+                        "hover": [
+                                "#ffffff",
+                                "#ffffff"
+                        ],
+                        "normal": [
+                                "#cdcdcd",
+                                "#cdcdcd"
+                        ]
+                },
+                "text_color": {
+                        "hover": [
+                                "#707070",
+                                "#aaaaaa"
+                        ],
+                        "normal": [
+                                "#404040",
+                                "#bbbbbb"
+                        ]
+                }
+        }
 }
