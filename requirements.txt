@@ -1,7 +1,0 @@
-# Project dependencies
-customtkinter==5.2.2 # for the ui
-pillow
-pytube
-pyautogui
-pystray
-pyperclip
