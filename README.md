@@ -22,6 +22,7 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 - **Automatic Download With Predefined Settings** Users can set predefined download settings such as preferred video quality, audio format, download location, and more. Once a YouTube URL is added, the video will load and then start to download automatically according to these predefined settings.
 - **System Tray Icon Mode:** Users can easily minimize the application to the system tray for unobtrusive operation.
 - **Theme Customization:** Personalize your experience with the ability to switch between dark and light themes. Additionally, customize the accent color to suit your preferences, creating a visually pleasing interface tailored to your style.
+- **Scaling Preferences:** Users can scale the application interface from 100% to 200%, adjusting the size of widgets and elements for better readability and usability.
 
 ---
 
@@ -30,8 +31,8 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 ![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/72489e71-95a6-4fa8-8da4-591a7d6e7adb)
 ![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6f4ce65d-93d5-4451-9bce-5b68ad276faa)
 ![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/154d93da-3b39-49b5-b98a-a658907ac283)
-![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/66318196-3d48-4c13-9ac4-93bbbce52248)
-![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/cb8f9332-025e-40ba-91d8-d66c35cc2d42)
+![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/c5d33638-f613-4256-8b0b-cc3f1b90457a)
+![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/fb3e7215-921c-464c-8aa7-33b104a6af91)
 ![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3517839d-1774-4b3d-b02d-d6c3cff94811)
 
 ---
