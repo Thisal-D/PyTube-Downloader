@@ -4,7 +4,7 @@ from .accent_color_button import AccentColorButton
 from services import ThemeManager
 from utils import SettingsValidateUtility
 from settings import (
-    AppearanceSettings,
+    AppearanceSettings
 )
 
 
@@ -130,7 +130,7 @@ class AppearancePanel(ctk.CTkFrame):
         self.scale_change_slider = ctk.CTkSlider(
             master=self,
             command=self.change_scale,
-            number_of_steps=5,
+            number_of_steps=100,
             from_=100,
             to=200,
         )

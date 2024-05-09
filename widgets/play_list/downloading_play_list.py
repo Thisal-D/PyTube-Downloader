@@ -5,7 +5,7 @@ from widgets.play_list import PlayList
 from widgets.video.downloading_video import DownloadingVideo
 from widgets.video.added_video import AddedVideo
 from utils import GuiUtils
-from settings import AppearanceSettings, WidgetPositionSettings
+from settings import AppearanceSettings
 
 
 class DownloadingPlayList(PlayList):
@@ -190,7 +190,8 @@ class DownloadingPlayList(PlayList):
     def indicate_downloading_failure(self):
         self.re_download_btn.place(
             relx=1,
-            y=WidgetPositionSettings.settings["DownloadingPlayList"][str(AppearanceSettings.settings["scale_r"])][3],
+            rely=0.5,
+            anchor="w",
             x=-80 * AppearanceSettings.settings["scale_r"])
         self.status_label.configure(
             text="Failed", text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"]
@@ -225,7 +226,9 @@ class DownloadingPlayList(PlayList):
         self.download_progress_bar = ctk.CTkProgressBar(master=self.sub_frame)
         self.download_percentage_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.status_label = ctk.CTkLabel(master=self.sub_frame, text="Waiting")
-        self.re_download_btn = ctk.CTkButton(self, text="⟳", command=self.re_download_videos, hover=False)
+        self.re_download_btn = ctk.CTkButton(
+            self.playlist_main_frame, text="⟳", command=self.re_download_videos, hover=False
+        )
         self.videos_status_counts_label = ctk.CTkLabel(
             master=self.sub_frame,
             text=f"Failed : {len(self.failed_videos)} |   "
@@ -243,17 +246,17 @@ class DownloadingPlayList(PlayList):
         self.download_percentage_label.configure(font=("arial", 12 * scale, "bold"))
         self.status_label.configure(font=("arial", 12 * scale, "bold"))
         self.re_download_btn.configure(font=("arial", 20 * scale, "normal"))
-        self.videos_status_counts_label.configure(font=("arial", 11 * scale, "bold"))
+        self.videos_status_counts_label.configure(font=("Segoe UI", 11 * scale, "normal"))
 
     def set_widgets_sizes(self):
         super().set_widgets_sizes()
 
         scale = AppearanceSettings.settings["scale_r"]
 
-        self.sub_frame.configure(height=self.height - 4)
+        self.sub_frame.configure(height=self.height - 3)
         self.download_progress_bar.configure(height=8 * scale)
-        self.download_percentage_label.configure(height=20 * scale)
-        self.status_label.configure(height=20 * scale)
+        self.download_percentage_label.configure(height=15 * scale)
+        self.status_label.configure(height=15 * scale)
         self.re_download_btn.configure(width=15 * scale, height=15 * scale)
         self.videos_status_counts_label.configure(height=15 * scale)
 
@@ -290,8 +293,6 @@ class DownloadingPlayList(PlayList):
     def bind_widgets_events(self):
         super().bind_widgets_events()
 
-        self.bind("<Configure>", self.configure_widget_sizes)
-
         def on_mouse_enter_re_download_btn(_event):
             self.re_download_btn.configure(
                 fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
@@ -311,18 +312,16 @@ class DownloadingPlayList(PlayList):
     def place_widgets(self):
         super().place_widgets()
 
-        scale = AppearanceSettings.settings["scale_r"]
-        y = WidgetPositionSettings.settings["DownloadingPlayList"][str(scale)]
-
-        self.title_label.place(width=-20 * scale, relwidth=0.5)
-        self.channel_btn.place(width=-20 * scale, relwidth=0.5)
-        self.url_label.place(width=-20 * scale, relwidth=0.5)
-        self.sub_frame.place(relx=0.5, y=2, x=50 * scale)
-        self.download_percentage_label.place(relx=0.5, anchor="n", y=y[0])
-        self.download_progress_bar.place(relwidth=1, y=y[1])
-        self.status_label.place(relx=0.775, anchor="n", y=y[2])
-        self.videos_status_counts_label.place(rely=1, y=-18 * scale, relx=0.5, anchor="n")
+        self.sub_frame.place(relx=0.5, y=1)
+        self.download_percentage_label.place(relx=0.15, anchor="center", rely=0.2)
+        self.download_progress_bar.place(relwidth=1, rely=0.4, anchor="w")
+        self.status_label.place(relx=0.775, anchor="n", rely=0.55)
+        self.videos_status_counts_label.place(rely=0.875, relx=0.5, anchor="center")
 
     # configure widgets sizes and place location depend on root width
     def configure_widget_sizes(self, _event):
-        self.sub_frame.configure(width=self.winfo_width() / 2 - 150 * AppearanceSettings.settings["scale_r"])
+        scale = AppearanceSettings.settings["scale_r"]
+        self.info_frame.configure(
+            width=self.master.winfo_width() / 2 - (50 * scale + 15 * scale) - (20 * scale)
+        )
+        self.sub_frame.configure(width=(self.winfo_width() / 2) - (110 * scale))

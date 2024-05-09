@@ -4,7 +4,7 @@
         "status": "disable"
     },
     "download_directory": false,
-    "load_thumbnail": true,
+    "load_thumbnail": false,
     "max_simultaneous_downloads": 1,
     "max_simultaneous_loads": 1,
     "update_delay": 0.5,

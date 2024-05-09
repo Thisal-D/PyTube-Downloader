@@ -5,8 +5,7 @@ from PIL import Image
 import webbrowser
 from services import ThemeManager
 from settings import (
-    AppearanceSettings,
-    GeneralSettings
+    AppearanceSettings
 )
 
 

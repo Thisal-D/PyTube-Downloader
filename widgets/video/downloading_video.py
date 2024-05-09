@@ -9,7 +9,6 @@ from pytube import request as pytube_request
 from settings import (
     GeneralSettings,
     AppearanceSettings,
-    WidgetPositionSettings
 )
 from services import (
     DownloadManager
@@ -103,7 +102,8 @@ class DownloadingVideo(Video):
         threading.Thread(target=self.retrieve_file, daemon=True).start()
         self.set_pause_btn()
         self.pause_resume_btn.place(
-            y=WidgetPositionSettings.settings["DownloadingVideo"][str(AppearanceSettings.settings["scale_r"])][6],
+            rely=0.5,
+            anchor="w",
             relx=1,
             x=-80 * AppearanceSettings.settings["scale_r"])
         self.net_speed_label.configure(text="0.0 B/s")
@@ -305,7 +305,8 @@ class DownloadingVideo(Video):
             DownloadManager.unregister_from_active(self)
             self.pause_resume_btn.place_forget()
             self.re_download_btn.place(
-                y=WidgetPositionSettings.settings["DownloadingVideo"][str(AppearanceSettings.settings["scale_r"])][7],
+                rely=0.5,
+                anchor="w",
                 relx=1,
                 x=-80 * AppearanceSettings.settings["scale_r"])
 
@@ -393,8 +394,8 @@ class DownloadingVideo(Video):
 
         self.download_progress_label.configure(font=("arial", 12 * scale, "bold"))
         self.download_percentage_label.configure(font=("arial", 12 * scale, "bold"))
-        self.download_type_label.configure(font=("arial", 12 * scale, "normal"))
-        self.net_speed_label.configure(font=("arial", 12 * scale, "normal"), )
+        self.download_type_label.configure(font=("arial", 12 * scale, "bold"))
+        self.net_speed_label.configure(font=("arial", 12 * scale, "bold"), )
         self.status_label.configure(font=("arial", 12 * scale, "bold"))
         self.re_download_btn.configure(font=("arial", 20 * scale, "normal"))
         self.pause_resume_btn.configure(font=("arial", 20 * scale, "normal"))
@@ -408,7 +409,7 @@ class DownloadingVideo(Video):
 
         scale = AppearanceSettings.settings["scale_r"]
 
-        self.sub_frame.configure(height=self.height - 4)
+        self.sub_frame.configure(height=self.height - 3)
         self.download_progress_bar.configure(height=8 * scale, width=self.sub_frame.winfo_width())
         self.download_progress_label.configure(height=20 * scale)
         self.download_percentage_label.configure(height=20 * scale)
@@ -482,8 +483,6 @@ class DownloadingVideo(Video):
         
         super().bind_widgets_events()
 
-        self.bind("<Configure>", self.configure_widget_sizes)
-
         def on_mouse_enter_re_download_btn(event):
             self.re_download_btn.configure(
                 fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
@@ -520,26 +519,24 @@ class DownloadingVideo(Video):
         """
         Place all widgets using a grid layout.
         """
-        
         super().place_widgets()
-
-        scale = AppearanceSettings.settings["scale_r"]
-        y = WidgetPositionSettings.settings["DownloadingVideo"][str(scale)]
-
-        self.video_title_label.place(relwidth=0.5, width=-150 * scale)
-        self.channel_btn.place(relwidth=0.5, width=-150 * scale)
-        self.url_label.place(relwidth=0.5, width=-150 * scale)
-        self.sub_frame.place(relx=0.5, y=2)
-        self.download_progress_label.place(relx=0.25, anchor="n", y=y[0])
-        self.download_type_label.place(relx=0.75, anchor="n", y=y[1])
-        self.download_progress_bar.place(relwidth=1, y=y[2] * scale)
-        self.download_percentage_label.place(relx=0.115, anchor="n", y=y[3])
-        self.net_speed_label.place(relx=0.445, anchor="n", y=y[4])
-        self.status_label.place(relx=0.775, anchor="n", y=y[5])
+        self.sub_frame.place(relx=0.5, y=1)
+        self.download_progress_label.place(relx=0.25, anchor="center", rely=0.2)
+        self.download_type_label.place(relx=0.75, anchor="center", rely=0.2)
+        self.download_progress_bar.place(relwidth=1, rely=0.5, anchor="w")
+        self.download_percentage_label.place(relx=0.115, anchor="center", rely=0.8)
+        self.net_speed_label.place(relx=0.445, anchor="center", rely=0.8)
+        self.status_label.place(relx=0.775, anchor="center", rely=0.8)
 
     def configure_widget_sizes(self, _event):
         """
         Configure widget sizes based on the parent widget's size.
         """
-        
-        self.sub_frame.configure(width=self.master.winfo_width() / 2 - 100 * AppearanceSettings.settings["scale_r"])
+        scale = AppearanceSettings.settings["scale_r"]
+        self.info_frame.configure(
+            width=(
+                    (self.winfo_width() / 2) - (self.thumbnail_btn.winfo_width() + 5) -
+                    (10 * scale) - (20 * scale)
+            )
+        )
+        self.sub_frame.configure(width=(self.winfo_width() / 2) - (100 * scale))

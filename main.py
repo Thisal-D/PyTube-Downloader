@@ -3,14 +3,13 @@ import customtkinter as ctk
 from widgets import AlertWindow
 from settings import (
     AppearanceSettings,
-    GeneralSettings,
-    WidgetPositionSettings
+    GeneralSettings
 )
 from services import (
     DownloadManager,
     LoadManager,
     ThemeManager,
-    LoadingIndicateManager,
+    LoadingIndicateManager
 )
 from utils import FileUtility
 
@@ -18,7 +17,6 @@ from utils import FileUtility
 # configure settings
 GeneralSettings.initialize("data\\general.json")
 AppearanceSettings.initialize("data\\appearance.json")
-WidgetPositionSettings.initialize("data\\widget_positions.json")
 
 # Initialize app.
 app = App()
@@ -73,5 +71,6 @@ app.set_widgets_accent_color()
 app.set_widgets_fonts()
 # app event bind
 app.bind_widgets_events()
+
 # just rut the app
 app.run()

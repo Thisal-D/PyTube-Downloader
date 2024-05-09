@@ -1,5 +1,4 @@
 import tkinter
-import tkinter as tk
 import webbrowser
 import customtkinter as ctk
 from typing import List, Union, Tuple
@@ -15,8 +14,7 @@ from services import (
     ThemeManager
 )
 from settings import (
-    AppearanceSettings,
-    WidgetPositionSettings
+    AppearanceSettings
 )
 
 
@@ -58,10 +56,11 @@ class Video(ctk.CTkFrame):
         self.length: int = length
         self.thumbnails: List[PhotoImage] = thumbnails
         # widgets
-        self.url_label: Union[tk.Button, None] = None
-        self.video_title_label: Union[tk.Button, None] = None
-        self.channel_btn: Union[tk.Button, None] = None
-        self.len_label: Union[ctk.CTkButton, None] = None
+        self.info_frame: Union[ctk.CTkFrame, None] = None
+        self.url_label: Union[ctk.CTkLabel, None] = None
+        self.video_title_label: Union[ctk.CTkLabel, None] = None
+        self.channel_btn: Union[ctk.CTkButton, None] = None
+        self.video_length_label: Union[ctk.CTkLabel, None] = None
         self.thumbnail_btn: Union[ThumbnailButton, None] = None
         self.remove_btn: Union[ctk.CTkButton, None] = None
 
@@ -85,7 +84,8 @@ class Video(ctk.CTkFrame):
         self.video_title_label.configure(text=f"Title : {self.video_title}")
         self.channel_btn.configure(text=f"Channel : {self.channel}", state="normal")
         self.url_label.configure(text=self.video_url)
-        self.len_label.configure(text=ValueConvertUtility.convert_time(self.length))
+        
+        self.video_length_label.configure(text=ValueConvertUtility.convert_time(self.length))
 
         self.thumbnail_btn.stop_loading_animation()
         self.thumbnail_btn.configure_thumbnail(thumbnails=self.thumbnails)
@@ -101,8 +101,8 @@ class Video(ctk.CTkFrame):
 
         self.thumbnail_btn.bind("<Enter>", on_mouse_enter_thumbnail_btn)
         self.thumbnail_btn.bind("<Leave>", on_mouse_leave_thumbnail_btn)
-        self.len_label.bind("<Enter>", on_mouse_enter_thumbnail_btn)
-        self.len_label.bind("<Leave>", on_mouse_leave_thumbnail_btn)
+        self.video_length_label.bind("<Enter>", on_mouse_enter_thumbnail_btn)
+        self.video_length_label.bind("<Leave>", on_mouse_leave_thumbnail_btn)
 
     def kill(self):
         """Destroy the widget."""
@@ -131,18 +131,19 @@ class Video(ctk.CTkFrame):
             state="disabled",
             command=lambda: webbrowser.open(self.video_url),
         )
-        self.len_label = ctk.CTkLabel(master=self, text=ValueConvertUtility.convert_time(self.length))
-        self.video_title_label = tk.Label(master=self, anchor="w", text=f"Title : {self.video_title}")
-        self.channel_btn = tk.Button(
-            master=self,
+        self.video_length_label = ctk.CTkLabel(master=self, text=ValueConvertUtility.convert_time(self.length))
+
+        self.info_frame = ctk.CTkFrame(master=self)
+        self.video_title_label = ctk.CTkLabel(master=self.info_frame, anchor="w", text=f"Title : {self.video_title}")
+        self.channel_btn = ctk.CTkButton(
+            master=self.info_frame,
             anchor="w",
             command=lambda: webbrowser.open(self.channel_url),
-            relief="sunken",
             state="disabled",
-            cursor="hand2",
+            hover=False,
             text=f"Channel : {self.channel}"
         )
-        self.url_label = tk.Label(master=self, anchor="w", text=self.video_url)
+        self.url_label = ctk.CTkLabel(master=self.info_frame, anchor="w", text=self.video_url)
         self.remove_btn = ctk.CTkButton(master=self, command=self.kill, text="X", hover=False)
 
         self.context_menu = ContextMenu(
@@ -160,10 +161,13 @@ class Video(ctk.CTkFrame):
         scale = AppearanceSettings.settings["scale_r"]
 
         self.thumbnail_btn.configure(font=("arial", int(14 * scale), "bold"))
-        self.len_label.configure(font=("arial", int(10 * scale), "bold"))
-        self.video_title_label.configure(font=('arial', int(10 * scale), 'normal'))
-        self.channel_btn.configure(font=('arial', int(10 * scale), 'bold'))
-        self.url_label.configure(font=('arial', int(10 * scale), "italic underline"))
+        self.video_length_label.configure(font=("arial", int(11 * scale), "bold"))
+
+        self.video_title_label.configure(font=('arial', int(13 * scale), 'bold'))
+        self.channel_btn.configure(font=('arial', int(13 * scale), 'bold'))
+        font_style = ctk.CTkFont(family="arial", size=int(13 * scale), slant="italic", underline=True)
+        self.url_label.configure(font=font_style)
+
         self.remove_btn.configure(font=("arial", 12 * scale, "bold"))
         self.context_menu.configure(font=("Segoe UI", 12 * scale, "bold"))
 
@@ -171,10 +175,13 @@ class Video(ctk.CTkFrame):
         """Set sizes for widgets."""
         scale = AppearanceSettings.settings["scale_r"]
 
-        self.len_label.configure(width=1, height=1)
-        self.video_title_label.configure(height=1)
-        self.channel_btn.configure(bd=0, height=1)
-        self.url_label.configure(height=1)
+        self.video_length_label.configure(height=1, width=1)
+        self.info_frame.configure(height=self.height-3)
+        label_height = int((self.height - 2) / 3)
+        self.video_title_label.configure(height=label_height, width=2)
+        self.channel_btn.configure(height=label_height, width=2)
+        self.url_label.configure(height=label_height, width=2)
+
         self.remove_btn.configure(width=22 * scale, height=22 * scale, border_spacing=0)
         self.context_menu.configure(
             width=int(120 * AppearanceSettings.settings["scale_r"]),
@@ -187,8 +194,7 @@ class Video(ctk.CTkFrame):
         self.thumbnail_btn.configure(
             fg=(AppearanceSettings.settings["root"]["accent_color"]["normal"]),
         )
-        self.channel_btn.configure(activeforeground=AppearanceSettings.settings["root"]["accent_color"]["normal"])
-        self.url_label.configure(fg=AppearanceSettings.settings["root"]["accent_color"]["normal"])
+        self.url_label.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
 
     def update_widgets_accent_color(self):
         """Update accent color for widgets."""
@@ -198,37 +204,14 @@ class Video(ctk.CTkFrame):
         """Set colors for the Tk widgets."""
         self.thumbnail_btn.configure(
             bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["normal"]),
+                AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
+            ),
             disabledforeground=ThemeManager.get_color_based_on_theme_mode(
                 AppearanceSettings.settings["video_object"]["text_color"]["normal"]
             ),
             activebackground=ThemeManager.get_color_based_on_theme_mode(
                 AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
             )
-        )
-        self.video_title_label.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
-            ),
-            fg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["text_color"]["normal"]
-            )
-        )
-        self.url_label.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
-            ),
-        )
-        self.channel_btn.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
-            ),
-            fg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["btn_text_color"]["normal"]
-            ),
-            activebackground=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
-            ),
         )
 
     def update_widgets_colors(self):
@@ -238,6 +221,19 @@ class Video(ctk.CTkFrame):
     def set_widgets_colors(self):
         """Set colors for widgets."""
         self.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
+        self.info_frame.configure(
+            fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
+        )
+        self.video_length_label.configure(
+            text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"]
+        )
+        self.video_title_label.configure(
+            text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"]
+        )
+        self.channel_btn.configure(
+            text_color=AppearanceSettings.settings["video_object"]["btn_text_color"]["normal"],
+            fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
+        )
         self.remove_btn.configure(
             fg_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"],
             text_color=AppearanceSettings.settings["video_object"]["remove_btn_text_color"]["normal"]
@@ -254,20 +250,11 @@ class Video(ctk.CTkFrame):
                 AppearanceSettings.settings["video_object"]["fg_color"]["hover"]
             )
         )
-        self.video_title_label.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["hover"]
-            )
+        self.info_frame.configure(
+            fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
         )
         self.channel_btn.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["hover"]
-            )
-        )
-        self.url_label.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["hover"]
-            )
+            fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"]
         )
 
     def on_mouse_leave_self(self, event):
@@ -281,20 +268,11 @@ class Video(ctk.CTkFrame):
                 AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
             )
         )
-        self.video_title_label.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode
-            (AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
-             )
+        self.info_frame.configure(
+            fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"],
         )
         self.channel_btn.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
-            )
-        )
-        self.url_label.configure(
-            bg=ThemeManager.get_color_based_on_theme_mode(
-                AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
-            )
+            fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
         )
 
     def open_context_menu(self, _event):
@@ -321,18 +299,17 @@ class Video(ctk.CTkFrame):
     def bind_widgets_events(self):
         """Bind events for widgets."""
 
+        self.bind("<Configure>", self.configure_widget_sizes)
+
         self.thumbnail_btn.bind("<Button-3>", self.open_context_menu)
         self.thumbnail_btn.bind("<Button-2>", self.open_context_menu)
 
         self.thumbnail_btn.bind("<Button-1>", self.close_context_menu_directly)
         self.context_menu.bind_widgets_events("<Leave>", self.close_context_menu)
-        # self.url_entry.bind("<Button-1>", self.close_context_menu_directly)
-        # self.bind("<Button-1>", self.close_context_menu_directly)
-        # self.bind('<FocusOut>', self.close_context_menu_directly)
-        # self.bind("<Configure>", self.run_geometry_tracker)
 
         self.bind("<Enter>", self.on_mouse_enter_self)
         self.bind("<Leave>", self.on_mouse_leave_self)
+
         for child_widgets in self.winfo_children():
             child_widgets.bind("<Enter>", self.on_mouse_enter_self)
             child_widgets.bind("<Leave>", self.on_mouse_leave_self)
@@ -353,17 +330,13 @@ class Video(ctk.CTkFrame):
 
         def on_mouse_enter_channel_btn(event):
             self.channel_btn.configure(
-                fg=ThemeManager.get_color_based_on_theme_mode(
-                    AppearanceSettings.settings["video_object"]["btn_text_color"]["hover"]
-                ),
+                text_color=AppearanceSettings.settings["video_object"]["btn_text_color"]["hover"]
             )
             self.on_mouse_enter_self(event)
 
         def on_mouse_leave_channel_btn(_event):
             self.channel_btn.configure(
-                fg=ThemeManager.get_color_based_on_theme_mode(
-                    AppearanceSettings.settings["video_object"]["btn_text_color"]["normal"]
-                )
+                text_color=AppearanceSettings.settings["video_object"]["btn_text_color"]["normal"]
             )
 
         self.channel_btn.bind("<Enter>", on_mouse_enter_channel_btn)
@@ -389,12 +362,17 @@ class Video(ctk.CTkFrame):
     def place_widgets(self):
         """Place widgets."""
         scale = AppearanceSettings.settings["scale_r"]
-        y = WidgetPositionSettings.settings["Video"][str(scale)]
 
         thumbnail_width = int((self.height - 4) / 9 * 16)
         self.thumbnail_btn.place(x=5, y=1, width=thumbnail_width, height=self.height - 4)
+        self.video_length_label.place(rely=1, x=thumbnail_width + 5, anchor="se", y=-2)
+
+        self.info_frame.place(x=thumbnail_width + 10 * scale, y=1)
+
+        self.video_title_label.place(x=0, rely=0.2, anchor="w")
+        self.channel_btn.place(x=0, rely=0.5, anchor="w")
+        self.url_label.place(x=0, rely=0.8, anchor="w")
         self.remove_btn.place(relx=1, x=-25 * scale, y=3 * scale)
-        self.len_label.place(rely=1, y=-10 * scale, x=thumbnail_width - 1, anchor="e")
-        self.video_title_label.place(x=thumbnail_width + 10 * scale, y=y[0], relwidth=1, width=-500 * scale)
-        self.channel_btn.place(x=thumbnail_width + 10 * scale, y=y[1], relwidth=1, width=-500 * scale)
-        self.url_label.place(x=thumbnail_width + 10 * scale, y=y[2], relwidth=1, width=-500 * scale)
+
+    def configure_widget_sizes(self, _event):
+        ...

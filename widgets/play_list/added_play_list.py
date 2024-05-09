@@ -5,7 +5,7 @@ from typing import Literal, Union, List
 from .play_list import PlayList
 from widgets import AddedVideo
 from utils import GuiUtils
-from settings import AppearanceSettings, WidgetPositionSettings
+from settings import AppearanceSettings
 
 
 class AddedPlayList(PlayList):
@@ -27,7 +27,7 @@ class AddedPlayList(PlayList):
         self.download_btn: Union[ctk.CTkButton, None] = None
         self.status_label: Union[ctk.CTkLabel, None] = None
         self.reload_btn: Union[ctk.CTkButton, None] = None
-        self.videos_status_label: Union[ctk.CTkLabel, None] = None
+        self.videos_status_counts_label: Union[ctk.CTkLabel, None] = None
         """self.loading_video_count_label: Union[ctk.CTkLabel, None] = None
         self.waiting_video_count_label: Union[ctk.CTkLabel, None] = None"""
         # playlist object
@@ -126,7 +126,7 @@ class AddedPlayList(PlayList):
             self.loading_videos.remove(video)
 
         if len(self.videos) != 0:
-            self.videos_status_label.configure(
+            self.videos_status_counts_label.configure(
                 text=f"Failed : {len(self.failed_videos)} |   "
                      f"Waiting : {len(self.waiting_videos)} |   "
                      f"Loading : {len(self.loading_videos)} |   "
@@ -172,7 +172,8 @@ class AddedPlayList(PlayList):
         )
         self.reload_btn.place(
             relx=1,
-            y=WidgetPositionSettings.settings["AddedPlayList"][str(AppearanceSettings.settings["scale_r"])][3],
+            rely=0.5,
+            anchor="w",
             x=-80 * AppearanceSettings.settings["scale_r"])
 
     def indicate_loading(self):
@@ -211,7 +212,7 @@ class AddedPlayList(PlayList):
     def create_widgets(self):
         super().create_widgets()
 
-        self.sub_frame = ctk.CTkFrame(master=self.playlist_info_widget)
+        self.sub_frame = ctk.CTkFrame(master=self.playlist_main_frame)
         self.resolution_select_menu = ctk.CTkComboBox(
             master=self.sub_frame,
             values=["..........", "..........", ".........."],
@@ -227,12 +228,12 @@ class AddedPlayList(PlayList):
         )
         self.status_label = ctk.CTkLabel(master=self.sub_frame, text="Loading")
         self.reload_btn = ctk.CTkButton(
-            self.playlist_info_widget,
+            self.playlist_main_frame,
             text="⟳",
             command=self.reload_playlist,
             hover=False,
         )
-        self.videos_status_label = ctk.CTkLabel(
+        self.videos_status_counts_label = ctk.CTkLabel(
             master=self.sub_frame,
             text=f"Failed : {len(self.failed_videos)} |   "
                  f"Waiting : {len(self.waiting_videos)} |   "
@@ -252,19 +253,19 @@ class AddedPlayList(PlayList):
         self.download_btn.configure(font=("arial", 12 * scale, "bold"))
         self.status_label.configure(font=("arial", 13 * scale, "bold"))
         self.reload_btn.configure(font=("arial", 22 * scale, "normal"))
-        self.videos_status_label.configure(font=("arial", 11 * scale, "bold"))
+        self.videos_status_counts_label.configure(font=("Segoe UI", 11 * scale, "normal"))
 
     def set_widgets_sizes(self):
         super().set_widgets_sizes()
 
         scale = AppearanceSettings.settings["scale_r"]
 
-        self.sub_frame.configure(height=self.height - 4, width=340 * scale)
+        self.sub_frame.configure(height=self.height - 3, width=340 * scale)
         self.resolution_select_menu.configure(width=150 * scale, height=28 * scale)
         self.download_btn.configure(width=80 * scale, height=25 * scale, border_width=2)
-        self.status_label.configure(height=15)
+        self.status_label.configure(height=15 * scale, width=80 * scale)
         self.reload_btn.configure(width=15 * scale, height=15 * scale)
-        self.videos_status_label.configure(height=15 * scale)
+        self.videos_status_counts_label.configure(height=15 * scale)
 
     # configure widgets colors
     def set_widgets_accent_color(self):
@@ -298,7 +299,7 @@ class AddedPlayList(PlayList):
         self.reload_btn.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
         )
-        self.videos_status_label.configure(
+        self.videos_status_counts_label.configure(
             text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"]
         )
         self.resolution_select_menu.configure(
@@ -359,17 +360,18 @@ class AddedPlayList(PlayList):
     # place widgets
     def place_widgets(self):
         super().place_widgets()
+
         scale = AppearanceSettings.settings["scale_r"]
-        y = WidgetPositionSettings.settings["AddedPlayList"][str(scale)]
 
-        self.title_label.place(width=-460 * scale)
-        self.channel_btn.place(width=-460 * scale)
-        self.url_label.place(width=-460 * scale)
+        self.sub_frame.place(y=1, relx=1, x=-390 * scale)
 
-        self.sub_frame.place(y=2, relx=1, x=-390 * scale)
+        self.resolution_select_menu.place(rely=0.5, x=0, anchor="w")
+        self.download_btn.place(x=190 * scale, rely=0.25, anchor='w')
+        self.status_label.place(x=190 * scale, rely=0.60, anchor='w')
+        self.videos_status_counts_label.place(rely=0.875, relx=0.5, anchor="center")
 
-        self.resolution_select_menu.place(y=y[0], x=0)
-        self.download_btn.place(x=160 * scale, y=y[1])
-        self.status_label.place(x=200 * scale, anchor="n", y=y[2])
-
-        self.videos_status_label.place(rely=1, y=-18 * scale, relx=0.5, anchor="n")
+    def configure_widget_sizes(self, _event):
+        scale = AppearanceSettings.settings["scale_r"]
+        self.info_frame.configure(
+            width=self.master.winfo_width() - (390*scale) - (50*scale + 15 * scale) - (20 * scale)
+        )
