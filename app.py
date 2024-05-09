@@ -31,7 +31,6 @@ class App(ctk.CTk):
         self.root_height = self.winfo_height()
 
         # widgets size resetting check
-        self.widget_size_reset_needed = True
         self.is_geometry_changes_tracker_running = False
 
         # download method
@@ -69,11 +68,11 @@ class App(ctk.CTk):
         self.downloading_frame_info_label_placed = False
         self.downloaded_frame_info_label_placed = False
 
+        self.videos_status_count_label = None
+
         self.context_menu = None
         self.settings_panel = None
         self.settings_btn = None
-
-        self.videos_status_count_label = None
 
         self.logo_frame = None
         self.logo_label = None
@@ -142,6 +141,11 @@ class App(ctk.CTk):
             text="Downloaded videos & playlists will be display here.",
         )
 
+        self.videos_status_count_label = ctk.CTkLabel(
+            text="Loading : 0 | Downloading : 0",
+            master=self
+        )
+
         self.settings_panel = SettingPanel(
             master=self,
             theme_settings_change_callback=self.update_theme_settings,
@@ -161,11 +165,6 @@ class App(ctk.CTk):
             master=self,
             options_texts=["Select All", "Cut", "Copy", "Paste"],
             options_commands=[self.select_all_url, self.cut_url, self.copy_url, self.paste_url]
-        )
-
-        self.videos_status_count_label = ctk.CTkLabel(
-            text="Loading : 0 | Downloading : 0",
-            master=self
         )
 
         self.logo_frame = ctk.CTkFrame(master=self)
@@ -313,13 +312,14 @@ class App(ctk.CTk):
         root_height = self.winfo_height()
         self.url_entry.configure(width=root_width - 250 * scale)
 
-        nav_button_width = (root_width - 26) / 3
+        button_margin = int(3 * scale)
+        nav_button_width = int((root_width - 20 - button_margin * 3) / 3)
         self.navigate_added_frame_btn.configure(width=nav_button_width)
         self.navigate_downloading_frame_btn.configure(width=nav_button_width)
         self.navigate_downloaded_frame_btn.configure(width=nav_button_width)
 
-        self.navigate_downloading_frame_btn.place(x=nav_button_width + 10 + 3)
-        self.navigate_downloaded_frame_btn.place(x=nav_button_width * 2 + 10 + 6)
+        self.navigate_downloading_frame_btn.place(x=nav_button_width + 10 + button_margin)
+        self.navigate_downloaded_frame_btn.place(x=nav_button_width * 2 + 10 + button_margin * 2)
 
         self.video_radio_btn.place(x=root_width - 190 * scale)
         self.playlist_radio_btn.place(x=root_width - 190 * scale)
@@ -664,6 +664,7 @@ class App(ctk.CTk):
             # after user stop changing windows size check if window size changed or not
             self.configure_widgets_size()
             self.update()
+            self.update_idletasks()
             self.hide_app_logo()
         self.is_geometry_changes_tracker_running = False
 
@@ -702,8 +703,9 @@ class App(ctk.CTk):
 
         else:
             AddedPlayList(
+                root=self,
                 master=self.added_content_scroll_frame,
-                height=int(85 * AppearanceSettings.settings["scale_r"]),
+                height=int(86 * AppearanceSettings.settings["scale_r"]),
                 width=self.added_content_scroll_frame.winfo_width(),
 
                 playlist_download_button_click_callback=self.download_playlist,
@@ -737,8 +739,9 @@ class App(ctk.CTk):
         self.is_content_downloading = True
         self.downloading_frame_info_label.place_forget()
         DownloadingPlayList(
+            root=self,
             master=self.downloading_content_scroll_frame,
-            height=int(85 * AppearanceSettings.settings["scale_r"]),
+            height=int(86 * AppearanceSettings.settings["scale_r"]),
             width=self.downloading_content_scroll_frame.winfo_width(),
             # video info
             channel_url=playlist.channel_url,
@@ -779,8 +782,9 @@ class App(ctk.CTk):
         self.is_content_downloaded = True
         self.downloaded_frame_info_label.place_forget()
         DownloadedPlayList(
+            root=self,
             master=self.downloaded_content_scroll_frame,
-            height=85 * AppearanceSettings.settings["scale_r"],
+            height=86 * AppearanceSettings.settings["scale_r"],
             width=self.downloaded_content_scroll_frame.winfo_width(),
             # playlist url
             channel_url=playlist.channel_url,
@@ -830,21 +834,24 @@ class App(ctk.CTk):
         self.settings_panel.place_forget()
         self.settings_btn.configure(command=self.open_settings)
 
-    def on_app_closing(self):
+    def on_app_closing(self, restart: bool = False):
         GeneralSettings.settings['window_geometry'] = self.geometry()
         GeneralSettings.save_settings()
         self.clear_temporally_saved_files()
         self.destroy()
+        if not restart:
+            os._exit(0)
 
     def cancel_app_closing(self):
         self.bind_widgets_events()
 
     def restart(self):
-        self.on_app_closing()
+        self.on_app_closing(restart=True)
         if os.path.exists("main.py"):
             os.startfile("main.py")
         if os.path.exists("PyTube Downloader.exe"):
             os.startfile("PyTube Downloader.exe")
+        os._exit(0)
 
     def show_close_confirmation_dialog(self):
         scale = AppearanceSettings.settings["scale_r"]

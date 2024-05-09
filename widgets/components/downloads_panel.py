@@ -6,8 +6,7 @@ from services import (
 )
 from settings import (
     AppearanceSettings,
-    GeneralSettings,
-    WidgetPositionSettings
+    GeneralSettings
 )
 from utils import SettingsValidateUtility
 from utils import FileUtility

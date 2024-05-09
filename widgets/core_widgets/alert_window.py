@@ -30,7 +30,6 @@ class AlertWindow(ctk.CTkToplevel):
         self.height = height
         self.callback = callback
         self.geometry(f"{self.width}x{self.height}")
-        print(f"{self.width}x{self.height}")
         self.configure(width=self.width),
         self.configure(height=self.height)
         self.resizable(False, False)

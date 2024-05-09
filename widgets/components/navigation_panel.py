@@ -2,9 +2,7 @@ import customtkinter as ctk
 from typing import Any, List, Callable
 from services import ThemeManager
 from settings import (
-    AppearanceSettings,
-    WidgetPositionSettings,
-    GeneralSettings
+    AppearanceSettings
 )
 
 
@@ -75,7 +73,7 @@ class NavigationPanel(ctk.CTkFrame):
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
         for navigation_button in self.navigation_buttons:
-            navigation_button.configure(height=int(34 * scale), width=self.width)
+            navigation_button.configure(height=int(36 * scale), width=self.width)
 
     def update_widgets_accent_color(self) -> None:
         self.set_widgets_accent_color()

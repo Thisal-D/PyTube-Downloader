@@ -6,7 +6,7 @@ import os
 from utils import (
     ValueConvertUtility
 )
-from settings import AppearanceSettings, WidgetPositionSettings
+from settings import AppearanceSettings
 
 
 class DownloadedVideo(Video):
@@ -145,8 +145,17 @@ class DownloadedVideo(Video):
         super().place_widgets()
 
         scale = AppearanceSettings.settings["scale_r"]
-        y = WidgetPositionSettings.settings["DownloadedVideo"][str(scale)]
 
-        self.download_type_label.place(y=y[0], relx=1, x=-300 * scale)
-        self.download_path_btn.place(y=y[1], relx=1, x=-150 * scale)
-        self.file_size_label.place(y=y[2], relx=1, x=-300 * scale)
+        self.download_type_label.place(relx=1, x=-300 * scale, rely=0.3, anchor="w")
+        self.download_path_btn.place(relx=1, x=-150 * scale, rely=0.5, anchor="w")
+        self.file_size_label.place(relx=1, x=-300 * scale, rely=0.7, anchor="w")
+
+    def configure_widget_sizes(self, _event):
+        scale = AppearanceSettings.settings["scale_r"]
+        self.info_frame.configure(
+            width=(
+                self.master.winfo_width() - (300 * scale) -
+                (self.thumbnail_btn.winfo_width() + 5) - (10 * scale) -
+                (20 * scale)
+            )
+        )

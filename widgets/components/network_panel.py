@@ -5,7 +5,7 @@ from services import (
 )
 from settings import (
     GeneralSettings,
-    AppearanceSettings,
+    AppearanceSettings
 )
 from utils import SettingsValidateUtility
 

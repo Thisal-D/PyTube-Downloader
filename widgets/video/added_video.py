@@ -12,7 +12,6 @@ from services import (
 from settings import (
     AppearanceSettings,
     GeneralSettings,
-    WidgetPositionSettings
 )
 from utils import (
     ImageUtility,
@@ -35,7 +34,7 @@ class AddedVideo(Video):
             # state callbacks only use if mode is play list
             mode: Literal["video", "playlist"] = "video",
             video_load_status_callback: callable = None):
-        
+
         # video info
         self.video_stream_data: pytube.YouTube.streams = None
         self.support_download_types: Union[List[Dict[str, int]], None] = None
@@ -89,8 +88,8 @@ class AddedVideo(Video):
 
     def get_video_thumbnails(self) -> Tuple[tk.PhotoImage, tk.PhotoImage]:
         thumbnail_size = (
-            int(113 * AppearanceSettings.settings["scale_r"]),
-            int(64 * AppearanceSettings.settings["scale_r"])
+            int(117 * AppearanceSettings.settings["scale_r"]),
+            int(66 * AppearanceSettings.settings["scale_r"])
         )
         thumbnail_save_directory = "temp/thumbnails/"
         thumbnail_url = self.video.thumbnail_url
@@ -145,8 +144,8 @@ class AddedVideo(Video):
     def get_default_thumbnails(self):
         if AddedVideo.default_thumbnails == (None, None):
             thumbnail_size = (
-                int(113 * AppearanceSettings.settings["scale_r"]),
-                int(64 * AppearanceSettings.settings["scale_r"])
+                int(117 * AppearanceSettings.settings["scale_r"]),
+                int(66 * AppearanceSettings.settings["scale_r"])
             )
             thumbnail_save_directory = "temp/thumbnails/"
             file_name = "default-thumbnail"
@@ -171,7 +170,7 @@ class AddedVideo(Video):
             thumbnail_hover = tk.PhotoImage(file=thumbnail_hover_save_path)
 
             AddedVideo.default_thumbnails = (thumbnail_normal, thumbnail_hover)
-        
+
         return AddedVideo.default_thumbnails
 
     def retrieve_video_data(self):
@@ -214,7 +213,7 @@ class AddedVideo(Video):
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
         self.status_label.configure(text="Waiting")
-        
+
     def select_download_quality_automatic(self):
         index = None
         if GeneralSettings.settings["automatic_download"]["quality"] == "Audio Only":
@@ -224,7 +223,7 @@ class AddedVideo(Video):
         elif GeneralSettings.settings["automatic_download"]["quality"] == "Highest Quality":
             index = 0
         self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[index])
-        
+
     def download_automatically(self):
         if self.mode == "video" and GeneralSettings.settings["automatic_download"]["status"] == "enable":
             self.select_download_quality_automatic()
@@ -238,7 +237,7 @@ class AddedVideo(Video):
                 self.video_load_status_callback(self, self.load_state)
             self.status_label.configure(text="Loaded")
             LoadManager.unregister_from_active(self)
-        
+
     def set_loading_failed(self):
         if self.load_state != "removed":
             LoadManager.unregister_from_active(self)
@@ -254,7 +253,8 @@ class AddedVideo(Video):
             )
             self.reload_btn.place(
                 relx=1,
-                y=WidgetPositionSettings.settings["AddedVideo"][str(AppearanceSettings.settings["scale_r"])][3],
+                rely=0.5,
+                anchor="w",
                 x=-80 * AppearanceSettings.settings["scale_r"]
             )
 
@@ -318,10 +318,10 @@ class AddedVideo(Video):
 
         scale = AppearanceSettings.settings["scale_r"]
 
-        self.sub_frame.configure(height=self.height - 4, width=270 * scale)
+        self.sub_frame.configure(height=self.height - 3, width=270 * scale)
         self.download_btn.configure(width=80 * scale, height=25 * scale, border_width=2)
         self.resolution_select_menu.configure(width=150 * scale, height=28 * scale)
-        self.status_label.configure(height=15 * scale)
+        self.status_label.configure(height=15 * scale, width=80 * scale)
         self.reload_btn.configure(width=15 * scale, height=15 * scale)
 
     # configure widgets colors
@@ -411,10 +411,19 @@ class AddedVideo(Video):
         super().place_widgets()
 
         scale = AppearanceSettings.settings["scale_r"]
-        y = WidgetPositionSettings.settings["AddedVideo"][str(scale)]
 
-        self.sub_frame.place(y=2, relx=1, x=-370 * scale)
+        self.sub_frame.place(y=1, relx=1, x=-370 * scale)
 
-        self.resolution_select_menu.place(y=y[0], x=20)
-        self.download_btn.place(x=190 * scale, y=y[1])
-        self.status_label.place(x=230 * scale, anchor="n", y=y[2])
+        self.resolution_select_menu.place(rely=0.5, anchor="w")
+        self.download_btn.place(x=190 * scale, rely=0.3, anchor="w")
+        self.status_label.place(x=190 * scale, rely=0.75, anchor="w")
+
+    def configure_widget_sizes(self, _event):
+        scale = AppearanceSettings.settings["scale_r"]
+        self.info_frame.configure(
+            width=(
+                self.master.winfo_width() - (370 * scale) -
+                (self.thumbnail_btn.winfo_width() + 5) - (10 * scale) -
+                (20 * scale)
+            )
+        )

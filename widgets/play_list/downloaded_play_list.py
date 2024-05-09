@@ -90,3 +90,9 @@ class DownloadedPlayList(PlayList):
             video.video_status_callback = GuiUtils.do_nothing
             video.kill()
         super().kill()
+
+    def configure_widget_sizes(self, _event):
+        scale = AppearanceSettings.settings["scale_r"]
+        self.info_frame.configure(
+            width=self.master.winfo_width() - (50 * scale + 15 * scale) - (60 * scale)
+        )

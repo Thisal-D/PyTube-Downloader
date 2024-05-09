@@ -1,9 +1,9 @@
 {
     "contributors": {
-      
+        
     },
     "disclaimer": "This application is intended for personal use only. Please respect YouTube's terms of service and \n the rights of content creators when downloading videos.",
     "name": "PyTube Downloader",
     "site": "https://github.com/Thisal-D/PyTube-Downloader",
-    "version": "0.0.6"
+    "version": "1.0.0"
 }
