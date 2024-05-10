@@ -25,14 +25,13 @@ class LoadManager:
             if (GeneralSettings.settings["max_simultaneous_loads"] > LoadManager.active_load_count and
                     LoadManager.queued_load_count > 0):
                 try:
-                    LoadManager.queued_loads[0].load_video()
-                    LoadManager.active_loads.append(LoadManager.queued_loads[0])
                     LoadManager.queued_load_count -= 1
+                    LoadManager.queued_loads[0].load_video()
                     LoadManager.active_load_count += 1
+                    LoadManager.active_loads.append(LoadManager.queued_loads.pop(0))
                 except Exception as error:
                     print(f"load_manager.py L33 : {error}")
                     pass
-                LoadManager.queued_loads.pop(0)
                 LoadManager.status_change_callback()
             time.sleep(1)
 
