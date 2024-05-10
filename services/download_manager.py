@@ -39,8 +39,8 @@ class DownloadManager:
     @staticmethod
     def register(video):
         DownloadManager.queued_downloads.append(video)
-        DownloadManager.status_change_callback()
         DownloadManager.queued_download_count += 1
+        DownloadManager.status_change_callback()
 
     @staticmethod
     def unregister_from_queued(video):
