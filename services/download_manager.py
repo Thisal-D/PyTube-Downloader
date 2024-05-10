@@ -25,14 +25,13 @@ class DownloadManager:
             if (GeneralSettings.settings["max_simultaneous_downloads"] > DownloadManager.active_download_count and
                     DownloadManager.queued_download_count > 0):
                 try:
-                    DownloadManager.queued_downloads[0].download_video()
                     DownloadManager.queued_download_count -= 1
+                    DownloadManager.queued_downloads[0].download_video()
                     DownloadManager.active_download_count += 1
-                    DownloadManager.active_downloads.append(DownloadManager.queued_downloads[0])
+                    DownloadManager.active_downloads.append(DownloadManager.queued_downloads.pop(0))
                 except Exception as error:
                     print(f"download_manager.py L33 : {error}")
                     pass
-                DownloadManager.queued_downloads.pop(0)
                 DownloadManager.status_change_callback()
             time.sleep(1)
 
