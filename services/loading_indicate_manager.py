@@ -12,7 +12,7 @@ class LoadingIndicateManager:
     max_dots_count: int = 4
 
     @staticmethod
-    def loading_indicator():
+    def loading_indicator() -> None:
         """
         Displays loading indicator dots in a loop.
 
@@ -26,6 +26,8 @@ class LoadingIndicateManager:
     def initialize() -> None:
         """
         Initializes the loading indicator manager.
+
+        Starts a separate thread for running the loading indicator.
         """
         loading_indicator_thread = threading.Thread(target=LoadingIndicateManager.loading_indicator)
         loading_indicator_thread.daemon = True

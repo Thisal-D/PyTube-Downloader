@@ -45,6 +45,7 @@ class DownloadingVideo(Video):
             video_download_complete_callback: callable = None,
             # state callbacks only use if mode is playlist
             mode: Literal["video", "playlist"] = "video",
+            playlist_title: str = None,
             video_download_status_callback: callable = None,
             video_download_progress_callback: callable = None):
 
@@ -61,6 +62,7 @@ class DownloadingVideo(Video):
         self.download_type: Literal["Video", "Audio"] = download_type
         self.video_stream_data: property = video_stream_data
         # download mode
+        self.playlist_title: str = playlist_title
         self.mode: Literal["video", "playlist"] = mode
         # widgets
         self.sub_frame: Union[ctk.CTkFrame, None] = None
@@ -126,7 +128,7 @@ class DownloadingVideo(Video):
         """
         Display the status of the download.
         """
-        
+
         if self.download_state == "failed":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"],
@@ -162,36 +164,50 @@ class DownloadingVideo(Video):
         """
         Download the video.
         """
-        
-        if not os.path.exists(GeneralSettings.settings["download_directory"]):
+
+        download_directory = f"{GeneralSettings.settings['download_directory']}\\"
+        if self.mode == "playlist" and GeneralSettings.settings["create_sep_path_for_playlists"]:
+            download_directory += (
+                f"{FileUtility.sanitize_filename(self.channel)} - "
+                f"{FileUtility.sanitize_filename(self.playlist_title)}\\"
+            )
+        else:
+            if GeneralSettings.settings["create_sep_path_for_videos_audios"]:
+                download_directory += f"{self.download_type}s\\"
+
+            if GeneralSettings.settings["create_sep_path_for_qualities"]:
+                download_directory += f"{self.download_quality}\\"
+
+        if not os.path.exists(download_directory):
             try:
-                FileUtility.create_directory(GeneralSettings.settings["download_directory"])
+                FileUtility.create_directory(download_directory)
             except Exception as error:
-                print("@2 : ", error)
+                print(f"downloading_play_list.py L-187 : {error}")
                 self.set_downloading_failed()
                 return
 
-        stream = None
-        self.bytes_downloaded = 0
-        self.download_file_name = (
-                f"{GeneralSettings.settings["download_directory"]}\\" +
-                f"{FileUtility.sanitize_filename(f"{self.channel} - {self.video_title}")}"
-            )
+        self.download_file_name = download_directory + (
+            f"{FileUtility.sanitize_filename(f"{self.channel} - {self.video_title}")}"
+        )
+        
         try:
-            self.download_type_label.configure(text=f"{self.download_type} : {self.download_quality}")
             if self.download_type == "Video":
                 stream = self.video_stream_data.get_by_resolution(self.download_quality)
                 self.download_file_name += ".mp4"
             else:
                 stream = self.video_stream_data.get_audio_only()
                 self.download_file_name += ".mp3"
-            self.file_size = stream.filesize
-            self.converted_file_size = ValueConvertUtility.convert_size(self.file_size, 2)
-            self.download_file_name = FileUtility.get_available_file_name(self.download_file_name)
-            self.set_downloading_progress()
         except Exception as error:
-            print("@1 : ", error)
+            print(f"downloading_play_list.py L-205 : {error}")
             self.set_downloading_failed()
+            return
+
+        self.bytes_downloaded = 0
+        self.download_type_label.configure(text=f"{self.download_type} : {self.download_quality}")
+        self.file_size = stream.filesize
+        self.converted_file_size = ValueConvertUtility.convert_size(self.file_size, 2)
+        self.download_file_name = FileUtility.get_available_file_name(self.download_file_name)
+        self.set_downloading_progress()
 
         try:
             with open(self.download_file_name, "wb") as self.video_file:
@@ -232,25 +248,25 @@ class DownloadingVideo(Video):
                                 self.set_downloading_failed()
                                 break
                     except Exception as error:
-                        print("@3 downloading_play_list.py : ", error)
+                        print(f"downloading_play_list.py L-235 : {error}")
                         self.set_downloading_failed()
                         break
         except Exception as error:
-            print("@4 downloading_play_list.py : ", error)
+            print(f"downloading_play_list.py L-239 : {error}")
             self.set_downloading_failed()
 
     def set_resume_btn(self):
         """
         Set the resume button.
         """
-        
+
         self.pause_resume_btn.configure(text="▷")
 
     def set_pause_btn(self):
         """
         Set the pause button.
         """
-        
+
         self.pause_resume_btn.configure(text="⏸")
 
     def pause_downloading(self):
@@ -267,7 +283,7 @@ class DownloadingVideo(Video):
         """
         Resume the downloading process.
         """
-        
+
         self.pause_requested = False
         self.set_pause_btn()
         while self.download_state == "paused":
@@ -282,7 +298,7 @@ class DownloadingVideo(Video):
         """
         Set the progress of the downloading process.
         """
-        
+
         completed_percentage = self.bytes_downloaded / self.file_size
         self.download_progress_bar.set(completed_percentage)
         self.download_percentage_label.configure(text=f"{round(completed_percentage * 100, 2)} %")
@@ -314,7 +330,7 @@ class DownloadingVideo(Video):
         """
         Set the status to 'waiting' if the download is queued.
         """
-        
+
         DownloadManager.unregister_from_queued(self)
         self.download_state = "waiting"
         if self.mode == "playlist":
@@ -346,7 +362,7 @@ class DownloadingVideo(Video):
         """
         Kill the downloading process.
         """
-        
+
         DownloadManager.unregister_from_active(self)
         DownloadManager.unregister_from_queued(self)
         self.download_state = "removed"
@@ -360,7 +376,7 @@ class DownloadingVideo(Video):
         """
         Create all required widgets.
         """
-        
+
         super().create_widgets()
 
         self.sub_frame = ctk.CTkFrame(self)
@@ -387,7 +403,7 @@ class DownloadingVideo(Video):
         """
         Set fonts for all widgets.
         """
-        
+
         super().set_widgets_fonts()
 
         scale = AppearanceSettings.settings["scale_r"]
@@ -404,7 +420,7 @@ class DownloadingVideo(Video):
         """
         Set sizes for all widgets.
         """
-        
+
         super().set_widgets_sizes()
 
         scale = AppearanceSettings.settings["scale_r"]
@@ -423,7 +439,7 @@ class DownloadingVideo(Video):
         """
         Set accent colors for widgets.
         """
-        
+
         super().set_widgets_accent_color()
 
         self.download_progress_bar.configure(
@@ -436,7 +452,7 @@ class DownloadingVideo(Video):
         """
         Set colors for all widgets.
         """
-        
+
         super().set_widgets_colors()
 
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
@@ -458,7 +474,7 @@ class DownloadingVideo(Video):
         """
         Handle mouse entering the widget area.
         """
-        
+
         super().on_mouse_enter_self(event)
 
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
@@ -480,7 +496,7 @@ class DownloadingVideo(Video):
         """
         Bind events to all widgets.
         """
-        
+
         super().bind_widgets_events()
 
         def on_mouse_enter_re_download_btn(event):

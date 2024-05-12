@@ -1,8 +1,7 @@
 import customtkinter as ctk
 import time
-from typing import List, Dict, Tuple, Any, Literal
+from typing import List, Tuple, Any, Literal
 import threading
-from settings import AppearanceSettings
 
 
 class ThemeManager:
@@ -22,50 +21,71 @@ class ThemeManager:
 
     @staticmethod
     def track_theme_mode_changes() -> None:
-        """Periodically checks for changes in theme and updates registered widgets."""
+        """
+        Periodically checks for changes in theme and updates registered widgets.
+        """
         while True:
             current_mode = ctk.get_appearance_mode()
             if current_mode != ThemeManager.current_theme_mode:
                 ThemeManager.current_theme_mode = current_mode
                 ThemeManager.update_widgets_colors()
+            # Wait 1 second before checking the theme mode again
             time.sleep(1)
 
     @staticmethod
     def update_accent_color() -> None:
-        """Updates accent color callback the change to registered widgets."""
+        """
+        Updates accent color callback the change to registered widgets.
+        """
         ThemeManager.update_widgets_accent_color()
 
     @staticmethod
     def update_widgets_colors() -> None:
+        """
+        Updates colors in all registered widgets based on the current theme mode.
+        """
         for widget in ThemeManager.registered_widgets:
             try:
                 widget.update_widgets_colors()
             except Exception as error:
-                print(f"theme_manager.py : {error}")
+                print(f"theme_manager.py L51 : {error}")
 
     @staticmethod
     def update_widgets_accent_color() -> None:
-        """Updates accent color in all registered widgets."""
+        """
+        Updates accent color in all registered widgets.
+        """
         for widget in ThemeManager.registered_widgets:
             try:
                 widget.update_widgets_accent_color()
             except Exception as error:
-                print(f"theme_manager.py : {error}")
+                print(f"theme_manager.py L62 : {error}")
 
     @staticmethod
     def initialize() -> None:
-        """Starts the theme tracking system."""
-        # Start tracking theme changes in a separate thread
+        """
+        Starts the theme tracking system in a separate thread.
+        """
         theme_tracking_thread = threading.Thread(target=ThemeManager.track_theme_mode_changes)
         theme_tracking_thread.daemon = True  # Daemonize the thread, so it exits when the main program exits
         theme_tracking_thread.start()
 
     @staticmethod
     def register_widget(widget: Any) -> None:
-        """Registers a widget with the ThemeManager for theme updates."""
+        """
+        Registers a widget with the ThemeManager for theme updates.
+
+        Args:
+            widget (Any): The widget to register.
+        """
         ThemeManager.registered_widgets.append(widget)
 
     @staticmethod
     def unregister_widget(widget: Any) -> None:
-        """Unregisters a widget from the ThemeManager."""
+        """
+        Unregisters a widget from the ThemeManager.
+
+        Args:
+            widget (Any): The widget to unregister.
+        """
         ThemeManager.registered_widgets.remove(widget)

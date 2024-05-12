@@ -32,7 +32,7 @@ class GitHubUtility:
                 })
 
         except Exception as error:
-            print("git_hub_utility.py : ", error)
+            print(f"git_hub_utility.py L35 : {error}")
             return None
 
         return contributors

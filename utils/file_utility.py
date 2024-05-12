@@ -23,6 +23,7 @@ class FileUtility:
                     if not os.path.exists(sub_path):
                         os.mkdir(sub_path)
         except Exception as error:
+            print(f"file_utility.py L-26 : {error}")
             raise Exception(error)
 
     @staticmethod
@@ -64,7 +65,7 @@ class FileUtility:
             os.remove(file)
             return True
         except Exception as error:
-            print(f"Error while checking accessibility of path: {error}")
+            print(f"file_utility.py L-68 : {error}")
             return False
 
     @staticmethod
@@ -120,5 +121,5 @@ class FileUtility:
                 if files_to_keep is None or file_name not in files_to_keep:
                     os.remove(os.path.join(directory, file_name))
             except Exception as error:
-                print(f"Error while deleting file {file_name}: {error}")
+                print(f"file_utility.py L-124 : {error}")
                 pass

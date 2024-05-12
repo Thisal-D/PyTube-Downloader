@@ -115,7 +115,7 @@ class NetworkPanel(ctk.CTkFrame):
 
         self.automatic_download_info_label = ctk.CTkLabel(
             master=self,
-            text="• Download videos automatically after complete loading",
+            text="• Automatically Download Videos Upon Completion of Loading.",
         )
 
         self.load_thumbnail_label = ctk.CTkLabel(
@@ -324,7 +324,7 @@ class NetworkPanel(ctk.CTkFrame):
 
         self.automatic_download_info_label.grid(
             row=4, column=0, columnspan=8,
-            padx=(100, 0), pady=(10, 0), sticky="w"
+            padx=(100 + (20 * scale), 0), pady=(10, 0), sticky="w"
         )
 
         self.load_thumbnail_label.grid(row=5, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")

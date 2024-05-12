@@ -113,6 +113,7 @@ class AppearancePanel(ctk.CTkFrame):
             master=self,
             text_color=AppearanceSettings.settings["settings_panel"]["warning_color"]["normal"],
             fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
+            activate_scrollbars=False,
         )
 
         self.scale_label = ctk.CTkLabel(
@@ -447,9 +448,10 @@ class AppearancePanel(ctk.CTkFrame):
         self.custom_accent_color_alert_text.bind("<Key>", lambda e: "break")
         self.custom_accent_color_alert_text.insert(
             "end",
-            """* Please enter custom accent colors for normal and hover states in one of the following formats  :
-                    - Hexadecimal: #0f0f0f, #0f0f0ff
-                    - Color names: green, lightgreen"""
+            """* Please Specify Custom Accent Colors for Both Normal and Hover State Using One of the 
+            Following Formats :
+                - Hexa-Decimal: #0f0f0f, #0f0f0ff
+                - Color Names: green, lightgreen"""
         )
 
         if AppearanceSettings.settings["root"]["accent_color"]["default"]:

@@ -79,6 +79,7 @@ class DownloadingPlayList(PlayList):
                 video_stream_data=added_video.video_stream_data,
                 length=added_video.length,
                 # download mode
+                playlist_title=self.playlist_title,
                 mode="playlist",
                 video_download_complete_callback=None,
                 # videos state, download progress track

@@ -273,11 +273,8 @@ class App(ctk.CTk):
         self.navigate_downloading_frame_btn.configure(font=font_style_2)
         self.navigate_downloaded_frame_btn.configure(font=font_style_2)
         self.settings_btn.configure(font=("arial", 25 * scale, "normal"))
-
         self.context_menu.configure(font=("Segoe UI", 13 * scale, "bold"))
-
         self.videos_status_count_label.configure(font=("Segoe UI", 11 * scale, "normal"))
-
         self.logo_label.configure(font=("arial", 50 * scale, "normal"))
 
     def set_widgets_sizes(self):
@@ -680,6 +677,7 @@ class App(ctk.CTk):
             self.playlist_radio_btn.deselect()
 
     def update_videos_count_status(self):
+        print(DownloadManager.queued_download_count, DownloadManager.active_download_count)
         self.videos_status_count_label.configure(
             text=f"Loading : {LoadManager.queued_load_count + LoadManager.active_load_count} | "
                  f"Downloading : {DownloadManager.queued_download_count + DownloadManager.active_download_count}"

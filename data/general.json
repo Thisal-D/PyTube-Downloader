@@ -3,6 +3,9 @@
         "quality": "Highest Quality",
         "status": "disable"
     },
+    "create_sep_path_for_playlists": false,
+    "create_sep_path_for_qualities": false,
+    "create_sep_path_for_videos_audios": false,
     "download_directory": false,
     "load_thumbnail": false,
     "max_simultaneous_downloads": 1,
