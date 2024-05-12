@@ -8,6 +8,8 @@ class DownloadManager:
     """
     Manages the download queue and controls the download process.
     """
+
+    # Class variables to keep track of active and queued loads
     active_download_count = 0
     queued_download_count = 0
     queued_downloads = []
@@ -20,6 +22,7 @@ class DownloadManager:
         Manages the download queue by starting downloads if conditions are met.
 
         This method continuously checks the download queue and starts downloads if conditions permit.
+        Delay is 1 second (1000 milliseconds).
         """
         while True:
             if (GeneralSettings.settings["max_simultaneous_downloads"] > DownloadManager.active_download_count and
@@ -30,19 +33,31 @@ class DownloadManager:
                     DownloadManager.active_download_count += 1
                     DownloadManager.active_downloads.append(DownloadManager.queued_downloads.pop(0))
                 except Exception as error:
-                    print(f"download_manager.py L33 : {error}")
+                    # Log the error for analysis
+                    print(f"download_manager.py L38 : {error}")
                     pass
                 DownloadManager.status_change_callback()
+            # Wait 1 second (1000 milliseconds) before checking the queue again
             time.sleep(1)
 
     @staticmethod
     def register(video):
+        """
+        Registers a video to be downloaded.
+
+        Adds the video to the download queue and updates the queued download count.
+        """
         DownloadManager.queued_downloads.append(video)
         DownloadManager.queued_download_count += 1
         DownloadManager.status_change_callback()
 
     @staticmethod
     def unregister_from_queued(video):
+        """
+        Unregisters a video from the download queue.
+
+        Removes the video from the download queue and updates the queued download count.
+        """
         if video in DownloadManager.queued_downloads:
             DownloadManager.queued_downloads.remove(video)
             DownloadManager.queued_download_count -= 1
@@ -50,6 +65,11 @@ class DownloadManager:
 
     @staticmethod
     def unregister_from_active(video):
+        """
+        Unregisters a video from the active download list.
+
+        Removes the video from the active download list and updates the active download count.
+        """
         if video in DownloadManager.active_downloads:
             DownloadManager.active_downloads.remove(video)
             DownloadManager.active_download_count -= 1
@@ -59,6 +79,9 @@ class DownloadManager:
     def initialize(status_change_callback: Callable = None) -> None:
         """
         Initializes the download manager by starting a separate thread for managing the download queue.
+
+        Args:
+            status_change_callback (Callable, optional): A callback function to be called on status changes.
         """
         DownloadManager.status_change_callback = status_change_callback
         downloading_manage_thread = threading.Thread(target=DownloadManager.manage_download_queue)
