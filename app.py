@@ -106,8 +106,6 @@ class App(ctk.CTk):
         self.downloading_content_scroll_frame = ctk.CTkScrollableFrame(master=self)
         self.downloaded_content_scroll_frame = ctk.CTkScrollableFrame(master=self)
 
-        self.settings_btn = ctk.CTkButton(master=self, text="Setting")
-
         self.navigate_added_frame_btn = ctk.CTkButton(
             master=self,
             text="Added",
@@ -640,7 +638,26 @@ class App(ctk.CTk):
 
     def hide_app_logo(self):
         self.logo_frame.place_forget()
-
+    
+    def update_widgets(self):
+        for widget in self.winfo_children():
+            widget.update()
+            try:
+                for sub_widget in widget.winfo_children():
+                    sub_widget.update()
+                    try:
+                        for sub_sub_widget in sub_widget.winfo_children():
+                            sub_sub_widget.update()
+                            try:
+                                for sub_sub_sub_widget in sub_sub_widget.winfo_children():
+                                    sub_sub_sub_widget.update()
+                            except Exception as error:
+                                print(f"app.py L-657 : {error}")
+                    except Exception as error:
+                        print(f"app.py L-659 : {error}")
+            except Exception as error:
+                print(f"app.py L-661 : {error}")
+       
     def geometry_changes_tracker(self):
         self.is_geometry_changes_tracker_running = True
         update_delay = 1
@@ -653,7 +670,7 @@ class App(ctk.CTk):
             time.sleep(update_delay)
             # wait till user stop window size changing
             while self.root_width != self.winfo_width() or self.root_height != self.winfo_height():
-                # keep update old window size to track i fuser change windows size or not
+                # keep update old window size to track to if user change windows size or not
                 self.root_width = self.winfo_width()
                 self.root_height = self.winfo_height()
                 # set delay to 1 sec
@@ -662,6 +679,7 @@ class App(ctk.CTk):
             self.configure_widgets_size()
             self.update()
             self.update_idletasks()
+            self.update_widgets()
             self.hide_app_logo()
         self.is_geometry_changes_tracker_running = False
 
