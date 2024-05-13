@@ -40,7 +40,7 @@ for directory in DIRECTORIES:
             ok_button_callback=app.on_app_closing,
             callback=app.on_app_closing,
             width=int(450 * scale),
-            height=int(130 * scale),
+            height=int(130 * scale)
         )
 
 # set the theme mode, dark or light or system, by getting from data
@@ -54,7 +54,7 @@ app.minsize(int(900 * scale), int(500 * scale))
 # configure alpha
 app.attributes("-alpha", AppearanceSettings.settings["opacity_r"])
 # set the title icon
-app.iconbitmap("assets\\main icon\\icon.ico")
+app.iconbitmap("assets\\main icon\\512x512.ico")
 # set the app title
 app.title("PyTube Downloader")
 # Create the main widgets of the application
