@@ -33,7 +33,8 @@ class App(ctk.CTk):
         Attributes:
             root_width (int): The initial width of the application window.
             root_height (int): The initial height of the application window.
-            is_geometry_changes_tracker_running (bool): A flag indicating whether the geometry changes tracker is running.
+            is_geometry_changes_tracker_running (bool): A flag indicating whether the geometry changes tracker is
+                                                        running.
             selected_download_mode (str): The selected download mode, either "video" or "playlist".
             is_content_downloading (bool): A flag indicating whether content is currently being downloaded.
             is_content_downloaded (bool): A flag indicating whether content has been downloaded.
@@ -352,8 +353,8 @@ class App(ctk.CTk):
         """
         Sets the sizes for various GUI widgets.
 
-        This method configures the size settings for different GUI widgets such as entry fields, buttons, radio buttons, etc.,
-        based on a predetermined scale value.
+        This method configures the size settings for different GUI widgets such as entry fields, buttons,
+        radio buttons, etc.,based on a predetermined scale value.
         """
         scale = AppearanceSettings.settings["scale_r"]
         self.url_entry.configure(height=int(40 * scale))
@@ -465,8 +466,8 @@ class App(ctk.CTk):
         """
         Sets the colors for various GUI widgets.
 
-        This method configures the color settings for different GUI widgets such as buttons, entry fields, radio buttons, 
-        labels, etc., based on the current color settings in the application's appearance settings.
+        This method configures the color settings for different GUI widgets such as buttons, entry fields, radio buttons
+        ,labels, etc., based on the current color settings in the application's appearance settings.
         """
         self.configure(fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"])
 
@@ -548,9 +549,10 @@ class App(ctk.CTk):
         """
         Binds events to various GUI widgets for handling user interactions.
 
-        This method binds different event handlers to GUI widgets such as entry fields, buttons, radio buttons, labels, etc.,
-        for handling user interactions such as mouse clicks, mouse hover, focus changes, etc. It ensures that appropriate
-        actions are taken in response to user interactions to maintain the desired functionality and user experience.
+        This method binds different event handlers to GUI widgets such as entry fields, buttons, radio buttons, labels,
+        etc.,for handling user interactions such as mouse clicks, mouse hover, focus changes, etc. It ensures that
+        appropriate actions are taken in response to user interactions to maintain the desired functionality and
+        user experience.
         """
         self.url_entry.bind("<Button-3>", self.open_context_menu)
         self.url_entry.bind("<Button-2>", self.open_context_menu)
@@ -566,9 +568,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the URL entry field.
 
-            This function is called when the mouse enters the URL entry field. It changes the appearance settings of the URL entry field
-            to reflect the hover state, such as modifying foreground color, border color, and text color, based on the current color
-            settings in the application's appearance settings.
+            This function is called when the mouse enters the URL entry field. It changes the appearance settings of
+            the URL entry field to reflect the hover state, such as modifying foreground color, border color, and
+            text color, based on the current color settings in the application's appearance settings.
             """
             self.url_entry.configure(
                 fg_color=AppearanceSettings.settings["url_entry"]["fg_color"]["hover"],
@@ -580,9 +582,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the URL entry field.
 
-            This function is called when the mouse leaves the URL entry field. It reverts the appearance settings of the URL entry field
-            back to the normal state after hover, restoring the original foreground color, border color, and text color based on the current
-            color settings in the application's appearance settings.
+            This function is called when the mouse leaves the URL entry field. It reverts the appearance settings of the
+            URL entry field back to the normal state after hover, restoring the original foreground color, border color,
+            and text color based on the current  color settings in the application's appearance settings.
             """
             self.url_entry.configure(
                 fg_color=AppearanceSettings.settings["url_entry"]["fg_color"]["normal"],
@@ -599,8 +601,8 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the settings button.
 
-            This function is called when the mouse enters the settings button. It adjusts the text color of the settings button to reflect
-            the hover state, using the accent color defined in the application's appearance settings.
+            This function is called when the mouse enters the settings button. It adjusts the text color of the settings
+            button to reflect the hover state, using the accent color defined in the application's appearance settings.
             """
             self.settings_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
 
@@ -608,8 +610,8 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the settings button.
 
-            This function is called when the mouse leaves the settings button. It resets the text color of the settings button to its normal
-            state, using the accent color defined in the application's appearance settings.
+            This function is called when the mouse leaves the settings button. It resets the text color of the settings
+            button to its normal state, using the accent color defined in the application's appearance settings.
             """
             self.settings_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
 
@@ -622,8 +624,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the video radio button.
 
-            This function is called when the mouse enters the video radio button. It adjusts the text color and foreground color of the
-            video radio button to reflect the hover state, using the colors defined in the application's appearance settings.
+            This function is called when the mouse enters the video radio button. It adjusts the text color and
+            foreground color of the video radio button to reflect the hover state, using the colors defined in
+            the application's appearance settings.
             """
             self.video_radio_btn.configure(
                 text_color=AppearanceSettings.settings["url_entry"]["text_color"]["hover"],
@@ -634,8 +637,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the video radio button.
 
-            This function is called when the mouse leaves the video radio button. It resets the text color and foreground color of the video
-            radio button to their normal states, using the colors defined in the application's appearance settings.
+            This function is called when the mouse leaves the video radio button. It resets the text color and
+            foreground color of the video radio button to their normal states, using the colors defined in the
+            application's appearance settings.
             """
             self.video_radio_btn.configure(
                 text_color=AppearanceSettings.settings["url_entry"]["text_color"]["normal"],
@@ -651,8 +655,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the playlist radio button.
 
-            This function is called when the mouse enters the playlist radio button. It adjusts the text color and foreground color of the
-            playlist radio button to reflect the hover state, using the colors defined in the application's appearance settings.
+            This function is called when the mouse enters the playlist radio button. It adjusts the text color and
+            foreground color of the playlist radio button to reflect the hover state, using the colors defined in
+            the application's appearance settings.
             """
             self.playlist_radio_btn.configure(
                 text_color=AppearanceSettings.settings["url_entry"]["text_color"]["hover"],
@@ -663,8 +668,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the playlist radio button.
 
-            This function is called when the mouse leaves the playlist radio button. It resets the text color and foreground color of the playlist
-            radio button to their normal states, using the colors defined in the application's appearance settings.
+            This function is called when the mouse leaves the playlist radio button. It resets the text color and
+            foreground color of the playlist radio button to their normal states, using the colors defined in the
+            application's appearance settings.
             """
             self.playlist_radio_btn.configure(
                 text_color=AppearanceSettings.settings["url_entry"]["text_color"]["normal"],
@@ -680,8 +686,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the add video/playlist button.
 
-            This function is called when the mouse enters the add video/playlist button. It adjusts the border color, text color, and foreground
-            color of the button to reflect the hover state, using the colors defined in the application's appearance settings.
+            This function is called when the mouse enters the add video/playlist button. It adjusts the border color,
+            text color, and foreground color of the button to reflect the hover state, using the colors defined in the
+            application's appearance settings.
             """
             self.add_url_btn.configure(
                 border_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
@@ -693,8 +700,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the add video/playlist button.
 
-            This function is called when the mouse leaves the add video/playlist button. It resets the border color, text color, and foreground color
-            of the button to their normal states, using the colors defined in the application's appearance settings.
+            This function is called when the mouse leaves the add video/playlist button. It resets the border color,
+            text color, and foreground color of the button to their normal states, using the colors defined in
+            the application's appearance settings.
             """
             self.add_url_btn.configure(
                 border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
@@ -711,8 +719,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the navigate added frame button.
 
-            This function is called when the mouse enters the navigate added frame button. It adjusts the text color and foreground color of the button
-            to reflect the hover state, using the colors defined in the application's appearance settings.
+            This function is called when the mouse enters the navigate added frame button. It adjusts the text color and
+            foreground color of the button to reflect the hover state, using the colors defined in the
+            application's appearance settings.
             """
             self.navigate_added_frame_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
@@ -723,8 +732,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the navigate added frame button.
 
-            This function is called when the mouse leaves the navigate added frame button. It resets the text color and foreground color of the button
-            to their normal states, using the colors defined in the application's appearance settings.
+            This function is called when the mouse leaves the navigate added frame button. It resets the text color and
+            foreground color of the button to their normal states, using the colors defined in the application's
+            appearance settings.
             """
             self.navigate_added_frame_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
@@ -740,8 +750,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the navigate downloading frame button.
 
-            This function adjusts the text color and foreground color of the navigate downloading frame button to reflect the hover state when the mouse enters the button. 
-            The colors are obtained from the application's appearance settings for the hover state.
+            This function adjusts the text color and foreground color of the navigate downloading frame button to
+            reflect the hover state when the mouse enters the button.The colors are obtained from the application's
+            appearance settings for the hover state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -755,8 +766,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the navigate downloading frame button.
 
-            This function resets the text color and foreground color of the navigate downloading frame button to their normal states when the mouse leaves the button. 
-            The colors are obtained from the application's appearance settings for the normal state.
+            This function resets the text color and foreground color of the navigate downloading frame button to their
+            normal states when the mouse leaves the button.The colors are obtained from the application's appearance
+            settings for the normal state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -775,8 +787,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the navigate downloaded frame button.
 
-            This function adjusts the text color and foreground color of the navigate downloaded frame button to reflect the hover state when the mouse enters the button. 
-            The colors are obtained from the application's appearance settings for the hover state.
+            This function adjusts the text color and foreground color of the navigate downloaded frame button to reflect
+            the hover state when the mouse enters the button.The colors are obtained from the application's appearance
+            settings for the hover state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -790,8 +803,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the navigate downloaded frame button.
 
-            This function resets the text color and foreground color of the navigate downloaded frame button to their normal states when the mouse leaves the button. 
-            The colors are obtained from the application's appearance settings for the normal state.
+            This function resets the text color and foreground color of the navigate downloaded frame button to their
+            normal states when the mouse leaves the button. The colors are obtained from the application's appearance
+            settings for the normal state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -810,8 +824,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the added frame information label.
 
-            This function adjusts the text color of the added frame information label to reflect the hover state when the mouse enters the label. 
-            The color is obtained from the application's appearance settings for the hover state.
+            This function adjusts the text color of the added frame information label to reflect the hover state when
+            the mouse enters the label. The color is obtained from the application's appearance settings
+            for the hover state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -824,8 +839,8 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the added frame information label.
 
-            This function resets the text color of the added frame information label to its normal state when the mouse leaves the label. 
-            The color is obtained from the application's appearance settings for the normal state.
+            This function resets the text color of the added frame information label to its normal state when the mouse
+            leaves the label. The color is obtained from the application's appearance settings for the normal state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -843,8 +858,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the downloading frame information label.
 
-            This function adjusts the text color of the downloading frame information label to reflect the hover state when the mouse enters the label. 
-            The color is obtained from the application's appearance settings for the hover state.
+            This function adjusts the text color of the downloading frame information label to reflect the hover state
+            when the mouse enters the label. The color is obtained from the application's appearance settings
+            for the hover state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -857,8 +873,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the downloading frame information label.
 
-            This function resets the text color of the downloading frame information label to its normal state when the mouse leaves the label. 
-            The color is obtained from the application's appearance settings for the normal state.
+            This function resets the text color of the downloading frame information label to its normal state when the
+            mouse leaves the label. The color is obtained from the application's appearance settings for
+            the normal state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -875,8 +892,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse entering the downloaded frame information label.
 
-            This function adjusts the text color of the downloaded frame information label to reflect the hover state when the mouse enters the label. 
-            The color is obtained from the application's appearance settings for the hover state.
+            This function adjusts the text color of the downloaded frame information label to reflect the hover state
+            when the mouse enters the label. The color is obtained from the application's appearance settings for
+            the hover state.
 
             Parameters:
                 _event (tk.Event): The event object.
@@ -889,8 +907,9 @@ class App(ctk.CTk):
             """
             Event handler for mouse leaving the downloaded frame information label.
 
-            This function resets the text color of the downloaded frame information label to its normal state when the mouse leaves the label. 
-            The color is obtained from the application's appearance settings for the normal state.
+            This function resets the text color of the downloaded frame information label to its normal state when the
+            mouse leaves the label. The color is obtained from the application's appearance settings for the
+            normal state.
 
             Parameters:
                 _event (tk.Event): The event object.
