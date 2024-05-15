@@ -408,7 +408,7 @@ class AppearancePanel(ctk.CTkFrame):
         self.custom_accent_color_display_btn.configure(width=30 * scale, height=30 * scale, corner_radius=6 * scale)
         self.custom_accent_color_entry.configure(width=140 * scale, height=28 * scale)
         self.custom_accent_color_apply_btn.configure(width=50 * scale, height=24 * scale)
-        self.custom_accent_color_alert_text.configure(width=590 * scale, height=80 * scale)
+        self.custom_accent_color_alert_text.configure(width=590 * scale, height=85 * scale)
 
         self.scale_change_slider.configure(width=180 * scale, height=18 * scale)
         self.scale_apply_btn.configure(width=50 * scale, height=24 * scale)
