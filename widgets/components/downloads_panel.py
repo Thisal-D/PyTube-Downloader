@@ -327,7 +327,7 @@ class DownloadsPanel(ctk.CTkFrame):
             row=6, column=0, columnspan=4, padx=(100 + (20 * scale), 0), pady=(10, 0), sticky="w"
         )
         
-        #elf.apply_changes_button.grid(row=7, column=3, pady=(pady, 0), padx=(20, 0), sticky="w")
+        self.apply_changes_button.grid(row=7, column=2, pady=(pady, 0), padx=(20, 0), sticky="w")
 
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
