@@ -317,16 +317,18 @@ class DownloadingVideo(Video):
 
         if self.download_state == "removed":
             return
+        
+        self.download_state = "failed"
+        if self.mode == "playlist":
+            self.video_download_status_callback(self, self.download_state)
+            
         if GeneralSettings.settings["re_download_automatically"] and self.automatically_re_download_count < 5:
             time.sleep(1)
             self.automatically_re_download_count += 1
             self.download_video()
         else:
-            self.download_state = "failed"
-            self.display_status()
-            if self.mode == "playlist":
-                self.video_download_status_callback(self, self.download_state)
             DownloadManager.unregister_from_active(self)
+            self.display_status()
             self.pause_resume_btn.place_forget()
             self.re_download_btn.place(
                 rely=0.5,
