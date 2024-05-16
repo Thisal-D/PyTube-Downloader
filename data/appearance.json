@@ -34,8 +34,8 @@
             ]
         }
     },
-    "opacity": 100,
-    "opacity_r": 1.0,
+    "opacity": 96.0,
+    "opacity_r": 0.96,
     "radio_btn": {
         "text_color": {
             "hover": [

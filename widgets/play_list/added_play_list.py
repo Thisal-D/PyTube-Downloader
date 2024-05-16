@@ -5,7 +5,7 @@ from typing import Literal, Union, List
 from .play_list import PlayList
 from widgets import AddedVideo
 from utils import GuiUtils
-from settings import AppearanceSettings
+from settings import AppearanceSettings, GeneralSettings
 
 
 class AddedPlayList(PlayList):
@@ -43,8 +43,9 @@ class AddedPlayList(PlayList):
         self.waiting_videos: List[AddedVideo] = []
         self.loading_videos: List[AddedVideo] = []
         self.failed_videos: List[AddedVideo] = []
-        self.completed_videos: List[AddedVideo] = []
-
+        self.loaded_videos: List[AddedVideo] = []
+        self.automatic_downloaded: bool = False
+        
         super().__init__(
             root=root,
             master=master,
@@ -105,8 +106,8 @@ class AddedPlayList(PlayList):
                     self.failed_videos.remove(video)
                 if video in self.waiting_videos:
                     self.waiting_videos.remove(video)
-                if video in self.completed_videos:
-                    self.completed_videos.remove(video)
+                if video in self.loaded_videos:
+                    self.loaded_videos.remove(video)
         elif state == "failed":
             self.failed_videos.append(video)
             if video in self.loading_videos:
@@ -122,7 +123,7 @@ class AddedPlayList(PlayList):
             if video in self.failed_videos:
                 self.failed_videos.remove(video)
         elif state == "completed":
-            self.completed_videos.append(video)
+            self.loaded_videos.append(video)
             self.loading_videos.remove(video)
 
         if len(self.videos) != 0:
@@ -130,7 +131,7 @@ class AddedPlayList(PlayList):
                 text=f"Failed : {len(self.failed_videos)} |   "
                      f"Waiting : {len(self.waiting_videos)} |   "
                      f"Loading : {len(self.loading_videos)} |   "
-                     f"Loaded : {len(self.completed_videos)}"
+                     f"Loaded : {len(self.loaded_videos)}"
                 )
             self.playlist_video_count_label.configure(
                 text=self.playlist_video_count
@@ -144,6 +145,15 @@ class AddedPlayList(PlayList):
                     self.indicate_loading()
             if len(self.loading_videos) == 0 and len(self.waiting_videos) == 0 and len(self.failed_videos) == 0:
                 self.set_loading_completed()
+                
+            self.handle_automatic_download()
+            
+    def handle_automatic_download(self):
+        if (GeneralSettings.settings["automatic_download"]["status"] == "enable" and
+                len(self.waiting_videos) == 0 and len(self.loading_videos) == 0 and
+                len(self.loaded_videos) != 0) and self.automatic_downloaded is not True:
+            self.automatic_downloaded = True
+            self.playlist_download_button_click_callback(self)
 
     def reload_playlist(self):
         if len(self.loading_videos) == 0 and len(self.videos) != 0:
@@ -198,7 +208,8 @@ class AddedPlayList(PlayList):
             index = -2
         elif e == "Audio Only":
             index = -1
-        for video in self.videos:
+        for video in self.loaded_videos:
+            print(video.video_title)
             video.resolution_select_menu.set(video.resolution_select_menu.cget("values")[index])
             video.choose_download_type(video.resolution_select_menu.get())
 
@@ -238,7 +249,7 @@ class AddedPlayList(PlayList):
             text=f"Failed : {len(self.failed_videos)} |   "
                  f"Waiting : {len(self.waiting_videos)} |   "
                  f"Loading : {len(self.loading_videos)} |   "
-                 f"Loaded : {len(self.completed_videos)}"
+                 f"Loaded : {len(self.loaded_videos)}"
         )
 
     def set_widgets_fonts(self):

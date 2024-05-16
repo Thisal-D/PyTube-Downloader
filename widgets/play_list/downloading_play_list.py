@@ -42,7 +42,7 @@ class DownloadingPlayList(PlayList):
         self.downloading_videos: List[DownloadingVideo] = []
         self.paused_videos: List[DownloadingVideo] = []
         self.failed_videos: List[DownloadingVideo] = []
-        self.completed_videos: List[DownloadingVideo] = []
+        self.downloaded_videos: List[DownloadingVideo] = []
 
         super().__init__(
             root=root,
@@ -106,8 +106,8 @@ class DownloadingPlayList(PlayList):
                     self.failed_videos.remove(video)
                 if video in self.waiting_videos:
                     self.waiting_videos.remove(video)
-                if video in self.completed_videos:
-                    self.completed_videos.remove(video)
+                if video in self.downloaded_videos:
+                    self.downloaded_videos.remove(video)
                 if video in self.paused_videos:
                     self.paused_videos.remove(video)
         elif state == "failed":
@@ -133,7 +133,7 @@ class DownloadingPlayList(PlayList):
             if video in self.failed_videos:
                 self.failed_videos.remove(video)
         elif state == "completed":
-            self.completed_videos.append(video)
+            self.downloaded_videos.append(video)
             self.downloading_videos.remove(video)
 
         # if len is 0 that means all videos are remove :D
@@ -143,7 +143,7 @@ class DownloadingPlayList(PlayList):
                      f"Waiting : {len(self.waiting_videos)} |   "
                      f"Downloading : {len(self.downloading_videos)} |   "
                      f"Paused : {len(self.paused_videos)} |   "
-                     f"Downloaded : {len(self.completed_videos)}",
+                     f"Downloaded : {len(self.downloaded_videos)}",
                 )
             self.playlist_video_count_label.configure(
                 text=self.playlist_video_count
@@ -236,7 +236,7 @@ class DownloadingPlayList(PlayList):
                  f"Waiting : {len(self.waiting_videos)} |   "
                  f"Downloading : {len(self.downloading_videos)} |   "
                  f"Paused : {len(self.paused_videos)} |   "
-                 f"Downloaded : {len(self.completed_videos)}",
+                 f"Downloaded : {len(self.downloaded_videos)}",
         )
 
     def set_widgets_fonts(self):

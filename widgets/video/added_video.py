@@ -228,9 +228,10 @@ class AddedVideo(Video):
         self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[index])
 
     def download_automatically(self):
-        if self.mode == "video" and GeneralSettings.settings["automatic_download"]["status"] == "enable":
+        if GeneralSettings.settings["automatic_download"]["status"] == "enable":
             self.select_download_quality_automatic()
             self.choose_download_type(self.resolution_select_menu.get())
+        if self.mode == "video":
             self.video_download_button_click_callback(self)
 
     def set_loading_completed(self):
@@ -245,21 +246,22 @@ class AddedVideo(Video):
         if self.load_state == "removed":
             return
         
+        self.load_state = "failed"
+        if self.mode == "playlist":
+            self.video_load_status_callback(self, self.load_state)
+            
         if GeneralSettings.settings["reload_automatically"] and self.automatically_reload_count < 5:
             time.sleep(1)
             self.automatically_reload_count += 1
             self.load_video()
         else:
-            LoadManager.unregister_from_active(self)
-            self.load_state = "failed"
-            if self.mode == "playlist":
-                self.video_load_status_callback(self, self.load_state)
-            self.thumbnail_btn.show_failure_indicator(
-                text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"]
-            )
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"],
                 text="Failed"
+            )
+            LoadManager.unregister_from_active(self)
+            self.thumbnail_btn.show_failure_indicator(
+                text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"]
             )
             self.reload_btn.place(
                 relx=1,

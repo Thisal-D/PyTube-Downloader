@@ -1086,10 +1086,10 @@ class App(ctk.CTk):
             channel_url=playlist.channel_url,
             channel=playlist.channel,
             playlist_title=playlist.playlist_title,
-            playlist_video_count=playlist.playlist_video_count,
+            playlist_video_count=len(playlist.loaded_videos),
             playlist_url=playlist.playlist_url,
             # play list videos
-            videos=playlist.videos,
+            videos=playlist.loaded_videos,
             # download directory
             # playlist download completed callback utils
             playlist_download_complete_callback=self.downloaded_playlist,
@@ -1141,9 +1141,9 @@ class App(ctk.CTk):
             channel_url=playlist.channel_url,
             channel=playlist.channel,
             playlist_title=playlist.playlist_title,
-            playlist_video_count=playlist.playlist_video_count,
+            playlist_video_count=len(playlist.downloaded_videos),
             playlist_url=playlist.playlist_url,
-            videos=playlist.videos
+            videos=playlist.downloaded_videos
         ).pack(fill="x", pady=2)
 
     def open_context_menu(self, _event: tk.Event) -> None:

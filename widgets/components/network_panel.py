@@ -69,7 +69,7 @@ class NetworkPanel(ctk.CTkFrame):
 
         self.automatic_download_label = ctk.CTkLabel(
             master=self,
-            text="Automatic Video Download",
+            text="Automatic Video/Playlist Download",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
