@@ -1,11 +1,11 @@
 from widgets.video import Video
 import customtkinter as ctk
 import threading
-import time
 import os
 from tkinter import PhotoImage
 from typing import Literal, List, Union
 from pytube import request as pytube_request
+import time
 from settings import (
     GeneralSettings,
     AppearanceSettings,
@@ -79,6 +79,8 @@ class DownloadingVideo(Video):
         self.file_size: int = 0
         self.converted_file_size: str = "0 B"
         self.download_file_name: str = ""
+        # Track automatically re download count
+        self.automatically_re_download_count = 0
 
         super().__init__(
             root=root,
@@ -313,7 +315,13 @@ class DownloadingVideo(Video):
         Set the status to 'failed' if downloading fails.
         """
 
-        if self.download_state != "removed":
+        if self.download_state == "removed":
+            return
+        if GeneralSettings.settings["re_download_automatically"] and self.automatically_re_download_count < 5:
+            time.sleep(1)
+            self.automatically_re_download_count += 1
+            self.download_video()
+        else:
             self.download_state = "failed"
             self.display_status()
             if self.mode == "playlist":

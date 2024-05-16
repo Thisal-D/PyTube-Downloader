@@ -5,6 +5,7 @@ import pytube
 import threading
 from typing import Literal, Union, List, Callable, Tuple, Dict
 from PIL import Image
+import time
 from services import (
     LoadManager,
     ThemeManager,
@@ -56,6 +57,8 @@ class AddedVideo(Video):
         self.video: Union[pytube.YouTube, None] = None
 
         self.mode: Literal["video", "playlist"] = mode
+        # Track automatically reload count
+        self.automatically_reload_count: int = 0
 
         super().__init__(
             root=root,
@@ -239,7 +242,14 @@ class AddedVideo(Video):
             LoadManager.unregister_from_active(self)
 
     def set_loading_failed(self):
-        if self.load_state != "removed":
+        if self.load_state == "removed":
+            return
+        
+        if GeneralSettings.settings["reload_automatically"] and self.automatically_reload_count < 5:
+            time.sleep(1)
+            self.automatically_reload_count += 1
+            self.load_video()
+        else:
             LoadManager.unregister_from_active(self)
             self.load_state = "failed"
             if self.mode == "playlist":
@@ -256,7 +266,7 @@ class AddedVideo(Video):
                 rely=0.5,
                 anchor="w",
                 x=-80 * AppearanceSettings.settings["scale_r"]
-            )
+                )
 
     def set_video_data(self):
         if self.load_state != "removed":
