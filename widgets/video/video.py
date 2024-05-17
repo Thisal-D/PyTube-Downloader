@@ -1,6 +1,6 @@
 import webbrowser
 import customtkinter as ctk
-from typing import List, Union, Tuple
+from typing import List, Union
 from tkinter import PhotoImage
 import pyperclip
 from utils import (

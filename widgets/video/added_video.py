@@ -25,7 +25,6 @@ class AddedVideo(Video):
     # default thumbnails to display
     default_thumbnails: Tuple[tk.PhotoImage, tk.PhotoImage] = (None, None)
     
-    
     def __init__(
             self,
             root: ctk.CTk,
