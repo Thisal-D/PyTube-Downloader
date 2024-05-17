@@ -29,17 +29,16 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 
 ### Dark Theme
 
-![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/003c632a-d6e6-4b33-8445-d77f941906ca)
-![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/35bceb0b-9548-4e90-a9d8-108094d55e01)
-![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2f28d40a-915c-420b-a9c5-ea593ee0ae13)
-![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/00fc31ba-d92d-479c-a0df-d0d6661c53e6)
-![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/5a4e57a1-ac2d-4707-bf6a-37aa728c6d60)
-![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/1ec6d8b8-f65c-4c1b-b3e3-d5b814810c5c)
-![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/0019ca3a-d681-422a-8181-25601fc6fdcc)
-![7](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/0afa4cec-f65e-41bc-9c90-34569d268154)
-![8](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/41232510-d103-4e58-81c8-8e1799184bd3)
-![9](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2ace7df5-62fd-4bde-83f0-b0b9e53ccc81)
-
+![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/03821a3b-264a-4f8a-ad56-142352d9d9be)
+![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/fc3475e7-5b62-486b-bbe6-fda589e2dc37)
+![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7f0df26e-4452-4b73-ae47-e05db7276095)
+![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/221bb327-00f9-4077-9a18-9b1d7b89982e)
+![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/03388570-a9fd-40e6-a673-ce9eaed7245c)
+![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b26e701d-0445-4397-80c4-107565651934)
+![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3a83d2c8-85c3-4247-8a9f-28e36e94359e)
+![7](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3617f5d2-59a8-4b07-b79e-bb0cee0258ac)
+![8](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/8d21672d-0b9c-4ee3-b526-13fa30ac9bd1)
+![9](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b9dbf091-32b5-4fa6-8173-7a6f02f83165)
 
 ---
 
