@@ -1,4 +1,3 @@
-import tkinter
 import webbrowser
 import customtkinter as ctk
 from typing import List, Union, Tuple
@@ -20,9 +19,7 @@ from settings import (
 
 class Video(ctk.CTkFrame):
     """A class representing a video widget."""
-
-    default_thumbnails: Tuple[tkinter.PhotoImage, tkinter.PhotoImage] = (None, None)
-
+    
     def __init__(
             self,
             root: ctk.CTk,
