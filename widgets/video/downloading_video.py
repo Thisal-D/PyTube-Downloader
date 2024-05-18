@@ -11,7 +11,8 @@ from settings import (
     AppearanceSettings,
 )
 from services import (
-    DownloadManager
+    DownloadManager,
+    LanguageManager
 )
 from utils import (
     GuiUtils,
@@ -50,7 +51,7 @@ class DownloadingVideo(Video):
             video_download_progress_callback: callable = None):
 
         # download status track and callback
-        self.download_state: Literal["waiting", "downloading", "failed", "completed", "removed"] = "waiting"
+        self.download_state: Literal["waiting", "downloading", "failed", "downloaded", "removed"] = "waiting"
         self.pause_requested: bool = False
         self.pause_resume_btn_command: Literal["pause", "resume"] = "pause"
         # status and progress callbacks
@@ -134,32 +135,32 @@ class DownloadingVideo(Video):
         if self.download_state == "failed":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"],
-                text="Failed"
+                text=LanguageManager.data["failed"]
             )
         elif self.download_state == "waiting":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text="Waiting"
+                text=LanguageManager.data["waiting"]
             )
         elif self.download_state == "paused":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text="Paused"
+                text=LanguageManager.data["paused"]
             )
         elif self.download_state == "downloading":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text="Downloading"
+                text=LanguageManager.data["downloading"]
             )
         elif self.download_state == "pausing":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text="Pausing"
+                text=LanguageManager.data["pausing"]
             )
-        elif self.download_state == "completed":
+        elif self.download_state == "downloaded":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text="Downloaded"
+                text=LanguageManager.data["downloaded"]
             )
 
     def retrieve_file(self):
@@ -205,7 +206,8 @@ class DownloadingVideo(Video):
             return
 
         self.bytes_downloaded = 0
-        self.download_type_label.configure(text=f"{self.download_type} : {self.download_quality}")
+        self.download_type_label.configure(text=f"{LanguageManager.data[self.download_type.lower()]} : "
+                                                f"{self.download_quality}")
         self.file_size = stream.filesize
         self.converted_file_size = ValueConvertUtility.convert_size(self.file_size, 2)
         self.download_file_name = FileUtility.get_available_file_name(self.download_file_name)
@@ -250,11 +252,11 @@ class DownloadingVideo(Video):
                                 self.set_downloading_failed()
                                 break
                     except Exception as error:
-                        print(f"downloading_play_list.py L-235 : {error}")
+                        print(f"downloading_video.py L-235 : {error}")
                         self.set_downloading_failed()
                         break
         except Exception as error:
-            print(f"downloading_play_list.py L-239 : {error}")
+            print(f"downloading_video.py L-239 : {error}")
             self.set_downloading_failed()
 
     def set_resume_btn(self):
@@ -355,12 +357,12 @@ class DownloadingVideo(Video):
 
     def set_downloading_completed(self):
         """
-        Set the status to 'completed' if the download is completed.
+        Set the status to 'downloaded' if the download is downloaded.
         """
 
         DownloadManager.unregister_from_active(self)
         self.pause_resume_btn.place_forget()
-        self.download_state = "completed"
+        self.download_state = "downloaded"
         self.display_status()
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)
@@ -409,6 +411,12 @@ class DownloadingVideo(Video):
             hover=False
         )
 
+    def set_widgets_texts(self):
+        super().set_widgets_texts()
+        self.download_type_label.configure(text=f"{LanguageManager.data[self.download_type.lower()]} : "
+                                                f"{self.download_quality}")
+        self.display_status()
+        
     def set_widgets_fonts(self):
         """
         Set fonts for all widgets.

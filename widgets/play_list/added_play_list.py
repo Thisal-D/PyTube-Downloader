@@ -6,6 +6,7 @@ from .play_list import PlayList
 from widgets import AddedVideo
 from utils import GuiUtils
 from settings import AppearanceSettings, GeneralSettings
+from services import LanguageManager
 
 
 class AddedPlayList(PlayList):
@@ -38,13 +39,15 @@ class AddedPlayList(PlayList):
         # all video objects
         self.videos: List[Union[None, AddedVideo]] = []
         # state
-        self.load_state: Literal[None, "waiting", "loading", "failed", "completed"] = None
+        self.load_state: Literal[None, "waiting", "loading", "failed", "loaded"] = "loading"
         # vars for state track
         self.waiting_videos: List[AddedVideo] = []
         self.loading_videos: List[AddedVideo] = []
         self.failed_videos: List[AddedVideo] = []
         self.loaded_videos: List[AddedVideo] = []
         self.automatic_downloaded: bool = False
+        
+        self.qualities: List[str] = ['highest_quality', 'lowest_quality', 'audio_only']
         
         super().__init__(
             root=root,
@@ -67,11 +70,10 @@ class AddedPlayList(PlayList):
             self.channel_url = str(self.playlist.owner_url)
             self.view_btn.configure(state="normal")
             self.channel_btn.configure(state="normal")
-            self.load_state = "completed"
             self.set_playlist_data()
             self.load_videos()
         except Exception as error:
-            print(f"added_play_list.py : {error}")
+            print(f"added_play_list.py L-74 : {error}")
             self.indicate_loading_failure()
 
     def load_videos(self):
@@ -93,7 +95,7 @@ class AddedPlayList(PlayList):
     def videos_status_track(
             self,
             video: AddedVideo,
-            state: Literal["waiting", "loading", "completed", "failed", "removed"]):
+            state: Literal["waiting", "loading", "loaded", "failed", "removed"]):
         if state == "removed":
             self.videos.remove(video)
             self.playlist_video_count -= 1
@@ -122,16 +124,16 @@ class AddedPlayList(PlayList):
             self.waiting_videos.append(video)
             if video in self.failed_videos:
                 self.failed_videos.remove(video)
-        elif state == "completed":
+        elif state == "loaded":
             self.loaded_videos.append(video)
             self.loading_videos.remove(video)
 
         if len(self.videos) != 0:
             self.videos_status_counts_label.configure(
-                text=f"Failed : {len(self.failed_videos)} |   "
-                     f"Waiting : {len(self.waiting_videos)} |   "
-                     f"Loading : {len(self.loading_videos)} |   "
-                     f"Loaded : {len(self.loaded_videos)}"
+                text=f"{LanguageManager.data['failed']} : {len(self.failed_videos)} |   "
+                     f"{LanguageManager.data['waiting']} : {len(self.waiting_videos)} |   "
+                     f"{LanguageManager.data['loading']} : {len(self.loading_videos)} |   "
+                     f"{LanguageManager.data['loaded']} : {len(self.loaded_videos)}"
                 )
             self.playlist_video_count_label.configure(
                 text=self.playlist_video_count
@@ -153,6 +155,14 @@ class AddedPlayList(PlayList):
                 len(self.waiting_videos) == 0 and len(self.loading_videos) == 0 and
                 len(self.loaded_videos) != 0) and self.automatic_downloaded is not True:
             self.automatic_downloaded = True
+            auto_download_quality_index = GeneralSettings.settings["automatic_download"]["quality"]
+            if len(self.failed_videos) == 0:
+                self.resolution_select_menu.set(
+                    LanguageManager.data[self.qualities[auto_download_quality_index]]
+                )
+            self.select_download_option(
+                [LanguageManager.data[quality] for quality in self.qualities][auto_download_quality_index]
+            )
             self.playlist_download_button_click_callback(self)
 
     def reload_playlist(self):
@@ -169,15 +179,17 @@ class AddedPlayList(PlayList):
             threading.Thread(target=self.load_playlist, daemon=True).start()
 
     def indicate_waiting(self):
+        self.load_state = "waiting"
         self.status_label.configure(
-            text="Waiting",
+            text=LanguageManager.data['waiting'],
             text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"]
         )
         self.reload_btn.place_forget()
 
     def indicate_loading_failure(self):
+        self.load_state = "failed"
         self.status_label.configure(
-            text="Failed",
+            text=LanguageManager.data['failed'],
             text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"]
         )
         self.reload_btn.place(
@@ -187,30 +199,36 @@ class AddedPlayList(PlayList):
             x=-80 * AppearanceSettings.settings["scale_r"])
 
     def indicate_loading(self):
+        self.load_state = "loading"
         self.status_label.configure(
-            text="Loading",
+            text=LanguageManager.data['loading'],
             text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"]
         )
         self.reload_btn.place_forget()
 
     def set_loading_completed(self):
-        self.status_label.configure(text="Loaded")
+        self.load_state = "loaded"
+        self.status_label.configure(text=LanguageManager.data['loaded'])
         self.download_btn.configure(state="normal")
-        self.resolution_select_menu.configure(values=["Highest Quality", "Lowest Quality", "Audio Only"])
-        self.resolution_select_menu.set("Highest Quality")
+        self.resolution_select_menu.configure(
+            values=[LanguageManager.data[quality] for quality in self.qualities]
+        )
+        if GeneralSettings.settings["automatic_download"]["status"] == "enable":
+            default_index = GeneralSettings.settings["automatic_download"]["quality"]
+        else:
+            default_index = 0
+        self.resolution_select_menu.set(
+            LanguageManager.data[self.qualities[default_index]]
+        )
+            
         self.resolution_select_menu.configure(command=self.select_download_option)
 
     def select_download_option(self, e):
-        index = None
-        if e == "Highest Quality":
-            index = 0
-        elif e == "Lowest Quality":
-            index = -2
-        elif e == "Audio Only":
-            index = -1
+        selected_index = self.resolution_select_menu.cget("values").index(e)
+        if selected_index != 0:
+            selected_index -= len(self.qualities)
         for video in self.loaded_videos:
-            print(video.video_title)
-            video.resolution_select_menu.set(video.resolution_select_menu.cget("values")[index])
+            video.resolution_select_menu.set(video.resolution_select_menu.cget("values")[selected_index])
             video.choose_download_type(video.resolution_select_menu.get())
 
     def kill(self):
@@ -232,12 +250,11 @@ class AddedPlayList(PlayList):
         )
         self.download_btn = ctk.CTkButton(
             master=self.sub_frame,
-            text="Download",
             state="disabled",
             hover=False,
             command=lambda: self.playlist_download_button_click_callback(self)
         )
-        self.status_label = ctk.CTkLabel(master=self.sub_frame, text="Loading")
+        self.status_label = ctk.CTkLabel(master=self.sub_frame)
         self.reload_btn = ctk.CTkButton(
             self.playlist_main_frame,
             text="⟳",
@@ -246,11 +263,28 @@ class AddedPlayList(PlayList):
         )
         self.videos_status_counts_label = ctk.CTkLabel(
             master=self.sub_frame,
-            text=f"Failed : {len(self.failed_videos)} |   "
-                 f"Waiting : {len(self.waiting_videos)} |   "
-                 f"Loading : {len(self.loading_videos)} |   "
-                 f"Loaded : {len(self.loaded_videos)}"
         )
+
+    def set_widgets_texts(self):
+        super().set_widgets_texts()
+        self.status_label.configure(text=LanguageManager.data[self.load_state])
+        self.download_btn.configure(text=LanguageManager.data["download"])
+        self.videos_status_counts_label.configure(
+            text=f"{LanguageManager.data['failed']} : {len(self.failed_videos)} |   "
+                 f"{LanguageManager.data['waiting']} : {len(self.waiting_videos)} |   "
+                 f"{LanguageManager.data['loading']} : {len(self.loading_videos)} |   "
+                 f"{LanguageManager.data['loaded']} : {len(self.loaded_videos)}"
+        )
+        if self.load_state == "loaded":
+            current_selected_quality = self.resolution_select_menu.cget("values").index(
+                self.resolution_select_menu.get()
+            )
+            self.resolution_select_menu.configure(
+                values=[LanguageManager.data[quality] for quality in self.qualities]
+            )
+            self.resolution_select_menu.set(
+                self.resolution_select_menu.cget("values")[current_selected_quality]
+            )
 
     def set_widgets_fonts(self):
         super().set_widgets_fonts()

@@ -1,7 +1,7 @@
 import webbrowser
 import customtkinter as ctk
 from typing import Union
-from services import ThemeManager
+from services import ThemeManager, LanguageManager
 from settings import AppearanceSettings
 
 
@@ -66,6 +66,7 @@ class PlayList(ctk.CTkFrame):
         
         # Create and configure widgets
         self.create_widgets()
+        self.set_widgets_texts()
         self.set_widgets_sizes()
         self.set_widgets_fonts()
         self.set_widgets_colors()
@@ -76,6 +77,7 @@ class PlayList(ctk.CTkFrame):
 
         # Register to Theme Manager for accent color updates & widgets colors updates
         ThemeManager.register_widget(self)
+        LanguageManager.register_widget(self)
 
     def hide_videos(self):
         """Hide the videos in the playlist."""
@@ -98,8 +100,8 @@ class PlayList(ctk.CTkFrame):
     def set_playlist_data(self):
         """Set the data of the playlist."""
         self.playlist_video_count_label.configure(text=f"{self.playlist_video_count}")
-        self.playlist_title_label.configure(text=f"Title : {self.playlist_title}")
-        self.channel_btn.configure(text=f"Channel : {self.channel}")
+        self.playlist_title_label.configure(text=f"{LanguageManager.data['title']} : {self.playlist_title}")
+        self.channel_btn.configure(text=f"{LanguageManager.data['channel']} : {self.channel}")
         self.url_label.configure(text=self.playlist_url)
         self.channel_btn.configure(state="normal")
 
@@ -122,7 +124,7 @@ class PlayList(ctk.CTkFrame):
         )
         self.info_frame = ctk.CTkFrame(master=self.playlist_main_frame)
         self.playlist_title_label = ctk.CTkLabel(
-            master=self.info_frame, anchor="w", text=f"Title : {self.playlist_title}"
+            master=self.info_frame, anchor="w"
         )
         self.channel_btn = ctk.CTkButton(
             master=self.info_frame,
@@ -130,7 +132,6 @@ class PlayList(ctk.CTkFrame):
             command=lambda: webbrowser.open(self.channel_url),
             state="disabled",
             hover=False,
-            text=f"Channel : {self.channel}"
         )
         self.url_label = ctk.CTkLabel(master=self.info_frame, anchor="w", text=self.playlist_url)
 
@@ -141,6 +142,13 @@ class PlayList(ctk.CTkFrame):
             text=f"{self.playlist_video_count}"
         )
         self.playlist_item_frame = ctk.CTkFrame(master=self)
+
+    def set_widgets_texts(self):
+        self.playlist_title_label.configure(text=f"{LanguageManager.data['title']} : {self.playlist_title}")
+        self.channel_btn.configure(text=f"{LanguageManager.data['channel']} : {self.channel}")
+
+    def update_widgets_text(self):
+        self.set_widgets_texts()
 
     def set_widgets_fonts(self):
         """Set fonts for the widgets."""

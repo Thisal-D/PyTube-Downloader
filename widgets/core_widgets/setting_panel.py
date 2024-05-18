@@ -1,6 +1,7 @@
 from typing import Any, Callable
 import customtkinter as ctk
 from widgets import (
+    GeneralPanel,
     AppearancePanel,
     NetworkPanel,
     DownloadsPanel,
@@ -28,7 +29,10 @@ class SettingPanel(ctk.CTkFrame):
             master=master,
             fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
-
+        self.general_panel = GeneralPanel(
+            master=self,
+            general_settings_change_callback=general_settings_change_callback
+        )
         self.appearance_panel = AppearancePanel(
             master=self,
             theme_settings_change_callback=theme_settings_change_callback,
@@ -49,13 +53,18 @@ class SettingPanel(ctk.CTkFrame):
             master=self
         )
 
-        self.panels = [self.appearance_panel, self.network_panel, self.downloads_panel, self.about_panel]
-        self.nav_buttons_text = ["Appearance", "Network", "Downloads", "About"]
+        self.panels = [
+            self.general_panel,
+            self.appearance_panel,
+            self.network_panel,
+            self.downloads_panel,
+            self.about_panel
+        ]
         self.navigation_panel = NavigationPanel(
             master=self,
             navigation_panels=self.panels,
             navigation_button_on_click_callback=self.place_panel,
-            navigation_buttons_text=self.nav_buttons_text,
+            navigation_buttons_texts=["general", "appearance", "network", "downloads", "about"],
             width=200 * AppearanceSettings.settings["scale_r"],
         )
 
@@ -72,7 +81,6 @@ class SettingPanel(ctk.CTkFrame):
     def place_widgets(self) -> None:
         self.navigation_panel.pack(side="left", fill="y")
         self.vertical_line.pack(side="left", fill="y")
-        self.appearance_panel.pack(side="right", fill="both", expand=True)
 
     def place_panel(self, selected_panel: ctk.CTkFrame) -> None:
         for panel in self.panels:

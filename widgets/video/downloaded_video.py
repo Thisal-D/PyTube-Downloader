@@ -6,6 +6,7 @@ import os
 from utils import (
     ValueConvertUtility
 )
+from services import LanguageManager
 from settings import AppearanceSettings
 
 
@@ -71,8 +72,7 @@ class DownloadedVideo(Video):
         super().create_widgets()
 
         self.download_type_label = ctk.CTkLabel(
-            master=self,
-            text=f"{self.download_type} : {self.download_quality}"
+            master=self
         )
         self.file_size_label = ctk.CTkLabel(
             master=self,
@@ -84,6 +84,13 @@ class DownloadedVideo(Video):
             cursor="hand2",
             command=lambda: os.startfile("\\".join(self.download_path.split("\\")[0:-1])),
             hover=False,
+        )
+
+    def set_widgets_texts(self):
+        super().set_widgets_texts()
+
+        self.download_type_label.configure(
+            text=f"{LanguageManager.data[self.download_type.lower()]} : {self.download_quality}"
         )
 
     def set_widgets_fonts(self):

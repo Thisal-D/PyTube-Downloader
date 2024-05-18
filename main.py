@@ -9,7 +9,8 @@ from services import (
     DownloadManager,
     LoadManager,
     ThemeManager,
-    LoadingIndicateManager
+    LoadingIndicateManager,
+    LanguageManager
 )
 from utils import FileUtility
 
@@ -26,6 +27,7 @@ LoadManager.initialize(app.update_videos_count_status)
 DownloadManager.initialize(app.update_videos_count_status)
 ThemeManager.initialize()
 LoadingIndicateManager.initialize()
+LanguageManager.initialize()
 
 # Check directory accessibility during startup.
 # If accessible, nothing happens if not, show an error message.
@@ -35,8 +37,8 @@ for directory in DIRECTORIES:
     if not FileUtility.is_accessible(directory):
         AlertWindow(
             master=app,
-            alert_msg="Please run this application as an administrator...!",
-            ok_button_text="ok",
+            alert_msg="run_as_admin_mode",
+            ok_button_display=True,
             ok_button_callback=app.on_app_closing,
             callback=app.on_app_closing,
             width=int(450 * scale),
@@ -44,7 +46,7 @@ for directory in DIRECTORIES:
         )
 
 # set the theme mode, dark or light or system, by getting from data
-ctk.set_appearance_mode(AppearanceSettings.settings["root"]["theme_mode"])
+ctk.set_appearance_mode(AppearanceSettings.themes[AppearanceSettings.settings["root"]["theme_mode"]])
 # deactivate the automatic scale
 ctk.deactivate_automatic_dpi_awareness()
 # place the app at the last placed geometry
@@ -61,6 +63,8 @@ app.title("PyTube Downloader")
 app.create_widgets()
 # set widgets sizes
 app.set_widgets_sizes()
+# set texts depend on language
+app.set_widgets_texts()
 # place main widgets
 app.place_widgets()
 # configure colors for main widgets

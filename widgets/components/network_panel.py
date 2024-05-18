@@ -1,7 +1,8 @@
-from typing import Any, Callable, Literal
+from typing import Any, Callable, List
 import customtkinter as ctk
 from services import (
-    ThemeManager
+    ThemeManager,
+    LanguageManager
 )
 from settings import (
     GeneralSettings,
@@ -21,9 +22,8 @@ class NetworkPanel(ctk.CTkFrame):
             fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
 
-        self.load_label = ctk.CTkLabel(
+        self.simultaneous_load_label = ctk.CTkLabel(
             master=self,
-            text="Maximum Simultaneous Loads",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
         self.dash1_label = ctk.CTkLabel(
@@ -44,9 +44,8 @@ class NetworkPanel(ctk.CTkFrame):
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
-        self.download_label = ctk.CTkLabel(
+        self.simultaneous_download_label = ctk.CTkLabel(
             master=self,
-            text="Maximum Simultaneous Downloads",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
         self.dash2_label = ctk.CTkLabel(
@@ -69,7 +68,6 @@ class NetworkPanel(ctk.CTkFrame):
 
         self.automatic_download_label = ctk.CTkLabel(
             master=self,
-            text="Automatic Video/Playlist Download",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
@@ -91,7 +89,6 @@ class NetworkPanel(ctk.CTkFrame):
 
         self.automatic_download_quality_label = ctk.CTkLabel(
             master=self,
-            text="Download Quality",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
@@ -101,26 +98,29 @@ class NetworkPanel(ctk.CTkFrame):
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
-        # noinspection PyTypeChecker
+        #
+        self.automatic_download_qualities = ["highest_quality", "lowest_quality", "audio_only"]
         self.automatic_download_quality_combo_box = ctk.CTkComboBox(
             master=self,
-            values=["Highest Quality", "Lowest Quality", "Audio Only"],
             dropdown_fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             command=self.change_automatic_download_quality,
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
             fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             width=140 * AppearanceSettings.settings["scale_r"],
-            height=28 * AppearanceSettings.settings["scale_r"]
+            height=28 * AppearanceSettings.settings["scale_r"],
+            values=[
+                LanguageManager.data[self.automatic_download_qualities[0]],
+                LanguageManager.data[self.automatic_download_qualities[1]],
+                LanguageManager.data[self.automatic_download_qualities[2]]
+            ]
         )
 
         self.automatic_download_info_label = ctk.CTkLabel(
             master=self,
-            text="• Automatically Download Videos Upon Completion of Loading.",
         )
 
         self.load_thumbnail_label = ctk.CTkLabel(
             master=self,
-            text="Load Video Thumbnail",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
@@ -144,7 +144,6 @@ class NetworkPanel(ctk.CTkFrame):
         
         self.reload_automatically_label = ctk.CTkLabel(
             master=self,
-            text="Auto-Reload Failed Videos",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
@@ -168,7 +167,6 @@ class NetworkPanel(ctk.CTkFrame):
         
         self.re_download_automatically_label = ctk.CTkLabel(
             master=self,
-            text="Auto-Re-Download Failed Videos",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
@@ -192,7 +190,6 @@ class NetworkPanel(ctk.CTkFrame):
 
         self.apply_changes_button = ctk.CTkButton(
             master=self,
-            text="Apply",
             state="disabled",
             height=24,
             width=50,
@@ -216,22 +213,37 @@ class NetworkPanel(ctk.CTkFrame):
         self.general_settings_change_callback = general_settings_change_callback
         self.set_widgets_accent_color()
         self.set_widgets_fonts()
+        self.set_widgets_texts()
         self.set_widgets_sizes()
         self.place_widgets()
         self.bind_widgets()
         self.configure_values()
+
         ThemeManager.register_widget(self)
+        LanguageManager.register_widget(self)
 
     def apply_general_settings(self):
         GeneralSettings.settings["max_simultaneous_loads"] = int(self.simultaneous_load_entry.get())
         GeneralSettings.settings["max_simultaneous_downloads"] = int(self.simultaneous_download_entry.get())
         GeneralSettings.settings["automatic_download"]["status"] = self.automatic_download_switch_state.get()
-        GeneralSettings.settings["automatic_download"]["quality"] = self.automatic_download_quality_combo_box.get()
+        GeneralSettings.settings["automatic_download"]["quality"] = (
+            self.automatic_download_quality_combo_box.cget("values").index(
+                self.automatic_download_quality_combo_box.get()
+            )
+        )
         GeneralSettings.settings["load_thumbnail"] = self.load_thumbnail_switch_state.get()
         GeneralSettings.settings["reload_automatically"] = self.reload_automatically_switch_state.get()
         GeneralSettings.settings["re_download_automatically"] = self.re_download_automatically_switch_state.get()
         self.general_settings_change_callback()
         self.apply_changes_button.configure(state="disabled")
+
+        self.automatic_download_state_changed = False
+        self.automatic_download_quality_changed = False
+        self.simultaneous_download_count_changed = False
+        self.simultaneous_load_count_changed = False
+        self.load_thumbnail_state_changed = False
+        self.reload_automatically_state_changed = False
+        self.re_download_automatically_state_changed = False
 
     def change_re_download_automatically(self):
         if GeneralSettings.settings["re_download_automatically"] != self.re_download_automatically_switch.get():
@@ -254,8 +266,9 @@ class NetworkPanel(ctk.CTkFrame):
             self.load_thumbnail_state_changed = False
         self.set_apply_button_state()
 
-    def change_automatic_download_quality(self, quality: Literal["Highest Quality", "Lowest Quality", "Audio Only"]):
-        if GeneralSettings.settings["automatic_download"]["quality"] != quality:
+    def change_automatic_download_quality(self, quality: str):
+        current_lan_qualities: List = self.automatic_download_quality_combo_box.cget("values")
+        if GeneralSettings.settings["automatic_download"]["quality"] != current_lan_qualities.index(quality):
             self.automatic_download_quality_changed = True
         else:
             self.automatic_download_quality_changed = False
@@ -297,6 +310,14 @@ class NetworkPanel(ctk.CTkFrame):
         self.set_apply_button_state()
 
     def set_apply_button_state(self):
+        print("self.simultaneous_download_count_changed", self.simultaneous_download_count_changed)
+        print("self.simultaneous_load_count_changed", self.simultaneous_load_count_changed)
+        print("self.automatic_download_state_changed", self.automatic_download_state_changed)
+        print("self.automatic_download_quality_changed", self.automatic_download_quality_changed)
+        print("self.load_thumbnail_state_changed", self.load_thumbnail_state_changed)
+        print("self.reload_automatically_state_changed", self.reload_automatically_state_changed)
+        print("self.re_download_automatically_state_changed", self.re_download_automatically_state_changed)
+
         if (any((self.simultaneous_download_count_changed, self.simultaneous_load_count_changed,
                  self.automatic_download_state_changed, self.automatic_download_quality_changed,
                  self.load_thumbnail_state_changed, self.reload_automatically_state_changed,
@@ -345,7 +366,11 @@ class NetworkPanel(ctk.CTkFrame):
         else:
             self.re_download_automatically_switch_state.set(False)
 
-        self.automatic_download_quality_combo_box.set(GeneralSettings.settings["automatic_download"]["quality"])
+        self.automatic_download_quality_combo_box.set(
+            LanguageManager.data[
+                self.automatic_download_qualities[GeneralSettings.settings["automatic_download"]["quality"]]
+            ]
+        )
 
     def update_widgets_accent_color(self):
         self.set_widgets_accent_color()
@@ -395,12 +420,12 @@ class NetworkPanel(ctk.CTkFrame):
         scale = AppearanceSettings.settings["scale_r"]
         pady = 16 * scale
 
-        self.load_label.grid(row=0, column=0, padx=(100, 0), pady=(50, 0), sticky="w")
+        self.simultaneous_load_label.grid(row=0, column=0, padx=(100, 0), pady=(50, 0), sticky="w")
         self.dash1_label.grid(row=0, column=1, padx=(30, 30), pady=(50, 0), sticky="w")
         self.simultaneous_load_entry.grid(row=0, column=2, pady=(50, 0), sticky="w")
         self.simultaneous_load_range_label.grid(row=0, column=3, pady=(50, 0), padx=(20, 0), sticky="w")
 
-        self.download_label.grid(row=1, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
+        self.simultaneous_download_label.grid(row=1, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash2_label.grid(row=1, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.simultaneous_download_entry.grid(row=1, column=2, pady=(pady, 0), sticky="w")
         self.simultaneous_download_range_label.grid(row=1, column=3, pady=(pady, 0), padx=(20, 0), sticky="w")
@@ -443,12 +468,64 @@ class NetworkPanel(ctk.CTkFrame):
         self.re_download_automatically_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.apply_changes_button.configure(width=50 * scale, height=24 * scale)
 
+    def set_widgets_texts(self):
+        self.simultaneous_load_label.configure(
+            text=LanguageManager.data["maximum_simultaneous_loads"]
+        )
+        self.simultaneous_download_label.configure(
+            text=LanguageManager.data["maximum_simultaneous_downloads"]
+        )
+        self.automatic_download_label.configure(
+            text=LanguageManager.data["automatic_video/playlist_download"]
+        )
+        self.automatic_download_quality_label.configure(
+            text=LanguageManager.data["download_quality"]
+        )
+
+        current_state_of_download_quality_combo_box = self.automatic_download_quality_combo_box.cget("state")
+        self.automatic_download_quality_combo_box.configure(state="normal")
+        current_selected_quality_index = self.automatic_download_quality_combo_box.cget("values").index(
+            self.automatic_download_quality_combo_box.get()
+        )
+        self.automatic_download_quality_combo_box.configure(
+            values=[
+                LanguageManager.data[self.automatic_download_qualities[0]],
+                LanguageManager.data[self.automatic_download_qualities[1]],
+                LanguageManager.data[self.automatic_download_qualities[2]]
+            ]
+        )
+        self.automatic_download_quality_combo_box.set(
+            self.automatic_download_quality_combo_box.cget("values")[current_selected_quality_index]
+        )
+        self.automatic_download_quality_combo_box.configure(
+            state=current_state_of_download_quality_combo_box
+        )
+
+        self.automatic_download_info_label.configure(
+            text=LanguageManager.data["automatic_download_info"]
+        )
+        self.load_thumbnail_label.configure(
+            text=LanguageManager.data["load_video_thumbnail"]
+        )
+        self.reload_automatically_label.configure(
+            text=LanguageManager.data["auto-reload_failed_videos"]
+        )
+        self.re_download_automatically_label.configure(
+            text=LanguageManager.data["auto-re-download_failed_videos"]
+        )
+        self.apply_changes_button.configure(
+            text=LanguageManager.data["apply"]
+        )
+
+    def update_widgets_text(self):
+        self.set_widgets_texts()
+
     def set_widgets_fonts(self):
         scale = AppearanceSettings.settings["scale_r"]
         title_font = ("Segoe UI", 13 * scale, "bold")
-        self.load_label.configure(font=title_font)
+        self.simultaneous_load_label.configure(font=title_font)
         self.dash1_label.configure(font=title_font)
-        self.download_label.configure(font=title_font)
+        self.simultaneous_download_label.configure(font=title_font)
         self.dash2_label.configure(font=title_font)
         self.automatic_download_label.configure(font=title_font)
         self.dash3_label.configure(font=title_font)

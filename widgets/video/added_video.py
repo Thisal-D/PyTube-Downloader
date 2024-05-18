@@ -9,6 +9,7 @@ import time
 from services import (
     LoadManager,
     ThemeManager,
+    LanguageManager
 )
 from settings import (
     AppearanceSettings,
@@ -22,9 +23,6 @@ from utils import (
 
 
 class AddedVideo(Video):
-    # default thumbnails to display
-    default_thumbnails: Tuple[tk.PhotoImage, tk.PhotoImage] = (None, None)
-    
     def __init__(
             self,
             root: ctk.CTk,
@@ -49,7 +47,7 @@ class AddedVideo(Video):
         self.video_download_button_click_callback: Callable = video_download_button_click_callback
         self.video_load_status_callback: Callable = video_load_status_callback
         # state
-        self.load_state: Literal["waiting", "loading", "failed", "completed", "removed"] = "waiting"
+        self.load_state: Literal["waiting", "loading", "failed", "loaded", "removed"] = "waiting"
         # widgets
         self.sub_frame: Union[ctk.CTkFrame, None] = None
         self.resolution_select_menu: Union[ctk.CTkComboBox, None] = None
@@ -89,7 +87,7 @@ class AddedVideo(Video):
         self.load_state = "loading"
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
-        self.status_label.configure(text="Loading")
+        self.status_label.configure(text=LanguageManager.data["loading"])
         threading.Thread(target=self.retrieve_video_data, daemon=True).start()
 
     def get_video_thumbnails(self) -> Tuple[tk.PhotoImage, tk.PhotoImage]:
@@ -200,7 +198,7 @@ class AddedVideo(Video):
             self.set_video_data()
             self.download_automatically()
         except Exception as error:
-            print(f"added_video.py L-198 : {error}")
+            print(f"added_video.py L-201 : {error}")
             self.set_loading_failed()
 
     def choose_download_type(self, e: str):
@@ -218,15 +216,15 @@ class AddedVideo(Video):
         self.load_state = "waiting"
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
-        self.status_label.configure(text="Waiting")
+        self.status_label.configure(text=LanguageManager.data["waiting"])
 
     def select_download_quality_automatic(self):
         index = None
-        if GeneralSettings.settings["automatic_download"]["quality"] == "Audio Only":
+        if GeneralSettings.settings["automatic_download"]["quality"] == 2:
             index = -1
-        elif GeneralSettings.settings["automatic_download"]["quality"] == "Lowest Quality":
+        elif GeneralSettings.settings["automatic_download"]["quality"] == 1:
             index = -2
-        elif GeneralSettings.settings["automatic_download"]["quality"] == "Highest Quality":
+        elif GeneralSettings.settings["automatic_download"]["quality"] == 0:
             index = 0
         self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[index])
 
@@ -239,10 +237,10 @@ class AddedVideo(Video):
 
     def set_loading_completed(self):
         if self.load_state != "removed":
-            self.load_state = "completed"
+            self.load_state = "loaded"
             if self.mode == "playlist":
                 self.video_load_status_callback(self, self.load_state)
-            self.status_label.configure(text="Loaded")
+            self.status_label.configure(text=LanguageManager.data["loaded"])
             LoadManager.unregister_from_active(self)
 
     def set_loading_failed(self):
@@ -260,7 +258,7 @@ class AddedVideo(Video):
         else:
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"],
-                text="Failed"
+                text=LanguageManager.data["failed"]
             )
             LoadManager.unregister_from_active(self)
             self.thumbnail_btn.show_failure_indicator(
@@ -307,13 +305,22 @@ class AddedVideo(Video):
         )
         self.download_btn = ctk.CTkButton(
             master=self.sub_frame,
-            text="Download",
             state="disabled",
             hover=False,
             command=lambda: self.video_download_button_click_callback(self),
         )
         self.status_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.reload_btn = ctk.CTkButton(master=self, text="⟳", command=self.reload_video, hover=False)
+
+    def set_widgets_texts(self):
+        super().set_widgets_texts()
+
+        self.download_btn.configure(
+            text=LanguageManager.data["download"]
+        )
+        self.status_label.configure(
+            text=LanguageManager.data[self.load_state]
+        )
 
     def set_widgets_fonts(self):
         super().set_widgets_fonts()

@@ -1,6 +1,6 @@
 # PyTube Downloader
 
-[Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/releases/tag/v1.0.2)
+[Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/releases/tag/v1.0.1)
 
 PyTube Downloader is a user-friendly application that allows users to download YouTube videos with ease. It features a simple and intuitive user interface, making the downloading process straightforward for all users.
 
@@ -24,21 +24,31 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 - **Scaling Preferences:** Users can scale the application interface from 100% to 200% (step 1%), adjusting the size of widgets and elements for better readability and usability.
 - **Auto Reload Failed Videos:** Automatically attempts to reload a video up to 5 times if it fails to load. Users can enable or disable this feature, ensuring a more seamless downloading experience even with intermittent connectivity issues.
 - **Auto Retry Failed Downloads:** Automatically retries a failed download up to 5 times. This feature ensures that temporary issues such as network interruptions do not prevent successful downloading, enhancing reliability and user experience.
+- **Multi-Language Support**: Enjoy the application in your preferred language with support for multiple languages.
+  - Currently Support Languages:
+    - English
+    - Chinese 
+
+
+  -  **Help us [``improve current languages``](LANGUAGE_CONTRIBUTION_GUIDE.md/#fixing-current-language-issues) and [``add new languages``](LANGUAGE_CONTRIBUTION_GUIDE.md/#adding-a-new-language) to this application.**
 
 ---
 
+
+help to improve or add new language
+
 ### Dark Theme
 
-![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/03821a3b-264a-4f8a-ad56-142352d9d9be)
-![1](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/fc3475e7-5b62-486b-bbe6-fda589e2dc37)
-![2](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7f0df26e-4452-4b73-ae47-e05db7276095)
-![3](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/221bb327-00f9-4077-9a18-9b1d7b89982e)
-![4](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/03388570-a9fd-40e6-a673-ce9eaed7245c)
-![5](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b26e701d-0445-4397-80c4-107565651934)
-![6](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3a83d2c8-85c3-4247-8a9f-28e36e94359e)
-![7](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3617f5d2-59a8-4b07-b79e-bb0cee0258ac)
-![8](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/8d21672d-0b9c-4ee3-b526-13fa30ac9bd1)
-![9](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b9dbf091-32b5-4fa6-8173-7a6f02f83165)
+![01](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6db80461-a8a4-4ae4-9ac5-22a591c4ebbe)
+![02](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/50ee6014-c9f0-4548-b8fc-5dd9b824ba9f)
+![03](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/af0fbdb0-23eb-40f9-951e-084b717de295)
+![04](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/e1d85545-b900-43cc-ac27-7710c5bef250)
+![06](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2192be1e-b2bc-4a70-87ed-6c6c15a786cf)
+![07](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/39660493-6121-4422-b345-ec2b92249d16)
+![08](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/38b51a50-6435-48f8-807f-4d8437dc634d)
+![09](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3e4970a2-3e7e-4adb-9fce-5bf4a8f9f62e)
+![10](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/c93501bf-4324-415d-879c-4e718978220b)
+![11](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/ef0f4deb-0893-4ed1-8c8b-18ab8b8a572c)
 
 ---
 
@@ -75,9 +85,15 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 project_folder/<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│<br>
 &nbsp;&nbsp;&nbsp;&nbsp;├── data/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Languages/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── en.json<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── zh.json<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── ???.json<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── ???.json<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── general.json<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── appearance.json<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── info.json<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── languages.json<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│<br>
 &nbsp;&nbsp;&nbsp;&nbsp;├── assets/<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── main icon/<br>
@@ -112,6 +128,7 @@ project_folder/<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── \_\_init\_\_.py<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── thumbnail_button.py<br> 
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── accent_color_button.py<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── general_panel.py<br> 
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── appearance_panel.py<br> 
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── network_panel.py<br> 
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── downloads_panel.py<br> 

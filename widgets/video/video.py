@@ -1,6 +1,7 @@
+import tkinter
 import webbrowser
 import customtkinter as ctk
-from typing import List, Union
+from typing import List, Union, Tuple
 from tkinter import PhotoImage
 import pyperclip
 from utils import (
@@ -10,7 +11,7 @@ from widgets.components.thumbnail_button import (
     ThumbnailButton,
 )
 from services import (
-    ThemeManager
+    ThemeManager, LanguageManager
 )
 from settings import (
     AppearanceSettings
@@ -19,7 +20,9 @@ from settings import (
 
 class Video(ctk.CTkFrame):
     """A class representing a video widget."""
-    
+
+    default_thumbnails: Tuple[tkinter.PhotoImage, tkinter.PhotoImage] = (None, None)
+
     def __init__(
             self,
             root: ctk.CTk,
@@ -65,6 +68,7 @@ class Video(ctk.CTkFrame):
         self.context_menu: Union['ContextMenu', None] = None
         # initialize the object
         self.create_widgets()
+        self.set_widgets_texts()
         self.set_widgets_sizes()
         self.set_widgets_fonts()
         self.set_widgets_colors()
@@ -75,11 +79,12 @@ class Video(ctk.CTkFrame):
 
         # register to Theme Manger for accent color updates & widgets colors updates
         ThemeManager.register_widget(self)
+        LanguageManager.register_widget(self)
 
     def set_video_data(self):
         """Display video data on widgets."""
-        self.video_title_label.configure(text=f"Title : {self.video_title}")
-        self.channel_btn.configure(text=f"Channel : {self.channel}", state="normal")
+        self.video_title_label.configure(text=f"{LanguageManager.data['title']} : {self.video_title}")
+        self.channel_btn.configure(text=f"{LanguageManager.data['channel']} : {self.channel}", state="normal")
         self.url_label.configure(text=self.video_url)
         
         self.video_length_label.configure(text=ValueConvertUtility.convert_time(self.length))
@@ -131,27 +136,37 @@ class Video(ctk.CTkFrame):
         self.video_length_label = ctk.CTkLabel(master=self, text=ValueConvertUtility.convert_time(self.length))
 
         self.info_frame = ctk.CTkFrame(master=self)
-        self.video_title_label = ctk.CTkLabel(master=self.info_frame, anchor="w", text=f"Title : {self.video_title}")
+        self.video_title_label = ctk.CTkLabel(master=self.info_frame, anchor="w")
         self.channel_btn = ctk.CTkButton(
             master=self.info_frame,
             anchor="w",
             command=lambda: webbrowser.open(self.channel_url),
             state="disabled",
-            hover=False,
-            text=f"Channel : {self.channel}"
+            hover=False
         )
         self.url_label = ctk.CTkLabel(master=self.info_frame, anchor="w", text=self.video_url)
         self.remove_btn = ctk.CTkButton(master=self, command=self.kill, text="X", hover=False)
 
         self.context_menu = ContextMenu(
             master=self.root,
-            options_texts=["Copy URL", "Open in Browser", "Remove"],
+            options_texts=["copy_url", "open_in_browser", "remove"],
             options_commands=[
                 self.copy_url,
                 self.open_in_web_browser,
                 self.remove
             ]
         )
+
+    def set_widgets_texts(self):
+        self.video_title_label.configure(
+            text=f"{LanguageManager.data['title']} : {self.video_title}"
+        )
+        self.channel_btn.configure(
+            text=f"{LanguageManager.data['channel']} : {self.channel}"
+        )
+
+    def update_widgets_text(self):
+        self.set_widgets_texts()
 
     def set_widgets_fonts(self):
         """Set fonts for widgets."""

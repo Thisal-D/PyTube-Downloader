@@ -34,8 +34,8 @@
             ]
         }
     },
-    "opacity": 100.0,
-    "opacity_r": 1.0,
+    "opacity": 95.75,
+    "opacity_r": 0.9575,
     "radio_btn": {
         "text_color": {
             "hover": [
@@ -74,10 +74,10 @@
                 "#ffffff"
             ]
         },
-        "theme_mode": "dark"
+        "theme_mode": 0
     },
-    "scale": 100.0,
-    "scale_r": 1.0,
+    "scale": 200.0,
+    "scale_r": 2.0,
     "settings_panel": {
         "accent_colors": {
             "0": {

@@ -6,6 +6,7 @@ from .play_list import AddedPlayList
 from .play_list import DownloadingPlayList
 from .play_list import DownloadedPlayList
 
+from .components import GeneralPanel
 from .components import AccentColorButton
 from .components import AppearancePanel
 from .components import NetworkPanel
