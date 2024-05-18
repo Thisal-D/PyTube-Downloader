@@ -32,8 +32,8 @@ To add a new language to the application, follow these steps:
    ```json
    {
      "English": "en",
-     "Simplified Chinese": "zh",
-     "Spanish": "es"  # New entry for Spanish
+     "中文": "zh" # Chinese
+     "Española": "es"  # New entry for Spanish
    }
 
 2.  **Create the Language File**:
