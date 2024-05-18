@@ -8,9 +8,9 @@ To address current language issues, follow these steps:
 2. **Edit the Language File:**
    - Update the translation text in the identified language file with your suggested fixes.
 
-3. **Test the Language:**
-   - Ensure that the updated language texts fit appropriately within the UI widgets. If the texts are too long, consider using shorter alternatives.
-
+3. **Test the Language**:
+    - Verify that the language texts fit within the UI widgets. If any text is too lengthy, consider using shorter forms or displaying them across multiple lines to ensure proper display and readability.
+     
 4. **You're all set, just create the pull request.**
 
 <br>
@@ -54,7 +54,7 @@ To add a new language to the application, follow these steps:
     }
 
 3. **Test the Language**:
-    - Check that the language texts fit in the UI widgets. If the texts are too long, consider using shorter forms.
+    - Verify that the language texts fit within the UI widgets. If any text is too lengthy, consider using shorter forms or displaying them across multiple lines to ensure proper display and readability.
 
 4. **You're all set, just create the pull request**
 
