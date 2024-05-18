@@ -1,13 +1,15 @@
 {
     "automatic_download": {
-        "quality": "Highest Quality",
+        "quality": 0,
         "status": "disable"
     },
     "create_sep_path_for_playlists": false,
     "create_sep_path_for_qualities": false,
     "create_sep_path_for_videos_audios": false,
     "download_directory": false,
-    "load_thumbnail": false,
+    "lang_code": "en",
+    "language": "English",
+    "load_thumbnail": true,
     "max_simultaneous_downloads": 1,
     "max_simultaneous_loads": 1,
     "re_download_automatically": false,
