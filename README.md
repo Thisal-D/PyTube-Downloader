@@ -1,4 +1,4 @@
-![25](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2c9eab15-fff5-4231-b13e-1899b969f105)![24](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/89c0ee4e-9869-431a-9d71-07329e492c3e)![23](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/4e1d8322-6bf5-446f-8e7e-b8e88a920928)# PyTube Downloader
+# PyTube Downloader
 
 [Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/releases/tag/v1.0.1)
 
