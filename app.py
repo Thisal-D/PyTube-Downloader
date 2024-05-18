@@ -12,7 +12,7 @@ from widgets import (
 )
 from widgets.core_widgets.context_menu import ContextMenu
 from services import (
-    ThemeManager, DownloadManager, LoadManager
+    ThemeManager, DownloadManager, LoadManager, LanguageManager
 )
 from settings import (
     AppearanceSettings,
@@ -24,31 +24,31 @@ from utils import (
 
 
 class App(ctk.CTk):
+    """
+    Initialize the application.
+
+    This method sets up the initial state of the application by initializing attributes and widgets.
+
+    Attributes:
+        root_width (int): The initial width of the application window.
+        root_height (int): The initial height of the application window.
+        is_geometry_changes_tracker_running (bool): A flag indicating whether the geometry changes tracker is
+                                                    running.
+        selected_download_mode (str): The selected download mode, either "video" or "playlist".
+        is_content_downloading (bool): A flag indicating whether content is currently being downloaded.
+        is_content_downloaded (bool): A flag indicating whether content has been downloaded.
+        is_content_added (bool): A flag indicating whether content has been added.
+        added_video_count (int): The number of added videos.
+        downloading_video_count (int): The number of videos currently being downloaded.
+        downloaded_video_count (int): The number of videos that have been downloaded.
+        # Add more attributes as needed...
+
+    Widgets:
+        url_entry (tk.Entry): Entry widget for entering URLs.
+        add_url_btn (tk.Button): Button widget for adding URLs.
+        # Add more widget descriptions as needed...
+    """
     def __init__(self) -> None:
-        """
-        Initialize the application.
-
-        This method sets up the initial state of the application by initializing attributes and widgets.
-
-        Attributes:
-            root_width (int): The initial width of the application window.
-            root_height (int): The initial height of the application window.
-            is_geometry_changes_tracker_running (bool): A flag indicating whether the geometry changes tracker is
-                                                        running.
-            selected_download_mode (str): The selected download mode, either "video" or "playlist".
-            is_content_downloading (bool): A flag indicating whether content is currently being downloaded.
-            is_content_downloaded (bool): A flag indicating whether content has been downloaded.
-            is_content_added (bool): A flag indicating whether content has been added.
-            added_video_count (int): The number of added videos.
-            downloading_video_count (int): The number of videos currently being downloaded.
-            downloaded_video_count (int): The number of videos that have been downloaded.
-            # Add more attributes as needed...
-
-        Widgets:
-            url_entry (tk.Entry): Entry widget for entering URLs.
-            add_url_btn (tk.Button): Button widget for adding URLs.
-            # Add more widget descriptions as needed...
-        """
         super().__init__()
 
         # root width height
@@ -114,7 +114,8 @@ class App(ctk.CTk):
         self.url_entry = ctk.CTkEntry(master=self, placeholder_text="Enter Youtube URL")
 
         self.video_radio_btn = ctk.CTkRadioButton(
-            master=self, text="Video",
+            master=self,
+            text="Video",
             height=18,
             command=lambda: self.select_download_mode("video")
         )
@@ -177,7 +178,7 @@ class App(ctk.CTk):
 
         self.settings_panel = SettingPanel(
             master=self,
-            theme_settings_change_callback=self.update_theme_settings,
+            theme_settings_change_callback=self.update_appearance_settings,
             general_settings_change_callback=self.update_general_settings,
             restart_callback=self.restart
         )
@@ -192,7 +193,7 @@ class App(ctk.CTk):
 
         self.context_menu = ContextMenu(
             master=self,
-            options_texts=["Select All", "Cut", "Copy", "Paste"],
+            options_texts=["select_all", "cut", "copy", "paste"],
             options_commands=[self.select_all_url, self.cut_url, self.copy_url, self.paste_url]
         )
 
@@ -385,8 +386,8 @@ class App(ctk.CTk):
         """
         Configures the size and placement of various GUI widgets based on the current size of the main window.
 
-        This method adjusts the size and placement settings for different GUI widgets such as entry fields, buttons, 
-        scrollable frames, etc., based on the current size of the main window. It ensures that the widgets are 
+        This method adjusts the size and placement settings for different GUI widgets such as entry fields, buttons,
+        scrollable frames, etc., based on the current size of the main window. It ensures that the widgets are
         appropriately sized and positioned to maintain a visually pleasing layout.
         """
         scale = AppearanceSettings.settings["scale_r"]
@@ -419,6 +420,35 @@ class App(ctk.CTk):
         self.added_content_scroll_frame.configure(height=frame_height, width=frame_width)
         self.downloading_content_scroll_frame.configure(height=frame_height, width=frame_width)
         self.downloaded_content_scroll_frame.configure(height=frame_height, width=frame_width)
+
+    def set_widgets_texts(self):
+        self.url_entry.configure(
+            placeholder_text=LanguageManager.data["enter_youtube_url"]
+        )
+        self.video_radio_btn.configure(text=LanguageManager.data["video"])
+        self.playlist_radio_btn.configure(text=LanguageManager.data["playlist"])
+        self.add_url_btn.configure(text=LanguageManager.data["add +"])
+        self.navigate_added_frame_btn.configure(text=LanguageManager.data["added"])
+        self.navigate_downloading_frame_btn.configure(text=LanguageManager.data["downloading"])
+        self.navigate_downloaded_frame_btn.configure(text=LanguageManager.data["downloaded"])
+        self.added_frame_info_label.configure(
+            text=LanguageManager.data["added_videos_&_playlists_will_be_display_here"]
+        )
+        self.downloading_frame_info_label.configure(
+            text=LanguageManager.data["downloading_videos_&_playlists_will_be_display_here"]
+        )
+        self.downloaded_frame_info_label.configure(
+            text=LanguageManager.data["downloaded_videos_&_playlists_will_be_display_here"]
+        )
+        self.videos_status_count_label.configure(
+            text=f"{LanguageManager.data['loading']} : {LoadManager.queued_load_count + LoadManager.active_load_count}"
+                 f" | "
+                 f"{LanguageManager.data['downloading']} : {DownloadManager.queued_download_count + 
+                                                            DownloadManager.active_download_count}"
+        )
+        
+    def update_widgets_text(self):
+        self.set_widgets_texts()
 
     def set_widgets_accent_color(self) -> None:
         """
@@ -932,7 +962,7 @@ class App(ctk.CTk):
         Hide the application logo.
         """
         self.logo_frame.place_forget()
-    
+
     def update_widgets(self) -> None:
         """
         Update all the widgets in the application.
@@ -954,7 +984,7 @@ class App(ctk.CTk):
                         print(f"app.py L-659 : {error}")
             except Exception as error:
                 print(f"app.py L-661 : {error}")
-       
+
     def geometry_changes_tracker(self) -> None:
         """
         Track changes in the geometry of the window and adjust accordingly.
@@ -1003,10 +1033,11 @@ class App(ctk.CTk):
         """
         Update the status label with the count of loading and downloading videos.
         """
-        print(DownloadManager.queued_download_count, DownloadManager.active_download_count)
         self.videos_status_count_label.configure(
-            text=f"Loading : {LoadManager.queued_load_count + LoadManager.active_load_count} | "
-                 f"Downloading : {DownloadManager.queued_download_count + DownloadManager.active_download_count}"
+            text=f"{LanguageManager.data['loading']} : {LoadManager.queued_load_count + LoadManager.active_load_count}"
+                 f" | "
+                 f"{LanguageManager.data['downloading']} : {DownloadManager.queued_download_count + 
+                                                            DownloadManager.active_download_count}"
         )
 
     def add_video_playlist(self) -> None:
@@ -1043,7 +1074,7 @@ class App(ctk.CTk):
     def download_video(self, video: AddedVideo) -> None:
         """
         Download a video.
-        
+
         Args:
             video (AddedVideo): The video to be downloaded.
         """
@@ -1071,7 +1102,7 @@ class App(ctk.CTk):
     def download_playlist(self, playlist: AddedPlayList) -> None:
         """
         Download a playlist.
-        
+
         Args:
             playlist (AddedPlayList): The playlist to be downloaded.
         """
@@ -1098,7 +1129,7 @@ class App(ctk.CTk):
     def downloaded_video(self, video: DownloadingVideo) -> None:
         """
         Handle downloaded video.
-        
+
         Args:
             video (DownloadingVideo): The downloaded video.
         """
@@ -1126,7 +1157,7 @@ class App(ctk.CTk):
     def downloaded_playlist(self, playlist: DownloadingPlayList) -> None:
         """
         Handle downloaded playlist.
-        
+
         Args:
             playlist (DownloadingPlayList): The downloaded playlist.
         """
@@ -1149,7 +1180,7 @@ class App(ctk.CTk):
     def open_context_menu(self, _event: tk.Event) -> None:
         """
         Open the context menu at the current pointer position.
-        
+
         Args:
             _event: The event triggering the context menu opening.
         """
@@ -1161,7 +1192,7 @@ class App(ctk.CTk):
     def close_context_menu(self, _event: tk.Event) -> None:
         """
         Close the context menu if the pointer is not over the entry widget.
-        
+
         Args:
             _event: The event triggering the context menu closing.
         """
@@ -1182,21 +1213,31 @@ class App(ctk.CTk):
         """
         self.context_menu.place_forget()
 
-    def update_theme_settings(
+    def update_general_settings(self, updated: Literal["language"] = None) -> None:
+        """
+        Update the general settings of the application and save them.
+        """
+        if updated == "language":
+            LanguageManager.update_language()
+            self.update_widgets_text()
+
+        GeneralSettings.save_settings()
+
+    def update_appearance_settings(
             self,
             updated: Literal["accent_color", "theme_mode", "opacity"] = None) -> None:
         """
         Update the theme settings based on the specified update.
 
         Args:
-            updated (Literal["accent_color", "theme_mode", "opacity"], optional): 
+            updated (Literal["accent_color", "theme_mode", "opacity"], optional):
                 The type of theme setting that was updated.
         """
         if updated == "accent_color":
             self.set_widgets_accent_color()
             ThemeManager.update_accent_color()
         if updated == "theme_mode":
-            ctk.set_appearance_mode(AppearanceSettings.settings["root"]["theme_mode"])
+            ctk.set_appearance_mode(AppearanceSettings.themes[AppearanceSettings.settings["root"]["theme_mode"]])
         if updated == "opacity":
             self.attributes("-alpha", AppearanceSettings.settings["opacity_r"])
         AppearanceSettings.save_settings()
@@ -1260,9 +1301,9 @@ class App(ctk.CTk):
         self.restore_from_tray()
         AlertWindow(
             master=self,
-            alert_msg="Are you sure you want to exit the application?",
-            ok_button_text="ok",
-            cancel_button_text="cancel",
+            alert_msg="exit_confirmation",
+            ok_button_display=True,
+            cancel_button_display=True,
             ok_button_callback=self.on_app_closing,
             cancel_button_callback=self.cancel_app_closing,
             callback=self.cancel_app_closing,
@@ -1295,13 +1336,6 @@ class App(ctk.CTk):
         """
         self.protocol("WM_DELETE_WINDOW", self.minimize_to_tray)
         self.mainloop()
-
-    @staticmethod
-    def update_general_settings() -> None:
-        """
-        Update the general settings of the application and save them.
-        """
-        GeneralSettings.save_settings()
 
     @classmethod
     def clear_temporally_saved_files(self) -> None:
