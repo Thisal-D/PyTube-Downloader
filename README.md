@@ -1,4 +1,4 @@
-# PyTube Downloader
+![25](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2c9eab15-fff5-4231-b13e-1899b969f105)![24](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/89c0ee4e-9869-431a-9d71-07329e492c3e)![23](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/4e1d8322-6bf5-446f-8e7e-b8e88a920928)# PyTube Downloader
 
 [Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/releases/tag/v1.0.1)
 
@@ -38,17 +38,35 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 help to improve or add new language
 
 ### Dark Theme
+![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b2079262-0d1c-4bd0-9b33-7cc16c9173ce)
 
-![01](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6db80461-a8a4-4ae4-9ac5-22a591c4ebbe)
-![02](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/50ee6014-c9f0-4548-b8fc-5dd9b824ba9f)
-![03](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/af0fbdb0-23eb-40f9-951e-084b717de295)
-![04](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/e1d85545-b900-43cc-ac27-7710c5bef250)
-![06](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2192be1e-b2bc-4a70-87ed-6c6c15a786cf)
-![07](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/39660493-6121-4422-b345-ec2b92249d16)
-![08](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/38b51a50-6435-48f8-807f-4d8437dc634d)
-![09](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/3e4970a2-3e7e-4adb-9fce-5bf4a8f9f62e)
-![10](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/c93501bf-4324-415d-879c-4e718978220b)
-![11](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/ef0f4deb-0893-4ed1-8c8b-18ab8b8a572c)
+- English Lang
+ 
+![18](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/e57acd23-cbdc-446e-86ed-b5d08f5ce9e1)
+![19](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/fbf086cb-e90c-499e-b63e-9f8a9515c014)
+![20](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6622a7d4-7b23-41b6-abba-4d55ff2d58cd)
+![21](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/09afa896-1739-4ec0-bf2e-10633b2ee066)
+![22](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/ea13e3c1-3397-4af7-ba8e-09cdc0f0eda5)
+![23](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7a8a00f2-6165-4379-8316-51d90b3e0747)
+![24](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/53ce24af-6224-4d7b-b1a4-3a52b436ec0d)
+![25](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/501763ad-e30f-4916-9a66-f9b8a80f2052)
+![26](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/a7d2ca37-289b-41f4-b01f-21cc915f7e0a)
+![27](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/1f8b6280-4bd3-469e-aace-12ddc1d645b8)
+
+---
+
+- Chinese Lang
+ 
+![7](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7aea8c67-669f-4ee6-af45-7ea6e3b92019)
+![8](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b209e21d-afe0-4dd6-a776-95a1fc0a1062)
+![9](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/5402f15b-ec81-4abc-b4ed-9d8c389ac03f)
+![10](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/1d197f08-77eb-4e3e-85e2-450de5497db1)
+![11](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6aa20ae2-fe27-4d32-9997-590fe6453c38)
+![12](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/4e30da72-b615-4d3a-baac-a986965ab8f9)
+![13](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2741bc3d-8b9a-4763-b4ee-987b0476015e)
+![14](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/a85491e9-189c-4e60-ad51-3c4241931e0a)
+![15](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/4c87c165-1b32-4053-99b6-f3087cf145e8)
+![16](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6d192edb-999b-4fdd-838b-0e2ecddf2df1)
 
 ---
 
@@ -85,7 +103,7 @@ help to improve or add new language
 project_folder/<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│<br>
 &nbsp;&nbsp;&nbsp;&nbsp;├── data/<br>
-&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Languages/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── languages/<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── en.json<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── zh.json<br>
 &nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── ???.json<br>
