@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from typing import Callable, List
 from settings import AppearanceSettings
-from services import ThemeManager
+from services import ThemeManager, LanguageManager
 
 
 class ContextMenu(ctk.CTkFrame):
@@ -36,12 +36,14 @@ class ContextMenu(ctk.CTkFrame):
         self.set_widgets_accent_color()
         self.set_widgets_colors()
         self.set_widgets_fonts()
+        self.set_widgets_texts()
         self.set_widgets_sizes()
         self.place_widgets()
 
         self.is_open = False
 
         ThemeManager.register_widget(self)
+        LanguageManager.register_widget(self)
         ContextMenu.child_widgets.append(self)
 
     def bind_widgets_events(self, event: str, event_command: Callable):
@@ -58,7 +60,7 @@ class ContextMenu(ctk.CTkFrame):
 
     def create_widgets(self):
         for i, option_text in enumerate(self.options_texts):
-            button = ctk.CTkButton(self, text=option_text, command=self.options_commands[i])
+            button = ctk.CTkButton(self, text="", command=self.options_commands[i])
             self.option_buttons.append(button)
 
     def set_widgets_accent_color(self):
@@ -87,6 +89,13 @@ class ContextMenu(ctk.CTkFrame):
             option_button.configure(
                 font=(self.font[0], self.font[1], self.font[2])
             )
+
+    def set_widgets_texts(self):
+        for i, button in enumerate(self.option_buttons):
+            button.configure(text=LanguageManager.data[self.options_texts[i]])
+
+    def update_widgets_text(self):
+        self.set_widgets_texts()
 
     def set_widgets_sizes(self):
         button_height = int((self.height - 2) / len(self.options_texts))

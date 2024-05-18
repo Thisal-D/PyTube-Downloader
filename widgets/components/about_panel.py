@@ -11,7 +11,7 @@ from utils import (
     FileUtility,
     ImageUtility,
 )
-from services import ThemeManager
+from services import ThemeManager, LanguageManager
 from settings import (
     AppearanceSettings,
 )
@@ -107,21 +107,23 @@ class AboutPanel(ctk.CTkFrame):
             text="",
             text_color=AppearanceSettings.settings["settings_panel"]["warning_color"]["normal"]
         )
-
+        self.contribute_data_retrieve_status = None
         self.app_info: Dict = JsonUtility.read_from_file("data\\info.json")
         self.place_widgets()
         self.set_widgets_fonts()
+        self.set_widgets_texts()
         self.set_widgets_sizes()
         self.configure_values()
         self.set_widgets_accent_color()
         self.bind_widgets_events()
+
         ThemeManager.register_widget(self)
+        LanguageManager.register_widget(self)
         
     def configure_values(self):
         self.name_label.configure(text=self.app_info["name"])
         self.version_label.configure(text=self.app_info["version"])
         self.site_button.configure(text=self.app_info["site"], command=lambda: webbrowser.open(self.app_info["site"]))
-        self.disclaimer_label.configure(text="•  " + self.app_info["disclaimer"])
         threading.Thread(target=self.configure_contributors_info, daemon=True).start()
 
     def update_contributors_info(self, contributors_data):
@@ -138,7 +140,7 @@ class AboutPanel(ctk.CTkFrame):
         # randomly choose to update info :D
         if random.choice((False,) * 15 + (True,)*5):
             # delete old profile images
-            FileUtility.delete_files("assets//profile images", ["this directory is necessary"])
+            FileUtility.delete_files("assets//profile images//", ["this directory is necessary"])
             self.app_info["contributors"] = {}
             
         # retrieve contributors data from GitHub repo as list[dict]
@@ -153,8 +155,9 @@ class AboutPanel(ctk.CTkFrame):
                 self.update_contributors_info(contributors_data)
         else:
             if len(self.app_info["contributors"]) == 0:
+                self.contribute_data_retrieve_status = "Failed"
                 self.contributors_status_label.configure(
-                    text="Failed to retrieve contributors data...!",
+                    text=LanguageManager.data["contribute_data_retrieve_fail"],
                     text_color=AppearanceSettings.settings["settings_panel"]["warning_color"]["normal"]
                 )
                 
@@ -169,7 +172,7 @@ class AboutPanel(ctk.CTkFrame):
                 sticky="w",
                 columnspan=10,
             )
-
+        self.contribute_data_retrieve_status = "Success"
         # iterate through contributors
         profile_images_directory = "assets//profile images//"
         row = 0
@@ -283,6 +286,20 @@ class AboutPanel(ctk.CTkFrame):
         scale = AppearanceSettings.settings["scale_r"]
         self.contributors_frame.configure(height=200 * scale, width=500 * scale)
         self.contributors_frame._scrollbar.grid_forget()
+
+    def set_widgets_texts(self):
+        self.name_title_label.configure(text=LanguageManager.data["name"])
+        self.version_title_label.configure(text=LanguageManager.data["version"])
+        self.site_title_label.configure(text=LanguageManager.data["site"])
+        self.contributors_title_label.configure(text=LanguageManager.data["contributors"])
+        if self.contribute_data_retrieve_status == "failed":
+            self.contributors_status_label.configure(text=LanguageManager.data["contribute_data_retrieve_fail"])
+        elif self.contribute_data_retrieve_status is None:
+            self.contributors_status_label.configure(text=LanguageManager.data["loading"])
+        self.disclaimer_label.configure(text="  " + LanguageManager.data["disclaimer"])
+
+    def update_widgets_text(self):
+        self.set_widgets_texts()
 
     def set_widgets_fonts(self):
         scale = AppearanceSettings.settings["scale_r"]

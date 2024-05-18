@@ -1,17 +1,18 @@
 import customtkinter as ctk
 from PIL import Image
 from typing import Callable
-from settings import AppearanceSettings, GeneralSettings
+from settings import AppearanceSettings
+from services import LanguageManager
 
 
 class AlertWindow(ctk.CTkToplevel):
     def __init__(
             self,
             master: ctk.CTk = None,
-            alert_msg: str = "Something went wrong,,.!",
-            ok_button_text: str = None,
+            alert_msg: str = "something_went_wrong",
+            ok_button_display: bool = None,
             ok_button_callback: Callable = None,
-            cancel_button_text: str = None,
+            cancel_button_display: bool = None,
             cancel_button_callback: Callable = None,
             callback: Callable = None,
             width: int = 400,
@@ -50,20 +51,20 @@ class AlertWindow(ctk.CTkToplevel):
 
         self.error_msg_label = ctk.CTkLabel(
             master=self,
-            text=alert_msg,
+            text=LanguageManager.data[alert_msg],
             text_color=AppearanceSettings.settings["alert_window"]["msg_color"]["normal"],
             font=("Arial", 13 * scale, "bold")
         )
         self.error_msg_label.pack(pady=(20 * scale, 15 * scale), padx=(0, 30 * scale))
 
-        if cancel_button_text is not None:
+        if cancel_button_display is True:
             self.cancel_button = ctk.CTkButton(
                 border_width=2,
                 border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 master=self,
                 hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
                 command=self.on_click_cancel_button,
-                text=cancel_button_text,
+                text=LanguageManager.data["cancel"],
                 fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 width=100 * scale,
                 height=28 * scale,
@@ -71,14 +72,14 @@ class AlertWindow(ctk.CTkToplevel):
             )
             self.cancel_button.pack(side="right", padx=(20 * scale, 40 * scale))
 
-        if ok_button_text is not None:
+        if ok_button_display is True:
             self.ok_button = ctk.CTkButton(
                 border_width=2,
                 border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 master=self,
                 hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
                 command=self.on_click_ok_button,
-                text=ok_button_text,
+                text=LanguageManager.data["ok"],
                 fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 width=100 * scale,
                 height=28 * scale,

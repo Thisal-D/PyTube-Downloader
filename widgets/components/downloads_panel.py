@@ -3,6 +3,7 @@ from typing import Callable, Any
 from tkinter import filedialog
 from services import (
     ThemeManager,
+    LanguageManager
 )
 from settings import (
     AppearanceSettings,
@@ -25,7 +26,6 @@ class DownloadsPanel(ctk.CTkFrame):
 
         self.download_path_label = ctk.CTkLabel(
             master=self,
-            text="Download Path",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
         self.dash1_label = ctk.CTkLabel(
@@ -51,7 +51,6 @@ class DownloadsPanel(ctk.CTkFrame):
         # ---------------------------------------------------------------------------
         self.create_sep_path_for_videos_audios_label = ctk.CTkLabel(
             master=self,
-            text="Separate Folders for Audio & Video",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
@@ -70,14 +69,12 @@ class DownloadsPanel(ctk.CTkFrame):
             variable=self.create_sep_path_for_videos_audios_switch_state
         )
         self.create_sep_path_for_videos_audios_info_label = ctk.CTkLabel(
-            master=self,
-            text="• Effortlessly Sort Downloaded Audio and Video Files into Their Own Distinct Folders.",
+            master=self
         )
 
         # ---------------------------------------------------------------------------
         self.create_sep_path_for_qualities_label = ctk.CTkLabel(
             master=self,
-            text="Quality-Based Folder Organization",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
@@ -97,7 +94,7 @@ class DownloadsPanel(ctk.CTkFrame):
         )
         self.create_sep_path_for_qualities_info_label = ctk.CTkLabel(
             master=self,
-            text="• Automatically Organize Downloaded Files into Specific Folders Based on Their Quality.",
+            text="",
         )
         
         # ---------------------------------------------------------------------------
@@ -124,12 +121,10 @@ class DownloadsPanel(ctk.CTkFrame):
         self.create_sep_path_for_playlists_info_label = ctk.CTkLabel(
             master=self,
             justify="left",
-            text="• Automatically Generate Folders for Each Downloaded Playlist, Organizing Files by \n  Channel and Playlist Title for Simplified Management.",
         )
 
         self.apply_changes_button = ctk.CTkButton(
             master=self,
-            text="Apply",
             state="disabled",
             command=self.apply_general_settings,
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
@@ -146,11 +141,14 @@ class DownloadsPanel(ctk.CTkFrame):
         self.general_settings_change_callback = general_settings_change_callback
         self.configure_values()
         self.set_widgets_accent_color()
+        self.set_widgets_texts()
         self.set_widgets_sizes()
         self.set_widgets_fonts()
         self.place_widgets()
         self.bind_widgets_events()
+
         ThemeManager.register_widget(self)
+        LanguageManager.register_widget(self)
 
     def apply_general_settings(self):
         GeneralSettings.settings["download_directory"] = FileUtility.format_path(self.download_path_entry.get())
@@ -327,7 +325,12 @@ class DownloadsPanel(ctk.CTkFrame):
             row=6, column=0, columnspan=4, padx=(100 + (20 * scale), 0), pady=(10, 0), sticky="w"
         )
         
-        self.apply_changes_button.grid(row=7, column=2, columnspan=2, pady=(pady, 0), padx=(20 + (120) * scale, 0), sticky="w")
+        self.apply_changes_button.grid(
+            row=7, column=2,
+            columnspan=2,
+            pady=(pady, 0), padx=(20 + 120 * scale, 0),
+            sticky="w"
+        )
 
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
@@ -338,6 +341,35 @@ class DownloadsPanel(ctk.CTkFrame):
         self.create_sep_path_for_qualities_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.create_sep_path_for_playlists_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.apply_changes_button.configure(width=50 * scale, height=24 * scale)
+
+    def set_widgets_texts(self):
+        self.download_path_label.configure(
+            text=LanguageManager.data["download_path"]
+        )
+        self.create_sep_path_for_videos_audios_label.configure(
+            text=LanguageManager.data["separate_folders_for_audio_&_video"]
+        )
+        self.create_sep_path_for_videos_audios_info_label.configure(
+            text=LanguageManager.data["separate_folders_for_audio_&_video_info"]
+        )
+        self.create_sep_path_for_qualities_label.configure(
+            text=LanguageManager.data["quality-based_folder_organization"]
+        )
+        self.create_sep_path_for_qualities_info_label.configure(
+            text=LanguageManager.data["quality-based_folder_organization_info"]
+        )
+        self.create_sep_path_for_playlists_label.configure(
+            text=LanguageManager.data["playlist-specific_directories"]
+        )
+        self.create_sep_path_for_playlists_info_label.configure(
+            text=LanguageManager.data["playlist-specific_directories_info"]
+        )
+        self.apply_changes_button.configure(
+            text=LanguageManager.data["apply"]
+        )
+
+    def update_widgets_text(self):
+        self.set_widgets_texts()
 
     def set_widgets_fonts(self):
         scale = AppearanceSettings.settings["scale_r"]

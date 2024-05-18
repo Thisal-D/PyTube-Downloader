@@ -8,6 +8,7 @@ class AppearanceSettings:
     """
     settings: Dict = {}
     file_path: str = ""
+    themes = ("dark", "light", "system")
 
     @staticmethod
     def save_settings() -> None:

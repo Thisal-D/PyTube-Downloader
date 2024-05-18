@@ -1,7 +1,7 @@
 from typing import Any, List, Callable, Literal
 import customtkinter as ctk
 from .accent_color_button import AccentColorButton
-from services import ThemeManager
+from services import ThemeManager, LanguageManager
 from utils import SettingsValidateUtility
 from settings import (
     AppearanceSettings
@@ -30,9 +30,14 @@ class AppearancePanel(ctk.CTkFrame):
             text=":",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
+
+        self.themes = ["dark", "light", "system"]
         self.theme_combo_box = ctk.CTkComboBox(
             master=self,
-            values=["Dark", "Light"],
+            values=[
+                LanguageManager.data[self.themes[0]],
+                LanguageManager.data[self.themes[1]]
+            ],
             dropdown_fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             command=self.apply_theme_mode,
             width=140 * AppearanceSettings.settings["scale_r"],
@@ -175,6 +180,7 @@ class AppearancePanel(ctk.CTkFrame):
         self.theme_settings_change_callback = theme_settings_change_callback
 
         self.set_widgets_fonts()
+        self.set_widgets_texts()
         self.set_widgets_sizes()
         self.set_widgets_accent_color()
         self.place_widgets()
@@ -183,6 +189,7 @@ class AppearancePanel(ctk.CTkFrame):
 
         # Register widget with ThemeManager
         ThemeManager.register_widget(self)
+        LanguageManager.register_widget(self)
 
     def release_all_accent_color_buttons(self):
         """
@@ -224,7 +231,7 @@ class AppearancePanel(ctk.CTkFrame):
         """
         Apply selected theme mode. Dark / Light
         """
-        AppearanceSettings.settings["root"]["theme_mode"] = theme_mode.lower()
+        AppearanceSettings.settings["root"]["theme_mode"] = self.theme_combo_box.cget("values").index(theme_mode)
         self.theme_settings_change_callback("theme_mode")
 
     def sync_theme_with_os(self):
@@ -233,7 +240,7 @@ class AppearancePanel(ctk.CTkFrame):
         """
         self.system_theme_check_box.configure(command=self.disable_sync_theme_with_os)
         self.theme_combo_box.configure(state="disabled")
-        AppearanceSettings.settings["root"]["theme_mode"] = "system"
+        AppearanceSettings.settings["root"]["theme_mode"] = 2
         self.theme_settings_change_callback("theme_mode")
 
     def disable_sync_theme_with_os(self):
@@ -242,7 +249,9 @@ class AppearancePanel(ctk.CTkFrame):
         """
         self.system_theme_check_box.configure(command=self.sync_theme_with_os)
         self.theme_combo_box.configure(state="normal")
-        AppearanceSettings.settings["root"]["theme_mode"] = ctk.get_appearance_mode().lower()
+        AppearanceSettings.settings["root"]["theme_mode"] = (
+            AppearanceSettings.themes.index(ctk.get_appearance_mode().lower())
+        )
         self.theme_settings_change_callback("theme_mode")
 
     def apply_opacity(self, opacity_value: float):
@@ -268,11 +277,11 @@ class AppearancePanel(ctk.CTkFrame):
         scale = AppearanceSettings.settings["scale_r"]
         AlertWindow(
             master=self.master.master,
-            alert_msg="Restart required for changes to take effect..!",
+            alert_msg="restart_confirmation",
             width=int(450 * scale),
             height=int(130 * scale),
-            ok_button_text="ok",
-            cancel_button_text="cancel",
+            ok_button_display=True,
+            cancel_button_display=True,
             ok_button_callback=self.apply_scale
         )
 
@@ -414,6 +423,41 @@ class AppearancePanel(ctk.CTkFrame):
         self.scale_apply_btn.configure(width=50 * scale, height=24 * scale)
         self.opacity_change_slider.configure(width=180 * scale, height=18 * scale)
 
+    def set_widgets_texts(self):
+        self.theme_label.configure(text=LanguageManager.data["theme"])
+
+        current_state_of_theme_combo_box = self.theme_combo_box.cget("state")
+        self.theme_combo_box.configure(state="normal")
+        current_selected_theme_index = self.theme_combo_box.cget("values").index(self.theme_combo_box.get())
+        self.theme_combo_box.configure(
+            values=[
+                LanguageManager.data[self.themes[0]],
+                LanguageManager.data[self.themes[1]]
+            ]
+        )
+        self.theme_combo_box.set(
+            self.theme_combo_box.cget("values")[current_selected_theme_index]
+        )
+        self.theme_combo_box.configure(state=current_state_of_theme_combo_box)
+
+        self.system_theme_check_box.configure(text=LanguageManager.data["sync_with_os"])
+        self.accent_color_label.configure(text=LanguageManager.data["accent_color"])
+        self.custom_accent_color_label.configure(
+            text=LanguageManager.data["custom_accent_color"]
+        )
+        self.custom_accent_color_apply_btn.configure(text=LanguageManager.data["apply"])
+        self.custom_accent_color_alert_text.delete(1.0, "end")
+        self.custom_accent_color_alert_text.insert(
+            "end",
+            LanguageManager.data["custom_accent_color_alert_text"]
+        )
+        self.scale_label.configure(text=LanguageManager.data["scale"])
+        self.scale_apply_btn.configure(text=LanguageManager.data["apply"])
+        self.opacity_label.configure(text=LanguageManager.data["transparent"])
+
+    def update_widgets_text(self):
+        self.set_widgets_texts()
+
     def set_widgets_fonts(self):
         # Segoe UI, Open Sans
         scale = AppearanceSettings.settings["scale_r"]
@@ -446,13 +490,6 @@ class AppearancePanel(ctk.CTkFrame):
         set values for widgets using saved settings.
         """
         self.custom_accent_color_alert_text.bind("<Key>", lambda e: "break")
-        self.custom_accent_color_alert_text.insert(
-            "end",
-            """* Please Specify Custom Accent Colors for Both Normal and Hover State Using One of the 
-            Following Formats :
-                - Hexa-Decimal: #0f0f0f, #0f0f0ff
-                - Color Names: green, lightgreen"""
-        )
 
         if AppearanceSettings.settings["root"]["accent_color"]["default"]:
             for button in self.accent_color_buttons:
@@ -470,13 +507,13 @@ class AppearancePanel(ctk.CTkFrame):
             self.validate_custom_accent_color("event")
             self.custom_accent_color_apply_btn.configure(state="disabled")
 
-        if AppearanceSettings.settings["root"]["theme_mode"] == "system":
+        if AppearanceSettings.settings["root"]["theme_mode"] == 2:
             self.sync_theme_with_os()
             self.system_theme_check_box.select()
-        elif AppearanceSettings.settings["root"]["theme_mode"] == "dark":
+        elif AppearanceSettings.settings["root"]["theme_mode"] == 0:
             self.theme_combo_box.set("Dark")
-        if AppearanceSettings.settings["root"]["theme_mode"] == "light":
-            self.theme_combo_box.set("Light")
+        if AppearanceSettings.settings["root"]["theme_mode"] == 1:
+            self.theme_combo_box.set(self.theme_combo_box.cget("values")[1])
 
         self.opacity_change_slider.set(AppearanceSettings.settings["opacity"])
 
