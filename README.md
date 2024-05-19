@@ -1,6 +1,6 @@
 # PyTube Downloader
 
-[Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/releases/tag/v1.0.1)
+[Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/releases/tag/v1.0.2)
 
 PyTube Downloader is a user-friendly application that allows users to download YouTube videos with ease. It features a simple and intuitive user interface, making the downloading process straightforward for all users.
 
@@ -26,8 +26,11 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 - **Auto Retry Failed Downloads:** Automatically retries a failed download up to 5 times. This feature ensures that temporary issues such as network interruptions do not prevent successful downloading, enhancing reliability and user experience.
 - **Multi-Language Support**: Enjoy the application in your preferred language with support for multiple languages.
   - Currently Support Languages:
-    - English
-    - Chinese 
+    | Language      | Contributors |
+    | --------------| ------------ |
+    | English       | -            |
+    | Chinese (中文)| [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
+
  
   -  **Help us [``improve current languages``](LANGUAGE_CONTRIBUTION_GUIDE.md/#fixing-current-language-issues) and [``add new languages``](LANGUAGE_CONTRIBUTION_GUIDE.md/#adding-a-new-language) to this application.**
 
