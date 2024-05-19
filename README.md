@@ -28,14 +28,10 @@ PyTube Downloader is a user-friendly application that allows users to download Y
   - Currently Support Languages:
     - English
     - Chinese 
-
-
+ 
   -  **Help us [``improve current languages``](LANGUAGE_CONTRIBUTION_GUIDE.md/#fixing-current-language-issues) and [``add new languages``](LANGUAGE_CONTRIBUTION_GUIDE.md/#adding-a-new-language) to this application.**
 
 ---
-
-
-help to improve or add new language
 
 ### Dark Theme
 ![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b2079262-0d1c-4bd0-9b33-7cc16c9173ce)
