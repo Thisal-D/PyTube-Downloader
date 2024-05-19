@@ -31,12 +31,11 @@ class AppearancePanel(ctk.CTkFrame):
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
 
-        self.themes = ["dark", "light", "system"]
         self.theme_combo_box = ctk.CTkComboBox(
             master=self,
             values=[
-                LanguageManager.data[self.themes[0]],
-                LanguageManager.data[self.themes[1]]
+                LanguageManager.data[AppearanceSettings.themes[0]],
+                LanguageManager.data[AppearanceSettings.themes[1]]
             ],
             dropdown_fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             command=self.apply_theme_mode,
@@ -427,16 +426,14 @@ class AppearancePanel(ctk.CTkFrame):
         self.theme_label.configure(text=LanguageManager.data["theme"])
 
         current_state_of_theme_combo_box = self.theme_combo_box.cget("state")
-        self.theme_combo_box.configure(state="normal")
-        current_selected_theme_index = self.theme_combo_box.cget("values").index(self.theme_combo_box.get())
         self.theme_combo_box.configure(
             values=[
-                LanguageManager.data[self.themes[0]],
-                LanguageManager.data[self.themes[1]]
+                LanguageManager.data[AppearanceSettings.themes[0]],
+                LanguageManager.data[AppearanceSettings.themes[1]]
             ]
         )
         self.theme_combo_box.set(
-            self.theme_combo_box.cget("values")[current_selected_theme_index]
+            self.theme_combo_box.cget("values")[AppearanceSettings.settings["root"]["theme_mode"]]
         )
         self.theme_combo_box.configure(state=current_state_of_theme_combo_box)
 
