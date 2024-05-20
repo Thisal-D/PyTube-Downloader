@@ -33,7 +33,7 @@ PyTube 下载器是一款用户友好的应用程序，使用户能够轻松下�
     | --------------| ------------ |
     | English (英文)        | -            |
     | 中文 | [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
-
+    | සිංහල (僧伽罗语) | [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21) |
  
   - **帮助我们 [``改进当前语言``](LANGUAGE_CONTRIBUTION_GUIDE_zh.md/#improve-current-language-issues) 和 [``添加新语言``](LANGUAGE_CONTRIBUTION_GUIDE_zh.md/#adding-a-new-language) 到此应用程序。**
 
