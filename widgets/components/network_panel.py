@@ -310,14 +310,6 @@ class NetworkPanel(ctk.CTkFrame):
         self.set_apply_button_state()
 
     def set_apply_button_state(self):
-        print("self.simultaneous_download_count_changed", self.simultaneous_download_count_changed)
-        print("self.simultaneous_load_count_changed", self.simultaneous_load_count_changed)
-        print("self.automatic_download_state_changed", self.automatic_download_state_changed)
-        print("self.automatic_download_quality_changed", self.automatic_download_quality_changed)
-        print("self.load_thumbnail_state_changed", self.load_thumbnail_state_changed)
-        print("self.reload_automatically_state_changed", self.reload_automatically_state_changed)
-        print("self.re_download_automatically_state_changed", self.re_download_automatically_state_changed)
-
         if (any((self.simultaneous_download_count_changed, self.simultaneous_load_count_changed,
                  self.automatic_download_state_changed, self.automatic_download_quality_changed,
                  self.load_thumbnail_state_changed, self.reload_automatically_state_changed,
