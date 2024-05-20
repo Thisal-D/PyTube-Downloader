@@ -51,11 +51,13 @@ class App(ctk.CTk):
     def __init__(self) -> None:
         super().__init__()
 
-        # root width height
+        # window width height save on these vars.
+        # i will track window width, if it change, i will call geometry tarcker .
         self.root_width = self.winfo_width()
         self.root_height = self.winfo_height()
 
-        # widgets size resetting check
+        # this var used to track status of geometry tracker. it's running or not
+        # if it's running already running it's not gonna start againg
         self.is_geometry_changes_tracker_running = False
 
         # download method
@@ -377,8 +379,8 @@ class App(ctk.CTk):
         self.navigate_downloaded_frame_btn.configure(height=int(40 * scale))
         self.settings_btn.configure(width=int(30 * scale), height=int(40 * scale))
         self.context_menu.configure(
-            width=int(100 * AppearanceSettings.settings["scale_r"]),
-            height=int(120 * AppearanceSettings.settings["scale_r"])
+            width=int(120 * AppearanceSettings.settings["scale_r"]),
+            height=int(130 * AppearanceSettings.settings["scale_r"])
         )
         self.videos_status_count_label.configure(height=int(15 * scale))
 
