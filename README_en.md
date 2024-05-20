@@ -33,6 +33,7 @@ PyTube Downloader is a user-friendly application that allows users to download Y
     | --------------| ------------ |
     | English       | -            |
     | 中文 (Chinese)| [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
+    | සිංහල (sinhala)| [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21) |
 
  
   -  **Help us [``improve current languages``](LANGUAGE_CONTRIBUTION_GUIDE_en.md/#improve-current-language-issues) and [``add new languages``](LANGUAGE_CONTRIBUTION_GUIDE_en.md/#adding-a-new-language) to this application.**
