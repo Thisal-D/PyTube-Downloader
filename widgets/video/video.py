@@ -196,7 +196,7 @@ class Video(ctk.CTkFrame):
 
         self.remove_btn.configure(width=22 * scale, height=22 * scale, border_spacing=0)
         self.context_menu.configure(
-            width=int(120 * AppearanceSettings.settings["scale_r"]),
+            width=int(130 * AppearanceSettings.settings["scale_r"]),
             height=int(80 * AppearanceSettings.settings["scale_r"]),
         )
 
