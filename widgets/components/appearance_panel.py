@@ -393,14 +393,14 @@ class AppearancePanel(ctk.CTkFrame):
         self.dash3_label.grid(row=2, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.custom_accent_color_entry.grid(row=2, column=2, pady=(pady, 0), sticky="w")
         self.custom_accent_color_display_btn.grid(row=2, column=3, padx=(20, 0), pady=(pady, 0), sticky="w")
-        self.custom_accent_color_apply_btn.grid(row=2, column=4, padx=(0, 0), pady=(pady, 0), sticky="w")
+        self.custom_accent_color_apply_btn.grid(row=2, column=3, padx=(100 * scale, 0), pady=(pady, 0), sticky="w")
         self.custom_accent_color_alert_text.grid(row=3, column=0, columnspan=9, padx=(100, 0), pady=(10, 0), sticky="w")
 
         self.scale_label.grid(row=4, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash4_label.grid(row=4, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.scale_change_slider.grid(row=4, column=2, pady=(pady, 0), sticky="w")
         self.scale_value_label.grid(row=4, column=3, padx=(20, 0), pady=(pady, 0), sticky="w")
-        self.scale_apply_btn.grid(row=4, column=4, padx=(0, 0), pady=(pady, 0), sticky="w")
+        self.scale_apply_btn.grid(row=4, column=3, padx=(100 * scale, 0), pady=(pady, 0), sticky="w")
 
         self.opacity_label.grid(row=5, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash5_label.grid(row=5, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")

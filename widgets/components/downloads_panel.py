@@ -328,7 +328,7 @@ class DownloadsPanel(ctk.CTkFrame):
         self.apply_changes_button.grid(
             row=7, column=2,
             columnspan=2,
-            pady=(pady, 0), padx=(20 + 120 * scale, 0),
+            pady=(pady, 0), padx=(20 + 170 * scale, 0),
             sticky="w"
         )
 

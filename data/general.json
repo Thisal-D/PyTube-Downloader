@@ -9,7 +9,7 @@
     "download_directory": false,
     "lang_code": "en",
     "language": "English",
-    "load_thumbnail": true,
+    "load_thumbnail": false,
     "max_simultaneous_downloads": 1,
     "max_simultaneous_loads": 1,
     "re_download_automatically": false,
