@@ -6,7 +6,11 @@
 # App View
 ![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b2079262-0d1c-4bd0-9b33-7cc16c9173ce)
 
-<table width="100%">
+<table width="100%" border=0>
+  <tr>
+    <td>English</td>
+    <td>中文</td>
+  </tr>
   <tr>
     <td align="center">
       <img src="https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/e57acd23-cbdc-446e-86ed-b5d08f5ce9e1" width="100%" />
