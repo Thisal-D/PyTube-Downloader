@@ -1,7 +1,6 @@
 # PyTube Downloader
 
-- `v1.0.2` [Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/releases/tag/v1.0.2)
-- `v1.0.3` [Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/tree/main/windows%20installer) ```(with Multiple-Language Support)```
+- `v1.0.3` [Download .exe for Windows](https://github.com/Thisal-D/PyTube-Downloader/releases)
 
 ---
 
