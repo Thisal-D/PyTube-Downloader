@@ -232,8 +232,8 @@ class AddedVideo(Video):
         if GeneralSettings.settings["automatic_download"]["status"] == "enable":
             self.select_download_quality_automatic()
             self.choose_download_type(self.resolution_select_menu.get())
-        if self.mode == "video":
-            self.video_download_button_click_callback(self)
+            if self.mode == "video":
+                self.video_download_button_click_callback(self)
 
     def set_loading_completed(self):
         if self.load_state != "removed":
