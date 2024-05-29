@@ -1,6 +1,6 @@
 # PyTube Downloader
 
-- `v1.0.3` [下载适用于 Windows 的 .exe](https://github.com/Thisal-D/PyTube-Downloader/releases)
+- `v1.0.3` [下载适用于 Windows 的 .exe](https://sourceforge.net/p/pytube-downloader)
 
 ---
 
