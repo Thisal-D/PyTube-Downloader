@@ -493,23 +493,27 @@ class DownloadingVideo(Video):
         Handle mouse entering the widget area.
         """
 
-        super().on_mouse_enter_self(event)
+        # super().on_mouse_enter_self(event)
 
+        """
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
         self.re_download_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
         self.pause_resume_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
+        """
 
     def on_mouse_leave_self(self, event):
         """
         Handle mouse leaving the widget area.
         """
 
-        super().on_mouse_leave_self(event)
+        # super().on_mouse_leave_self(event)
 
+        """
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
         self.re_download_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
         self.pause_resume_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
-
+        """
+        
     def bind_widgets_events(self):
         """
         Bind events to all widgets.
@@ -522,7 +526,7 @@ class DownloadingVideo(Video):
                 fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
             )
-            self.on_mouse_enter_self(event)
+            # self.on_mouse_enter_self(event)
 
         def on_mouse_leave_download_btn(_event):
             self.re_download_btn.configure(
@@ -538,7 +542,7 @@ class DownloadingVideo(Video):
                 fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
             )
-            self.on_mouse_enter_self(event)
+            # self.on_mouse_enter_self(event)
 
         def on_mouse_leave_pause_resume_btn(_event):
             self.pause_resume_btn.configure(

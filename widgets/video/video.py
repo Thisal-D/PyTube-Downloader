@@ -94,7 +94,7 @@ class Video(ctk.CTkFrame):
         self.thumbnail_btn.configure(state="normal")
 
         def on_mouse_enter_thumbnail_btn(event):
-            self.on_mouse_enter_self(event)
+            # self.on_mouse_enter_self(event)
             self.thumbnail_btn.on_mouse_enter(event)
 
         def on_mouse_leave_thumbnail_btn(event):
@@ -253,6 +253,8 @@ class Video(ctk.CTkFrame):
 
     def on_mouse_enter_self(self, event):
         """Handle mouse enter event for self."""
+        # Disable due to UI Performence issue
+        """
         self.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
             border_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
@@ -268,9 +270,13 @@ class Video(ctk.CTkFrame):
         self.channel_btn.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"]
         )
+        """
 
     def on_mouse_leave_self(self, event):
         """Handle mouse leave event for self."""
+        
+        # Disable due to UI Performence issue
+        """
         self.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"],
             border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
@@ -286,6 +292,7 @@ class Video(ctk.CTkFrame):
         self.channel_btn.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
         )
+        """
 
     def open_context_menu(self, _event):
         from widgets import ContextMenu
@@ -319,6 +326,7 @@ class Video(ctk.CTkFrame):
         self.thumbnail_btn.bind("<Button-1>", self.close_context_menu_directly)
         self.context_menu.bind_widgets_events("<Leave>", self.close_context_menu)
 
+        """ Disable Due to UI Performence
         self.bind("<Enter>", self.on_mouse_enter_self)
         self.bind("<Leave>", self.on_mouse_leave_self)
 
@@ -339,12 +347,13 @@ class Video(ctk.CTkFrame):
                     print(f"Video.py : {error}")
             except Exception as error:
                 print(f"Video.py : {error}")
-
+        """
+        
         def on_mouse_enter_channel_btn(event):
             self.channel_btn.configure(
                 text_color=AppearanceSettings.settings["video_object"]["btn_text_color"]["hover"]
             )
-            self.on_mouse_enter_self(event)
+            # self.on_mouse_enter_self(event)
 
         def on_mouse_leave_channel_btn(_event):
             self.channel_btn.configure(
@@ -359,7 +368,7 @@ class Video(ctk.CTkFrame):
                 fg_color=AppearanceSettings.settings["video_object"]["error_color"]["hover"],
                 text_color=AppearanceSettings.settings["video_object"]["remove_btn_text_color"]["hover"]
             )
-            self.on_mouse_enter_self(event)
+            # self.on_mouse_enter_self(event)
 
         def on_mouse_leave_remove_btn(event):
             self.remove_btn.configure(

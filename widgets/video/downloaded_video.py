@@ -126,10 +126,12 @@ class DownloadedVideo(Video):
         self.download_path_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
 
     def on_mouse_enter_self(self, event):
-        super().on_mouse_enter_self(event)
-
+        # super().on_mouse_enter_self(event)
+        
+        """
         self.download_path_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
-
+        """
+        
     def on_mouse_leave_self(self, event):
         super().on_mouse_leave_self(event)
 
@@ -140,7 +142,7 @@ class DownloadedVideo(Video):
 
         def on_mouse_enter_download_path_btn(event):
             self.download_path_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
-            self.on_mouse_enter_self(event)
+             #self.on_mouse_enter_self(event)
 
         def on_mouse_leave_download_path_btn(_event):
             self.download_path_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])

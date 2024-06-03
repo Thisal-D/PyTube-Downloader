@@ -240,6 +240,7 @@ class PlayList(ctk.CTkFrame):
 
     def on_mouse_enter_self(self, event):
         """Handle mouse enter event for the widget."""
+        """
         self.playlist_main_frame.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
             border_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
@@ -255,8 +256,8 @@ class PlayList(ctk.CTkFrame):
                 AppearanceSettings.settings["video_object"]["fg_color"]["hover"]
             )
         )
-
-        # disable due to ui performance down
+        """
+        # disable due to ui performance issue
         """def on_mouse_enter_videos():
             video_object: AddedVideo
             for video_object in self.playlist_item_frame.winfo_children():
@@ -271,6 +272,7 @@ class PlayList(ctk.CTkFrame):
 
     def on_mouse_leave_self(self, event):
         """Handle mouse leave event for the widget."""
+        """
         self.playlist_main_frame.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"],
             border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
@@ -286,6 +288,7 @@ class PlayList(ctk.CTkFrame):
                 AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
             )
         )
+        """
 
         # disable due to ui performance down
         """def on_mouse_leave_videos():
@@ -302,11 +305,12 @@ class PlayList(ctk.CTkFrame):
 
     def bind_widgets_events(self):
         """Bind events for the widgets."""
-        self.playlist_main_frame.bind("<Enter>", self.on_mouse_enter_self)
-        self.playlist_main_frame.bind("<Leave>", self.on_mouse_leave_self)
+        # self.playlist_main_frame.bind("<Enter>", self.on_mouse_enter_self)
+        # self.playlist_main_frame.bind("<Leave>", self.on_mouse_leave_self)
 
         self.bind("<Configure>", self.configure_widget_sizes)
 
+        """
         for child_widgets in self.playlist_main_frame.winfo_children() + self.playlist_item_frame.winfo_children():
             child_widgets.bind("<Enter>", self.on_mouse_enter_self)
             child_widgets.bind("<Leave>", self.on_mouse_leave_self)
@@ -317,14 +321,15 @@ class PlayList(ctk.CTkFrame):
             except Exception as error:
                 print(f"1@PlayList.py > Err : {error}")
                 pass
-
+        """
+        
         def on_mouse_enter_channel_btn(event):
             self.channel_btn.configure(
                 text_color=ThemeManager.get_color_based_on_theme_mode(
                     AppearanceSettings.settings["video_object"]["btn_text_color"]["hover"]
                 ),
             )
-            self.on_mouse_enter_self(event)
+            # self.on_mouse_enter_self(event)
 
         def on_mouse_leave_channel_btn(_event):
             self.channel_btn.configure(
@@ -341,7 +346,7 @@ class PlayList(ctk.CTkFrame):
                 fg_color=AppearanceSettings.settings["video_object"]["error_color"]["hover"],
                 text_color=AppearanceSettings.settings["video_object"]["remove_btn_text_color"]["hover"]
             )
-            self.on_mouse_enter_self(event)
+            # self.on_mouse_enter_self(event)
 
         def on_mouse_leave_remove_btn(_event):
             self.remove_btn.configure(

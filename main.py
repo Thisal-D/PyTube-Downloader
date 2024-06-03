@@ -75,6 +75,7 @@ app.set_widgets_accent_color()
 app.set_widgets_fonts()
 # app event bind
 app.bind_widgets_events()
-
+# bind shortcut keys
+app.bind_keyboard_shortcuts()
 # just rut the app
 app.run()

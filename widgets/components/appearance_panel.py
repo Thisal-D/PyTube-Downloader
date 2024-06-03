@@ -424,18 +424,18 @@ class AppearancePanel(ctk.CTkFrame):
 
     def set_widgets_texts(self):
         self.theme_label.configure(text=LanguageManager.data["theme"])
-
-        current_state_of_theme_combo_box = self.theme_combo_box.cget("state")
+        
         self.theme_combo_box.configure(
             values=[
                 LanguageManager.data[AppearanceSettings.themes[0]],
                 LanguageManager.data[AppearanceSettings.themes[1]]
             ]
         )
-        self.theme_combo_box.set(
-            self.theme_combo_box.cget("values")[AppearanceSettings.settings["root"]["theme_mode"]]
-        )
-        self.theme_combo_box.configure(state=current_state_of_theme_combo_box)
+        
+        if AppearanceSettings.settings["root"]["theme_mode"] != 2:
+            self.theme_combo_box.set(
+                self.theme_combo_box.cget("values")[AppearanceSettings.settings["root"]["theme_mode"]]
+            )
 
         self.system_theme_check_box.configure(text=LanguageManager.data["sync_with_os"])
         self.accent_color_label.configure(text=LanguageManager.data["accent_color"])
@@ -508,7 +508,7 @@ class AppearancePanel(ctk.CTkFrame):
             self.sync_theme_with_os()
             self.system_theme_check_box.select()
         elif AppearanceSettings.settings["root"]["theme_mode"] == 0:
-            self.theme_combo_box.set("Dark")
+            self.theme_combo_box.set(self.theme_combo_box.cget("values")[0])
         if AppearanceSettings.settings["root"]["theme_mode"] == 1:
             self.theme_combo_box.set(self.theme_combo_box.cget("values")[1])
 

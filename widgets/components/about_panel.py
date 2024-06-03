@@ -119,7 +119,7 @@ class AboutPanel(ctk.CTkFrame):
 
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
-        
+
     def configure_values(self):
         self.name_label.configure(text=self.app_info["name"])
         self.version_label.configure(text=self.app_info["version"])
@@ -142,7 +142,7 @@ class AboutPanel(ctk.CTkFrame):
             # delete old profile images
             FileUtility.delete_files("assets//profile images//", ["this directory is necessary"])
             self.app_info["contributors"] = {}
-            
+
         # retrieve contributors data from GitHub repo as list[dict]
         contributors_data = GitHubUtility.get_contributors_data()
         # if it success -> return Dict
@@ -160,7 +160,7 @@ class AboutPanel(ctk.CTkFrame):
                     text=LanguageManager.data["contribute_data_retrieve_fail"],
                     text_color=AppearanceSettings.settings["settings_panel"]["warning_color"]["normal"]
                 )
-                
+
         if len(self.app_info["contributors"]) != 0:
             # place forget the loading label
             self.contributors_status_label.grid_forget()
@@ -194,7 +194,7 @@ class AboutPanel(ctk.CTkFrame):
                 )
                 # update images path
                 self.app_info["contributors"][i]["profile_images_paths"] = profile_images_paths
-            
+
             # check if profile image is already downloaded if it's not download profile image
             if not os.path.exists(profile_images_paths[0]):
                 try:

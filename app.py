@@ -106,6 +106,11 @@ class App(ctk.CTk):
 
         self.tray_menu = None
 
+        self.is_settings_open = False
+        self.is_in_full_screen_mdoe = False
+        self.root_geometry = ""
+        self.is_maximized = False
+        
     def create_widgets(self) -> None:
         """
         Creates and initializes all the GUI widgets for the application.
@@ -952,6 +957,79 @@ class App(ctk.CTk):
 
         self.downloaded_frame_info_label.bind("<Enter>", on_mouse_enter_downloaded_frame_info_label)
         self.downloaded_frame_info_label.bind("<Leave>", mouse_ot_downloaded_frame_info_label)
+    
+    def bind_keyboard_shortcuts(self):
+        """
+        Bind the keyboards shortcuts.
+        """
+        def toggle_settings(_event):
+            if self.is_settings_open:
+                self.close_settings()
+            else:
+                self.open_settings()
+                
+        self.bind("<Control-s>", toggle_settings)
+        self.bind("<Escape>", toggle_settings)
+        self.bind("<F2>", toggle_settings)
+        
+        def choose_download_mode(_event):
+            if self.selected_download_mode == "video":
+                self.select_download_mode("playlist")
+            else:
+                self.select_download_mode("video")
+                
+        self.bind("<Control-r>", choose_download_mode)
+        self.bind("<F9>", choose_download_mode)
+        
+        def add_video_playlist(_event):
+            self.add_video_playlist()
+        self.bind("<Return>", add_video_playlist)
+        
+        def toggle_full_screen(event):
+            if not self.is_in_full_screen_mdoe: 
+                self.is_in_full_screen_mdoe = True
+                self.attributes("-fullscreen", True)
+                self.run_geometry_changes_tracker("_event")
+            else:
+                self.is_in_full_screen_mdoe = False
+                self.attributes("-fullscreen", False)
+                # Had to reset titlebar color because of customtkinter has some issue with when fullscreen toggle
+                self._windows_set_titlebar_color(self._get_appearance_mode())
+                self.run_geometry_changes_tracker("_event")
+    
+        self.bind("<F5>", toggle_full_screen)
+        
+        def minimize(_event):
+            self.iconify()
+            
+        self.bind("<F3>", minimize)
+        self.bind("<Control-,>", minimize)
+        
+        def toggle_maximize(_event):
+            if not self.is_maximized:
+                self.is_maximized = True
+                self.root_geometry = self.geometry()
+                self.geometry(f"{self.winfo_screenwidth()}x{self.winfo_screenheight()}+{0}+{0}")
+                self.run_geometry_changes_tracker("_event")
+            else:
+                self.is_maximized = False
+                self.geometry(self.root_geometry)
+                self.run_geometry_changes_tracker("_event")
+                
+        self.bind("<F4>", toggle_maximize)
+        self.bind("<Control-.>", toggle_maximize)
+        
+        def terminate(_event):
+            self.on_app_closing()
+            
+        self.bind("<Control-Alt-x>", terminate)
+        self.bind("<Control-Alt-F4>", terminate)
+        
+        def quick_exit(_event):
+            self.show_close_confirmation_dialog()
+            
+        self.bind("<F12>", quick_exit)
+        
 
     def show_app_logo(self) -> None:
         """
@@ -974,25 +1052,30 @@ class App(ctk.CTk):
             try:
                 for sub_widget in widget.winfo_children():
                     sub_widget.update()
+                    sub_widget.focus_set()
                     try:
                         for sub_sub_widget in sub_widget.winfo_children():
                             sub_sub_widget.update()
+                            sub_widget.focus_set()
                             try:
                                 for sub_sub_sub_widget in sub_sub_widget.winfo_children():
                                     sub_sub_sub_widget.update()
+                                    sub_widget.focus_set()
                             except Exception as error:
                                 print(f"app.py L-657 : {error}")
                     except Exception as error:
                         print(f"app.py L-659 : {error}")
             except Exception as error:
                 print(f"app.py L-661 : {error}")
+        self.update()
+        self.focus_set()
 
     def geometry_changes_tracker(self) -> None:
         """
         Track changes in the geometry of the window and adjust accordingly.
         """
         self.is_geometry_changes_tracker_running = True
-        update_delay = 1
+        update_delay = 0.5
         # Check if the old window width or height is different from the current width or height
         if self.root_width != self.winfo_width() or self.root_height != self.winfo_height():
             # If the window size changed, show the logo on full screen
@@ -1008,7 +1091,6 @@ class App(ctk.CTk):
                 # Set delay to 1 sec
                 time.sleep(update_delay)
             self.configure_widgets_size()
-            self.update()
             self.update_idletasks()
             self.update_widgets()
             self.hide_app_logo()
@@ -1027,8 +1109,10 @@ class App(ctk.CTk):
         """
         self.selected_download_mode = download_mode
         if download_mode == "playlist":
+            self.playlist_radio_btn.select()
             self.video_radio_btn.deselect()
         else:
+            self.video_radio_btn.select()
             self.playlist_radio_btn.deselect()
 
     def update_videos_count_status(self) -> None:
@@ -1049,6 +1133,11 @@ class App(ctk.CTk):
         self.is_content_added = True
         self.added_frame_info_label.place_forget()
         yt_url = self.url_entry.get()
+        
+        # if url entry is nothing just do nothing
+        if yt_url.replace(" ","") == "":
+            return
+        
         if self.selected_download_mode == "video":
             AddedVideo(
                 root=self,
@@ -1249,6 +1338,7 @@ class App(ctk.CTk):
         Open the settings panel and configure the settings button to close the settings.
 
         """
+        self.is_settings_open = True
         ContextMenu.close_all_menus()
         self.settings_panel.place(relwidth=1, relheight=1)
         self.settings_btn.configure(command=self.close_settings)
@@ -1258,6 +1348,7 @@ class App(ctk.CTk):
         Close the settings panel and configure the settings button to open the settings.
 
         """
+        self.is_settings_open = False
         self.settings_panel.place_forget()
         self.settings_btn.configure(command=self.open_settings)
 
@@ -1293,6 +1384,10 @@ class App(ctk.CTk):
         if os.path.exists("PyTube Downloader.exe"):
             os.startfile("PyTube Downloader.exe")
         os._exit(0)
+        
+    def confirm_quit(self):
+        self.restore_from_tray()
+        self.show_close_confirmation_dialog()
 
     def show_close_confirmation_dialog(self) -> None:
         """
@@ -1300,7 +1395,6 @@ class App(ctk.CTk):
 
         """
         scale = AppearanceSettings.settings["scale_r"]
-        self.restore_from_tray()
         AlertWindow(
             master=self,
             alert_msg="exit_confirmation",
@@ -1327,7 +1421,7 @@ class App(ctk.CTk):
         self.iconify()
         self.tray_menu = TrayMenu(
             open_command=self.restore_from_tray,
-            quit_command=self.show_close_confirmation_dialog,
+            quit_command=self.confirm_quit,
         )
         self.withdraw()
         threading.Thread(target=self.tray_menu.run, daemon=True).start()

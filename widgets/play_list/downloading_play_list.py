@@ -294,17 +294,21 @@ class DownloadingPlayList(PlayList):
         self.re_download_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
 
     def on_mouse_enter_self(self, _event):
-        super().on_mouse_enter_self(_event)
+        # super().on_mouse_enter_self(_event)
 
+        """
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
         self.re_download_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
+        """
 
     def on_mouse_leave_self(self, _event):
-        super().on_mouse_leave_self(_event)
+        # super().on_mouse_leave_self(_event)
 
+        """
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
         self.re_download_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
-
+        """
+        
     def bind_widgets_events(self):
         super().bind_widgets_events()
 
@@ -313,7 +317,7 @@ class DownloadingPlayList(PlayList):
                 fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
             )
-            self.on_mouse_enter_self(_event)
+            # self.on_mouse_enter_self(_event)
 
         def on_mouse_leave_download_btn(_event):
             self.re_download_btn.configure(

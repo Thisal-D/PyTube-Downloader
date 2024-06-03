@@ -354,17 +354,21 @@ class AddedPlayList(PlayList):
         )
 
     def on_mouse_enter_self(self, _event):
-        super().on_mouse_enter_self(_event)
-
+        # super().on_mouse_enter_self(_event)
+        
+        """
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
         self.reload_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
-
+        """
+        
     def on_mouse_leave_self(self, _event):
-        super().on_mouse_leave_self(_event)
-
+        # super().on_mouse_leave_self(_event)
+        
+        """
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
         self.reload_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
-
+        """
+        
     def bind_widgets_events(self):
         super().bind_widgets_events()
 
@@ -375,7 +379,7 @@ class AddedPlayList(PlayList):
                     text_color=AppearanceSettings.settings["video_object"]["btn_text_color"]["hover"],
                     border_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
                 )
-            self.on_mouse_enter_self(_event)
+            # self.on_mouse_enter_self(_event)
 
         def on_mouse_leave_download_btn(_event):
             if self.download_btn.cget("state") == "normal":
@@ -392,7 +396,7 @@ class AddedPlayList(PlayList):
             self.reload_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
             )
-            self.on_mouse_enter_self(_event)
+            # self.on_mouse_enter_self(_event)
 
         def on_mouse_leave_reload_btn(_event):
             self.reload_btn.configure(
