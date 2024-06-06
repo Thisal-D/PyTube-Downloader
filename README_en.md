@@ -1,6 +1,6 @@
 # PyTube Downloader
 
-- `v1.0.4` [Download .exe for Windows](sourceforge.net/p/pytube-downloader)
+- `v1.0.4` [Download .exe for Windows](https://sourceforge.net/p/pytube-downloader)
 
 ---
 
