@@ -52,7 +52,9 @@ class ThumbnailButton(tk.Button):
 
     def run_loading_animation(self):
         self.loading_animation_state = "enabled"
-        threading.Thread(target=self.run_loading_animation_thread).start()
+        loading_animation_thread = threading.Thread(target=self.run_loading_animation_thread)
+        loading_animation_thread.daemon = True
+        loading_animation_thread.start()
 
     def stop_loading_animation(self):
         self.loading_animation_state = 'disabled'
@@ -73,3 +75,14 @@ class ThumbnailButton(tk.Button):
 
     def on_mouse_leave(self, _event):
         self.configure(image=self.thumbnails[0])
+
+    def __del__(self):
+        """Destructor"""
+        self.stop_loading_animation()
+        
+        del self.loading_animation_state
+        del self.loading_animation_running
+        del self.thumbnails
+        
+        self.destroy()
+        del self

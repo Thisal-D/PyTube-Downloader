@@ -1,6 +1,6 @@
 # PyTube Downloader
 
-- `v1.0.3` [下载适用于 Windows 的 .exe](https://sourceforge.net/p/pytube-downloader)
+- `v1.0.4` [下载适用于 Windows 的 .exe](https://github.com/Thisal-D/PyTube-Downloader/releases)
 
 ---
 
@@ -33,9 +33,9 @@ PyTube 下载器是一款用户友好的应用程序，使用户能够轻松下�
     | English (英文)        | -            |
     | 中文 | [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
     | සිංහල (僧伽罗语) | [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21) |
- 
-  - **帮助我们 [``改进当前语言``](LANGUAGE_CONTRIBUTION_GUIDE_zh.md/#improve-current-language-issues) 和 [``添加新语言``](LANGUAGE_CONTRIBUTION_GUIDE_zh.md/#adding-a-new-language) 到此应用程序。**
 
+  - **帮助我们 [``改进当前语言``](LANGUAGE_CONTRIBUTION_GUIDE_zh.md/#improve-current-language-issues) 和 [``添加新语言``](LANGUAGE_CONTRIBUTION_GUIDE_zh.md/#adding-a-new-language) 到此应用程序。**
+- **快捷键**： 使用常见任务的快捷键来控制应用程序。
 ---
 
 ## 查看 - 深色主题
@@ -44,7 +44,7 @@ PyTube 下载器是一款用户友好的应用程序，使用户能够轻松下�
 ![7](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7aea8c67-669f-4ee6-af45-7ea6e3b92019)
 ![8](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b209e21d-afe0-4dd6-a776-95a1fc0a1062)
 ![9](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/5402f15b-ec81-4abc-b4ed-9d8c389ac03f)
-![10](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/1d197f08-77eb-4e3e-85e2-450de5497db1)
+![10](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/45a9ff9f-dc56-49a5-b4e0-576e8299a609)
 ![11](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6aa20ae2-fe27-4d32-9997-590fe6453c38)
 ![12](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/4e30da72-b615-4d3a-baac-a986965ab8f9)
 ![13](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2741bc3d-8b9a-4763-b4ee-987b0476015e)

@@ -96,9 +96,9 @@ class AboutPanel(ctk.CTkFrame):
             text="Loading..."
         )
         self.contributors_frame = ctk.CTkScrollableFrame(
+            master=self,
             scrollbar_fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
-            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
-            master=self
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
 
         self.disclaimer_label = ctk.CTkLabel(
