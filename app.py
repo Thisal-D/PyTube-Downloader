@@ -52,12 +52,12 @@ class App(ctk.CTk):
         super().__init__()
 
         # window width height save on these vars.
-        # i will track window width, if it change, i will call geometry tarcker .
+        # I will track window width, if it changed,app will call geometry tracker.
         self.root_width = self.winfo_width()
         self.root_height = self.winfo_height()
 
         # this var used to track status of geometry tracker. it's running or not
-        # if it's running already running it's not gonna start againg
+        # if it's running already running it's not be start again
         self.is_geometry_changes_tracker_running = False
 
         # download method
@@ -107,7 +107,7 @@ class App(ctk.CTk):
         self.tray_menu = None
 
         self.is_settings_open = False
-        self.is_in_full_screen_mdoe = False
+        self.is_in_full_screen_mode = False
         self.root_geometry = ""
         self.is_maximized = False
         
@@ -967,10 +967,13 @@ class App(ctk.CTk):
                 self.close_settings()
             else:
                 self.open_settings()
+        
+        def close_settings(_event):
+            if self.is_settings_open:
+                self.close_settings()
                 
-        self.bind("<Control-s>", toggle_settings)
-        self.bind("<Escape>", toggle_settings)
-        self.bind("<F2>", toggle_settings)
+        self.bind("<Control-,>", toggle_settings)
+        self.bind("<Escape>", close_settings)
         
         def choose_download_mode(_event):
             if self.selected_download_mode == "video":
@@ -978,32 +981,36 @@ class App(ctk.CTk):
             else:
                 self.select_download_mode("video")
                 
-        self.bind("<Control-r>", choose_download_mode)
-        self.bind("<F9>", choose_download_mode)
+        self.bind("<Control-d>", choose_download_mode)
+        self.bind("<Control-D>", choose_download_mode)
+        self.bind("<F6>", choose_download_mode)
         
         def add_video_playlist(_event):
             self.add_video_playlist()
         self.bind("<Return>", add_video_playlist)
         
-        def toggle_full_screen(event):
-            if not self.is_in_full_screen_mdoe: 
-                self.is_in_full_screen_mdoe = True
+        def toggle_full_screen(_event):
+            if not self.is_in_full_screen_mode: 
+                self.is_in_full_screen_mode = True
                 self.attributes("-fullscreen", True)
                 self.run_geometry_changes_tracker("_event")
             else:
-                self.is_in_full_screen_mdoe = False
+                self.is_in_full_screen_mode = False
                 self.attributes("-fullscreen", False)
                 # Had to reset titlebar color because of customtkinter has some issue with when fullscreen toggle
                 self._windows_set_titlebar_color(self._get_appearance_mode())
                 self.run_geometry_changes_tracker("_event")
     
-        self.bind("<F5>", toggle_full_screen)
+        self.bind("<F11>", toggle_full_screen)
+        self.bind("<Alt-Return>", toggle_full_screen)
         
         def minimize(_event):
             self.iconify()
             
-        self.bind("<F3>", minimize)
-        self.bind("<Control-,>", minimize)
+        self.bind("<Control-n>", minimize)
+        self.bind("<Control-N>", minimize)
+        self.bind("<F9>", minimize)
+        self.bind("<Control-Down>", minimize)
         
         def toggle_maximize(_event):
             if not self.is_maximized:
@@ -1015,23 +1022,36 @@ class App(ctk.CTk):
                 self.is_maximized = False
                 self.geometry(self.root_geometry)
                 self.run_geometry_changes_tracker("_event")
-                
-        self.bind("<F4>", toggle_maximize)
-        self.bind("<Control-.>", toggle_maximize)
+        
+        self.bind("<Control-m>", toggle_maximize)
+        self.bind("<Control-M>", toggle_maximize)
+        self.bind("<F10>", toggle_maximize)
+        self.bind("<Control-Up>", toggle_maximize)
         
         def terminate(_event):
             self.on_app_closing()
             
-        self.bind("<Control-Alt-x>", terminate)
+        self.bind("<Control-Alt-q>", terminate)
+        self.bind("<Control-Alt-Q>", terminate)
         self.bind("<Control-Alt-F4>", terminate)
         
         def quick_exit(_event):
             self.show_close_confirmation_dialog()
             
-        self.bind("<F12>", quick_exit)
+        self.bind("<Control-q>", quick_exit)
+        self.bind("<Control-Q>", quick_exit)
         
+        def minimize_to_tray_icon(_event):
+            self.minimize_to_tray()
+            
+        self.bind("<F12>", minimize_to_tray_icon)
+        self.bind("<Control-Shift-m>", minimize_to_tray_icon)
+        self.bind("<Control-Shift-M>", minimize_to_tray_icon)
+        self.bind("<Control-Shift-n>", minimize_to_tray_icon)
+        self.bind("<Control-Shift-N>", minimize_to_tray_icon)
 
     def show_app_logo(self) -> None:
+        
         """
         Show the application logo.
         """
@@ -1096,7 +1116,7 @@ class App(ctk.CTk):
             self.hide_app_logo()
         self.is_geometry_changes_tracker_running = False
 
-    def run_geometry_changes_tracker(self, _event: tk.Event) -> None:
+    def run_geometry_changes_tracker(self, _event: tk.Event | str) -> None:
         """
         Run the geometry changes tracker in a separate thread.
         """
@@ -1135,7 +1155,7 @@ class App(ctk.CTk):
         yt_url = self.url_entry.get()
         
         # if url entry is nothing just do nothing
-        if yt_url.replace(" ","") == "":
+        if yt_url.replace(" ", "") == "":
             return
         
         if self.selected_download_mode == "video":

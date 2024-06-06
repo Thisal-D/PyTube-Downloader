@@ -105,13 +105,7 @@ class Video(ctk.CTkFrame):
         self.thumbnail_btn.bind("<Leave>", on_mouse_leave_thumbnail_btn)
         self.video_length_label.bind("<Enter>", on_mouse_enter_thumbnail_btn)
         self.video_length_label.bind("<Leave>", on_mouse_leave_thumbnail_btn)
-
-    def kill(self):
-        """Destroy the widget."""
-        ThemeManager.unregister_widget(self)
-        self.pack_forget()
-        self.destroy()
-
+        
     def copy_url(self):
         pyperclip.copy(self.video_url)
         self.close_context_menu_directly("event")
@@ -253,7 +247,7 @@ class Video(ctk.CTkFrame):
 
     def on_mouse_enter_self(self, event):
         """Handle mouse enter event for self."""
-        # Disable due to UI Performence issue
+        # Disable due to UI Performance issue
         """
         self.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
@@ -275,7 +269,7 @@ class Video(ctk.CTkFrame):
     def on_mouse_leave_self(self, event):
         """Handle mouse leave event for self."""
         
-        # Disable due to UI Performence issue
+        # Disable due to UI Performance issue
         """
         self.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"],
@@ -326,7 +320,7 @@ class Video(ctk.CTkFrame):
         self.thumbnail_btn.bind("<Button-1>", self.close_context_menu_directly)
         self.context_menu.bind_widgets_events("<Leave>", self.close_context_menu)
 
-        """ Disable Due to UI Performence
+        """ Disable Due to UI Performance
         self.bind("<Enter>", self.on_mouse_enter_self)
         self.bind("<Leave>", self.on_mouse_leave_self)
 
@@ -349,7 +343,7 @@ class Video(ctk.CTkFrame):
                 print(f"Video.py : {error}")
         """
         
-        def on_mouse_enter_channel_btn(event):
+        def on_mouse_enter_channel_btn(_event):
             self.channel_btn.configure(
                 text_color=AppearanceSettings.settings["video_object"]["btn_text_color"]["hover"]
             )
@@ -363,7 +357,7 @@ class Video(ctk.CTkFrame):
         self.channel_btn.bind("<Enter>", on_mouse_enter_channel_btn)
         self.channel_btn.bind("<Leave>", on_mouse_leave_channel_btn)
 
-        def on_mouse_enter_remove_btn(event):
+        def on_mouse_enter_remove_btn(_event):
             self.remove_btn.configure(
                 fg_color=AppearanceSettings.settings["video_object"]["error_color"]["hover"],
                 text_color=AppearanceSettings.settings["video_object"]["remove_btn_text_color"]["hover"]
@@ -397,3 +391,48 @@ class Video(ctk.CTkFrame):
 
     def configure_widget_sizes(self, _event):
         ...
+
+    def __del__(self):
+        """Clear the Memory."""
+        del self.height
+        del self.width
+        
+        # video details
+        del self.video_url
+        del self.video_title
+        del self.channel
+        del self.channel_url
+        del self.length
+        del self.thumbnails
+
+        # widgets
+        del self.info_frame
+        del self.url_label
+        del self.video_title_label
+        del self.channel_btn
+        del self.video_length_label
+        del self.remove_btn
+
+        del self.context_menu
+        del self.thumbnail_btn
+
+        del self
+
+    def destroy_widgets(self):
+        """Destroy the child widget."""
+        self.video_length_label.destroy()
+        self.info_frame.destroy()
+        self.video_title_label.destroy()
+        self.channel_btn.destroy()
+        self.url_label.destroy()
+        self.remove_btn.destroy()
+        self.destroy()
+
+    def kill(self):
+        """Destroy the widget."""
+        ThemeManager.unregister_widget(self)
+        LanguageManager.unregister_widget(self)
+        self.pack_forget()
+        self.destroy_widgets()
+        self.__del__()
+        

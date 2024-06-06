@@ -88,7 +88,9 @@ class AddedVideo(Video):
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
         self.status_label.configure(text=LanguageManager.data["loading"])
-        threading.Thread(target=self.retrieve_video_data, daemon=True).start()
+        load_thread = threading.Thread(target=self.retrieve_video_data)
+        load_thread.daemon = True
+        load_thread.start()
 
     def get_video_thumbnails(self) -> Tuple[tk.PhotoImage, tk.PhotoImage]:
         thumbnail_size = (
@@ -229,7 +231,7 @@ class AddedVideo(Video):
         self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[index])
 
     def download_automatically(self):
-        if GeneralSettings.settings["automatic_download"]["status"] == "enable" :
+        if GeneralSettings.settings["automatic_download"]["status"] == "enable":
             self.select_download_quality_automatic()
             self.choose_download_type(self.resolution_select_menu.get())
             if self.mode == "video":
@@ -283,14 +285,6 @@ class AddedVideo(Video):
             self.resolution_select_menu.configure(command=self.choose_download_type)
             self.channel_btn.configure(state="normal")
             self.download_btn.configure(state="normal")
-
-    def kill(self):
-        self.load_state = "removed"
-        LoadManager.unregister_from_active(self)
-        LoadManager.unregister_from_queued(self)
-        if self.mode == "playlist":
-            self.video_load_status_callback(self, self.load_state)
-        super().kill()
 
     # create widgets
     def create_widgets(self):
@@ -398,7 +392,7 @@ class AddedVideo(Video):
     def bind_widgets_events(self):
         super().bind_widgets_events()
 
-        def on_mouse_enter_download_btn(event):
+        def on_mouse_enter_download_btn(_event):
             # self.on_mouse_enter_self(event)
             if self.download_btn.cget("state") == "normal":
                 self.download_btn.configure(
@@ -407,7 +401,7 @@ class AddedVideo(Video):
                     border_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
                 )
 
-        def on_mouse_leave_download_btn(event):
+        def on_mouse_leave_download_btn(_event):
             # self.on_mouse_leave_self(event)
             if self.download_btn.cget("state") == "normal":
                 self.download_btn.configure(
@@ -419,11 +413,11 @@ class AddedVideo(Video):
         self.download_btn.bind("<Enter>", on_mouse_enter_download_btn)
         self.download_btn.bind("<Leave>", on_mouse_leave_download_btn)
 
-        def on_mouse_enter_reload_btn(event):
+        def on_mouse_enter_reload_btn(_event):
             # self.on_mouse_enter_self(event)
             self.reload_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"], )
 
-        def on_mouse_leave_reload_btn(event):
+        def on_mouse_leave_reload_btn(_event):
             # self.on_mouse_leave_self(event)
             self.reload_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
 
@@ -451,3 +445,47 @@ class AddedVideo(Video):
                 (20 * scale)
             )
         )
+
+    def __del__(self):
+        """Clear the Memory."""
+        del self.video_stream_data
+        del self.support_download_types
+        # download info
+        del self.download_quality
+        del self.download_type
+        # callback utils
+        del self.video_download_button_click_callback
+        del self.video_load_status_callback
+        # state
+        del self.load_state
+        # widgets
+        del self.sub_frame
+        del self.resolution_select_menu
+        del self.download_btn
+        del self.status_label
+        del self.reload_btn
+        # video object
+        del self.video
+
+        del self.mode
+        # Track automatically reload count
+        del self.automatically_reload_count
+
+        super().__del__()
+
+    def destroy_widgets(self):
+        """Destroy the child widgets."""
+        self.sub_frame.destroy()
+        self.resolution_select_menu.destroy()
+        self.download_btn.destroy()
+        self.status_label.destroy()
+        self.reload_btn.destroy()
+
+        super().destroy_widgets()
+
+    def kill(self):
+        self.load_state = "removed"
+        if self.mode == "playlist":
+            self.video_load_status_callback(self, self.load_state)
+
+        super().kill()

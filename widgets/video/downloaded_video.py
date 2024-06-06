@@ -63,11 +63,6 @@ class DownloadedVideo(Video):
 
         self.set_video_data()
 
-    def kill(self):
-        if self.mode == "playlist":
-            self.video_status_callback(self, "removed")
-        super().kill()
-
     def create_widgets(self):
         super().create_widgets()
 
@@ -142,7 +137,7 @@ class DownloadedVideo(Video):
 
         def on_mouse_enter_download_path_btn(event):
             self.download_path_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
-             #self.on_mouse_enter_self(event)
+            # self.on_mouse_enter_self(event)
 
         def on_mouse_leave_download_path_btn(_event):
             self.download_path_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
@@ -168,3 +163,34 @@ class DownloadedVideo(Video):
                 (20 * scale)
             )
         )
+
+    def __del__(self):
+        # video info
+        del self.file_size
+        # download info
+        del self.download_path
+        del self.download_quality
+        del self.download_type
+        # widgets
+        del self.download_type_label
+        del self.file_size_label
+        del self.download_path_btn
+        # status callbacks
+        del self.video_status_callback
+        del self.mode
+
+        super().__del__()
+
+    def destroy_widgets(self):
+        """Destroy the child widgets."""
+        self.download_type_label.destroy()
+        self.file_size_label.destroy()
+        self.download_path_btn.destroy()
+
+        super().destroy_widgets()
+
+    def kill(self):
+        if self.mode == "playlist":
+            self.video_status_callback(self, "removed")
+
+        super().kill()

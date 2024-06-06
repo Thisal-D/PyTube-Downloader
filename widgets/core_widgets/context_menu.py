@@ -123,3 +123,23 @@ class ContextMenu(ctk.CTkFrame):
             self.set_widgets_sizes()
         else:
             super().configure(**kwargs)
+
+    def __del__(self):
+        ContextMenu.child_widgets.remove(self)
+        self.unregister_from_services()
+        
+        del self.width
+        del self.height
+        del self.font
+        del self.options_texts
+        del self.options_commands
+        del self.option_buttons
+        del self.is_open
+        
+        self.destroy()
+        del self
+
+    def unregister_from_services(self):
+        ThemeManager.unregister_widget(self)
+        LanguageManager.unregister_widget(self)
+

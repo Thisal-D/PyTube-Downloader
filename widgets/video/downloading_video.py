@@ -370,19 +370,6 @@ class DownloadingVideo(Video):
             self.video_download_complete_callback(self)
             self.kill()
 
-    def kill(self):
-        """
-        Kill the downloading process.
-        """
-
-        DownloadManager.unregister_from_active(self)
-        DownloadManager.unregister_from_queued(self)
-        self.download_state = "removed"
-        if self.mode == "playlist":
-            self.video_download_status_callback(self, self.download_state)
-
-        super().kill()
-
     # create widgets
     def create_widgets(self):
         """
@@ -521,7 +508,7 @@ class DownloadingVideo(Video):
 
         super().bind_widgets_events()
 
-        def on_mouse_enter_re_download_btn(event):
+        def on_mouse_enter_re_download_btn(_event):
             self.re_download_btn.configure(
                 fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
@@ -537,7 +524,7 @@ class DownloadingVideo(Video):
         self.re_download_btn.bind("<Enter>", on_mouse_enter_re_download_btn)
         self.re_download_btn.bind("<Leave>", on_mouse_leave_download_btn)
 
-        def on_mouse_enter_pause_resume_btn(event):
+        def on_mouse_enter_pause_resume_btn(_event):
             self.pause_resume_btn.configure(
                 fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
@@ -578,3 +565,62 @@ class DownloadingVideo(Video):
             )
         )
         self.sub_frame.configure(width=(self.winfo_width() / 2) - (100 * scale))
+
+    def __del__(self):
+        del self.download_state
+        del self.pause_requested
+        del self.pause_resume_btn_command
+        # status and progress callbacks
+        del self.video_download_complete_callback
+        del self.video_download_status_callback
+        del self.video_download_progress_callback
+        # download info
+        del self.download_quality
+        del self.download_type
+        del self.video_stream_data
+        # download mode
+        del self.playlist_title
+        del self.mode
+        # widgets
+        del self.sub_frame
+        del self.download_progress_bar
+        del self.download_progress_label
+        del self.download_percentage_label
+        del self.download_type_label
+        del self.net_speed_label
+        del self.status_label
+        del self.re_download_btn
+        del self.pause_resume_btn
+        # download file info
+        del self.bytes_downloaded
+        del self.file_size
+        del self.converted_file_size
+        del self.download_file_name
+        # Track automatically re download count
+        del self.automatically_re_download_count
+
+        super().__del__()
+
+    def destroy_widgets(self):
+        """Destroy the child widgets."""
+        self.sub_frame.destroy()
+        self.download_progress_bar.destroy()
+        self.download_progress_label.destroy()
+        self.download_percentage_label.destroy()
+        self.download_type_label.destroy()
+        self.net_speed_label.destroy()
+        self.status_label.destroy()
+        self.re_download_btn.destroy()
+        self.pause_resume_btn.destroy()
+
+        super().destroy_widgets()
+
+    def kill(self):
+        """
+        Kill the downloading process.
+        """
+        self.download_state = "removed"
+        if self.mode == "playlist":
+            self.video_download_status_callback(self, self.download_state)
+
+        super().kill()
