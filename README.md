@@ -37,10 +37,10 @@
   </tr>
   <tr>
     <td align="center">
-      <img src="https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/09afa896-1739-4ec0-bf2e-10633b2ee066" width="100%" />
+      <img src="https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/8b8a03fe-2770-48d9-9d88-42748d24e63f" width="100%" />
     </td>
     <td align="center">
-      <img src="https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/1d197f08-77eb-4e3e-85e2-450de5497db1" width="100%" />
+      <img src="https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/45a9ff9f-dc56-49a5-b4e0-576e8299a609" width="100%" />
     </td>
   </tr>
   <tr>
