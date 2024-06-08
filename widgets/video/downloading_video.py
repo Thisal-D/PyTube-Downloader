@@ -619,6 +619,7 @@ class DownloadingVideo(Video):
         """
         Kill the downloading process.
         """
+        DownloadManager.unregister_from_active(self)
         self.download_state = "removed"
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)

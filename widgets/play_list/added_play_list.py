@@ -89,7 +89,8 @@ class AddedPlayList(PlayList):
                 # videos state track
                 video_load_status_callback=self.videos_status_track,
             )
-            video.pack(fill="x", padx=(20, 0), pady=1)
+            if self.viewed_videos_index < 10:
+                video.pack(fill="x", padx=(20, 0), pady=1)
             self.videos.append(video)
 
     def videos_status_track(

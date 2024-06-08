@@ -142,4 +142,3 @@ class ContextMenu(ctk.CTkFrame):
     def unregister_from_services(self):
         ThemeManager.unregister_widget(self)
         LanguageManager.unregister_widget(self)
-

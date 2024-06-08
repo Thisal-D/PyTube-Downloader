@@ -1,6 +1,6 @@
 import webbrowser
 import customtkinter as ctk
-from typing import Union
+from typing import Union, List
 from services import ThemeManager, LanguageManager
 from settings import AppearanceSettings
 
@@ -64,6 +64,8 @@ class PlayList(ctk.CTkFrame):
         self.playlist_video_count_label: Union[ctk.CTkLabel, None] = None
         self.playlist_item_frame: Union[ctk.CTkFrame, None] = None
         
+        self.videos: List = []
+        self.viewed_videos_index = 0
         # Create and configure widgets
         self.create_widgets()
         self.set_widgets_texts()
@@ -96,6 +98,10 @@ class PlayList(ctk.CTkFrame):
             font=('arial', 13 * AppearanceSettings.settings["scale_r"], 'bold')
         )
         self.playlist_item_frame.pack(padx=10, fill="x", pady=2)
+        
+    def view_next_10_videos(self):
+        for self.viewed_videos_index in range(self.viewed_videos_index , self.viewed_videos_index + 10):
+            self.videos[self.viewed_videos_index].pack()
 
     def set_playlist_data(self):
         """Set the data of the playlist."""
@@ -323,7 +329,7 @@ class PlayList(ctk.CTkFrame):
                 pass
         """
         
-        def on_mouse_enter_channel_btn(event):
+        def on_mouse_enter_channel_btn(_event):
             self.channel_btn.configure(
                 text_color=ThemeManager.get_color_based_on_theme_mode(
                     AppearanceSettings.settings["video_object"]["btn_text_color"]["hover"]
@@ -341,7 +347,7 @@ class PlayList(ctk.CTkFrame):
         self.channel_btn.bind("<Enter>", on_mouse_enter_channel_btn)
         self.channel_btn.bind("<Leave>", on_mouse_leave_channel_btn)
 
-        def on_mouse_enter_remove_btn(event):
+        def on_mouse_enter_remove_btn(_event):
             self.remove_btn.configure(
                 fg_color=AppearanceSettings.settings["video_object"]["error_color"]["hover"],
                 text_color=AppearanceSettings.settings["video_object"]["remove_btn_text_color"]["hover"]

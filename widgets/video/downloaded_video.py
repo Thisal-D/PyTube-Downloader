@@ -135,7 +135,7 @@ class DownloadedVideo(Video):
     def bind_widgets_events(self):
         super().bind_widgets_events()
 
-        def on_mouse_enter_download_path_btn(event):
+        def on_mouse_enter_download_path_btn(_event):
             self.download_path_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
             # self.on_mouse_enter_self(event)
 
