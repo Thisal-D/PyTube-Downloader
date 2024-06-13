@@ -30,9 +30,9 @@ PyTube Downloader is a user-friendly application that allows users to download Y
   - Currently Support Languages:
     | Language      | Contributors |
     | --------------| ------------ |
-    | English       | -            |
-    | 中文 (Chinese)| [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
-    | සිංහල (sinhala)| [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21) |
+    | `English`       | -            |
+    | `中文` (Chinese)| [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
+    | `සිංහල` (Sinhala)| [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21) |
 
   -  **Help us [``improve current languages``](LANGUAGE_CONTRIBUTION_GUIDE_en.md/#improve-current-language-issues) and [``add new languages``](LANGUAGE_CONTRIBUTION_GUIDE_en.md/#adding-a-new-language) to this application.** 
 - **Shortcut Keys**: Take control of the application with  shortcut keys for common tasks.
@@ -44,7 +44,7 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 ![18](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/e57acd23-cbdc-446e-86ed-b5d08f5ce9e1)
 ![19](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/fbf086cb-e90c-499e-b63e-9f8a9515c014)
 ![20](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6622a7d4-7b23-41b6-abba-4d55ff2d58cd)
-![21](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/8b8a03fe-2770-48d9-9d88-42748d24e63f)
+![10](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/45a9ff9f-dc56-49a5-b4e0-576e8299a609)
 ![22](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/ea13e3c1-3397-4af7-ba8e-09cdc0f0eda5)
 ![23](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7a8a00f2-6165-4379-8316-51d90b3e0747)
 ![24](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/53ce24af-6224-4d7b-b1a4-3a52b436ec0d)
