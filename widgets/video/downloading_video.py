@@ -95,7 +95,7 @@ class DownloadingVideo(Video):
             channel=channel,
             length=length
         )
-
+        
         self.set_video_data()
         self.set_waiting()
         DownloadManager.register(self)
@@ -342,8 +342,7 @@ class DownloadingVideo(Video):
         """
         Set the status to 'waiting' if the download is queued.
         """
-
-        DownloadManager.unregister_from_queued(self)
+        
         self.download_state = "waiting"
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)
@@ -620,6 +619,7 @@ class DownloadingVideo(Video):
         Kill the downloading process.
         """
         DownloadManager.unregister_from_active(self)
+        DownloadManager.unregister_from_queued(self)
         self.download_state = "removed"
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)

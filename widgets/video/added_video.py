@@ -486,6 +486,7 @@ class AddedVideo(Video):
     def kill(self):
         self.load_state = "removed"
         LoadManager.unregister_from_active(self)
+        LoadManager.unregister_from_queued(self)
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
 
