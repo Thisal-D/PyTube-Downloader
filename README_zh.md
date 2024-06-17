@@ -1,3 +1,5 @@
+![Language](https://img.shields.io/badge/Language-中文-red) [![English](https://img.shields.io/badge/Language-English-blue)](README.md)
+
 # PyTube Downloader
 
 - `v1.0.4` [下载适用于 Windows 的 .exe](https://sourceforge.net/p/pytube-downloader)
@@ -66,6 +68,15 @@ PyTube 下载器是一款用户友好的应用程序，使用户能够轻松下�
   - pyautogui
   - pystray
   - pyperclip
+
+---
+
+## Star 历史
+
+<picture> 
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Thisal-D/PyTube-Downloader&type=Date&theme=dark"> 
+    <img src="https://api.star-history.com/svg?repos=Thisal-D/PyTube-Downloader&type=Date&theme=light" > 
+</picture> 
 
 ---
 
