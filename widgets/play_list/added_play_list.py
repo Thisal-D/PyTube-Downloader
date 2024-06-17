@@ -37,7 +37,6 @@ class AddedPlayList(PlayList):
         self.playlist_download_button_click_callback: callable = playlist_download_button_click_callback
         self.video_download_button_click_callback: callable = video_download_button_click_callback
         # all video objects
-        self.videos: List[Union[None, AddedVideo]] = []
         # state
         self.load_state: Literal[None, "waiting", "loading", "failed", "loaded"] = "loading"
         # vars for state track
@@ -89,8 +88,7 @@ class AddedPlayList(PlayList):
                 # videos state track
                 video_load_status_callback=self.videos_status_track,
             )
-            if self.viewed_videos_index < 10:
-                video.pack(fill="x", padx=(20, 0), pady=1)
+            video.pack(fill="x", padx=(20, 0), pady=1)
             self.videos.append(video)
 
     def videos_status_track(
@@ -231,12 +229,6 @@ class AddedPlayList(PlayList):
         for video in self.loaded_videos:
             video.resolution_select_menu.set(video.resolution_select_menu.cget("values")[selected_index])
             video.choose_download_type(video.resolution_select_menu.get())
-
-    def kill(self):
-        for video in self.videos:
-            video.video_load_status_callback = GuiUtils.do_nothing
-            video.kill()
-        super().kill()
 
     # create widgets
     def create_widgets(self):
@@ -423,5 +415,50 @@ class AddedPlayList(PlayList):
     def configure_widget_sizes(self, _event):
         scale = AppearanceSettings.settings["scale_r"]
         self.info_frame.configure(
-            width=self.master.winfo_width() - (390*scale) - (50*scale + 15 * scale) - (20 * scale)
+            width=self.master_frame.winfo_width() - (390*scale) - (50*scale + 15 * scale) - (20 * scale)
         )
+        
+    def __del__(self):
+        """Clear the Memory."""
+        del self.sub_frame
+        del self.resolution_select_menu
+        del self.download_btn
+        del self.status_label
+        del self.reload_btn
+        del self.videos_status_counts_label
+
+        del self.playlist
+        del self.playlist_download_button_click_callback
+        del self.video_download_button_click_callback
+        del self.load_state
+        
+        del self.waiting_videos
+        del self.loading_videos
+        del self.failed_videos
+        del self.loaded_videos
+        
+        del self.automatic_downloaded
+        del self.qualities
+
+        super().__del__()
+        
+    def destroy_widgets(self):
+        """Destroy the child widget."""
+        self.sub_frame.destroy()
+        self.resolution_select_menu.destroy()
+        self.download_btn.destroy()
+        self.status_label.destroy()
+        self.reload_btn.destroy()
+        self.videos_status_counts_label.destroy()
+        
+        super().destroy_widgets()
+        
+    def kill(self):
+        self.pack_forget()
+        
+        for video in self.videos:
+            video.video_load_status_callback = GuiUtils.do_nothing
+            video.kill()
+        
+        super().kill()
+        

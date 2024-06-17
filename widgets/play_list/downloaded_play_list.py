@@ -26,7 +26,6 @@ class DownloadedPlayList(PlayList):
 
         # playlist videos
         self.downloading_videos: List[DownloadingVideo] = videos
-        self.videos: List[DownloadedVideo] = []
 
         super().__init__(
             root=root,
@@ -85,14 +84,28 @@ class DownloadedPlayList(PlayList):
                     text=self.playlist_video_count
                 )
 
-    def kill(self):
-        for video in self.videos:
-            video.video_status_callback = GuiUtils.do_nothing
-            video.kill()
-        super().kill()
-
     def configure_widget_sizes(self, _event):
         scale = AppearanceSettings.settings["scale_r"]
         self.info_frame.configure(
-            width=self.master.winfo_width() - (50 * scale + 15 * scale) - (60 * scale)
+            width=self.master_frame.winfo_width() - (50 * scale + 15 * scale) - (60 * scale)
         )
+
+    def __del__(self):
+        """Clear the Memory."""
+        del self.downloading_videos
+        
+        super().__del__()
+        
+    def destroy_widgets(self):
+        """Destroy the child widget."""
+            
+        super().destroy_widgets()
+    
+    def kill(self):
+        self.pack_forget()
+        
+        for video in self.videos:
+            video.video_status_callback = GuiUtils.do_nothing
+            video.kill()
+            
+        super().kill()

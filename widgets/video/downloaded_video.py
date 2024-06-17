@@ -158,7 +158,7 @@ class DownloadedVideo(Video):
         scale = AppearanceSettings.settings["scale_r"]
         self.info_frame.configure(
             width=(
-                self.master.winfo_width() - (300 * scale) -
+                self.master_frame.winfo_width() - (300 * scale) -
                 (self.thumbnail_btn.winfo_width() + 5) - (10 * scale) -
                 (20 * scale)
             )
@@ -178,7 +178,7 @@ class DownloadedVideo(Video):
         # status callbacks
         del self.video_status_callback
         del self.mode
-
+        
         super().__del__()
 
     def destroy_widgets(self):

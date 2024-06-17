@@ -44,8 +44,9 @@ class Video(ctk.CTkFrame):
             border_width=1,
             corner_radius=8,
         )
+        
         self.root = root
-        self.master = master
+        self.master_frame = master
         self.height: int = height
         self.width: int = width
         # video details
@@ -394,6 +395,11 @@ class Video(ctk.CTkFrame):
 
     def __del__(self):
         """Clear the Memory."""
+        self.root = None
+        self.master_frame = None
+        
+        del self.master_frame
+        del self.root
         del self.height
         del self.width
         
@@ -417,7 +423,7 @@ class Video(ctk.CTkFrame):
         del self.thumbnail_btn
 
         del self
-
+        
     def destroy_widgets(self):
         """Destroy the child widget."""
         self.video_length_label.destroy()
@@ -426,7 +432,10 @@ class Video(ctk.CTkFrame):
         self.channel_btn.destroy()
         self.url_label.destroy()
         self.remove_btn.destroy()
+
         self.destroy()
+
+        super().destroy()
 
     def kill(self):
         """Destroy the widget."""

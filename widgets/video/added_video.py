@@ -440,7 +440,7 @@ class AddedVideo(Video):
         scale = AppearanceSettings.settings["scale_r"]
         self.info_frame.configure(
             width=(
-                self.master.winfo_width() - (370 * scale) -
+                self.master_frame.winfo_width() - (370 * scale) -
                 (self.thumbnail_btn.winfo_width() + 5) - (10 * scale) -
                 (20 * scale)
             )
@@ -470,7 +470,7 @@ class AddedVideo(Video):
         del self.mode
         # Track automatically reload count
         del self.automatically_reload_count
-
+        
         super().__del__()
 
     def destroy_widgets(self):

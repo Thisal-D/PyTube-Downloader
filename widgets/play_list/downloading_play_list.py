@@ -37,7 +37,6 @@ class DownloadingPlayList(PlayList):
         # callback utils
         self.playlist_download_complete_callback = playlist_download_complete_callback
         self.added_videos: List[AddedVideo] = videos
-        self.videos: List[DownloadingVideo] = []
         # vars for state track
         self.waiting_videos: List[DownloadingVideo] = []
         self.downloading_videos: List[DownloadingVideo] = []
@@ -221,12 +220,6 @@ class DownloadingPlayList(PlayList):
         self.playlist_download_complete_callback(self)
         self.kill()
 
-    def kill(self):
-        for video in self.videos:
-            video.video_download_status_callback = GuiUtils.do_nothing
-            video.kill()
-        super().kill()
-
     # create widgets
     def create_widgets(self):
         super().create_widgets()
@@ -341,6 +334,48 @@ class DownloadingPlayList(PlayList):
     def configure_widget_sizes(self, _event):
         scale = AppearanceSettings.settings["scale_r"]
         self.info_frame.configure(
-            width=self.master.winfo_width() / 2 - (50 * scale + 15 * scale) - (20 * scale)
+            width=self.master_frame.winfo_width() / 2 - (50 * scale + 15 * scale) - (20 * scale)
         )
         self.sub_frame.configure(width=(self.winfo_width() / 2) - (110 * scale))
+
+    def __del__(self):
+        """Clear the Memory."""
+        del self.sub_frame
+        del self.download_progress_bar
+        del self.download_percentage_label
+        del self.status_label
+        del self.re_download_btn
+        del self.videos_status_counts_label
+        
+        del self.playlist_download_complete_callback
+        del self.added_videos
+        
+        del self.waiting_videos
+        del self.downloading_videos
+        del self.paused_videos
+        del self.failed_videos
+        del self.downloaded_videos
+        del self.download_state
+
+        super().__del__()
+        
+    def destroy_widgets(self):
+        """Destroy the child widget."""
+        self.sub_frame.destroy()
+        self.download_progress_bar.destroy()
+        self.download_percentage_label.destroy()
+        self.status_label.destroy()
+        self.re_download_btn.destroy()
+        self.videos_status_counts_label.destroy()
+        
+        super().destroy_widgets()
+    
+    def kill(self):
+        self.pack_forget()
+        
+        for video in self.videos:
+            video.video_download_status_callback = GuiUtils.do_nothing
+            video.kill()
+        
+        super().kill()
+        

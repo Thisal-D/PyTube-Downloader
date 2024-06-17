@@ -40,6 +40,7 @@ class PlayList(ctk.CTkFrame):
         
         # Initialize attributes
         self.root = root
+        self.master_frame = master
         self.height: int = height
         self.width: int = width
         
@@ -65,7 +66,6 @@ class PlayList(ctk.CTkFrame):
         self.playlist_item_frame: Union[ctk.CTkFrame, None] = None
         
         self.videos: List = []
-        self.viewed_videos_index = 0
         # Create and configure widgets
         self.create_widgets()
         self.set_widgets_texts()
@@ -98,10 +98,6 @@ class PlayList(ctk.CTkFrame):
             font=('arial', 13 * AppearanceSettings.settings["scale_r"], 'bold')
         )
         self.playlist_item_frame.pack(padx=10, fill="x", pady=2)
-        
-    def view_next_10_videos(self):
-        for self.viewed_videos_index in range(self.viewed_videos_index , self.viewed_videos_index + 10):
-            self.videos[self.viewed_videos_index].pack()
 
     def set_playlist_data(self):
         """Set the data of the playlist."""
@@ -110,12 +106,6 @@ class PlayList(ctk.CTkFrame):
         self.channel_btn.configure(text=f"{LanguageManager.data['channel']} : {self.channel}")
         self.url_label.configure(text=self.playlist_url)
         self.channel_btn.configure(state="normal")
-
-    def kill(self):
-        """Destroy the playlist widget."""
-        ThemeManager.unregister_widget(self)
-        self.pack_forget()
-        self.destroy()
 
     def create_widgets(self):
         """Create widgets for the playlist."""
@@ -216,10 +206,10 @@ class PlayList(ctk.CTkFrame):
     def set_widgets_colors(self):
         """Set colors for the widgets."""
         self.configure(
-            fg_color=self.master.cget("fg_color")
+            fg_color=self.master_frame.cget("fg_color")
         )
         self.playlist_item_frame.configure(
-            fg_color=self.master.cget("fg_color")
+            fg_color=self.master_frame.cget("fg_color")
         )
         self.playlist_main_frame.configure(
             fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"]
@@ -382,3 +372,54 @@ class PlayList(ctk.CTkFrame):
 
     def configure_widget_sizes(self, _event):
         ...
+        
+    def __del__(self):
+        """Clear the Memory."""
+        self.root = None
+        self.master_frame = None
+        
+        del self.height
+        del self.width
+        
+        # playlist info
+        del self.channel_url
+        del self.channel
+        del self.playlist_url
+        del self.playlist_title
+        del self.playlist_video_count
+
+        # widgets
+        del self.view_btn
+        del self.info_frame
+        del self.playlist_title_label
+        del self.channel_btn
+        del self.url_label
+        del self.playlist_main_frame
+        del self.remove_btn
+        del self.playlist_video_count_label
+        del self.playlist_item_frame
+        
+        del self.videos
+        
+        del self
+
+    def destroy_widgets(self):
+        """Destroy the child widget."""
+        self.playlist_main_frame.destroy()
+        self.view_btn.destroy()
+        self.info_frame.destroy()
+        self.playlist_title_label.destroy()
+        self.channel_btn.destroy()
+        self.url_label.destroy()
+        self.remove_btn.destroy()
+        self.playlist_video_count_label.destroy()
+        self.playlist_item_frame.destroy()
+                
+        super().destroy()
+
+    def kill(self):
+        """Destroy the playlist widget."""
+        ThemeManager.unregister_widget(self)
+        LanguageManager.unregister_widget(self)
+        self.destroy_widgets()
+        self.__del__()
