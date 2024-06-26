@@ -2,7 +2,7 @@
 
 # PyTube Downloader
 
-- `v1.0.4` [下载适用于 Windows 的 .exe](https://sourceforge.net/p/pytube-downloader)
+- `v2.0.0` [下载适用于 Windows 的 .exe](https://sourceforge.net/p/pytube-downloader)
 
 ---
 
