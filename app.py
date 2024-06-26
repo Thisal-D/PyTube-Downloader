@@ -6,13 +6,22 @@ import time
 from typing import Literal
 import pyautogui
 from widgets import (
-    AddedVideo, DownloadingVideo, DownloadedVideo,
-    AddedPlayList, DownloadingPlayList, DownloadedPlayList,
-    SettingPanel, TrayMenu, AlertWindow
+    AddedVideo, 
+    DownloadingVideo, 
+    DownloadedVideo,
+    AddedPlayList, 
+    DownloadingPlayList, 
+    DownloadedPlayList,
+    SettingPanel, 
+    TrayMenu, 
+    AlertWindow
 )
 from widgets.core_widgets.context_menu import ContextMenu
 from services import (
-    ThemeManager, DownloadManager, LoadManager, LanguageManager
+    ThemeManager,
+    DownloadManager, 
+    LoadManager, 
+    LanguageManager
 )
 from settings import (
     AppearanceSettings,
@@ -79,9 +88,9 @@ class App(ctk.CTk):
         self.video_radio_btn = None
         self.playlist_radio_btn = None
 
-        self.navigate_added_frame_btn = None
-        self.navigate_downloading_frame_btn = None
-        self.navigate_downloaded_frame_btn = None
+        self.navigate_added_btn = None
+        self.navigate_downloading_btn = None
+        self.navigate_downloaded_btn = None
 
         self.added_content_scroll_frame = None
         self.downloading_content_scroll_frame = None
@@ -145,19 +154,19 @@ class App(ctk.CTk):
         self.downloading_content_scroll_frame = ctk.CTkScrollableFrame(master=self)
         self.downloaded_content_scroll_frame = ctk.CTkScrollableFrame(master=self)
 
-        self.navigate_added_frame_btn = ctk.CTkButton(
+        self.navigate_added_btn = ctk.CTkButton(
             master=self,
             text="Added",
             command=lambda: self.place_frame(self.added_content_scroll_frame, "added")
         )
 
-        self.navigate_downloading_frame_btn = ctk.CTkButton(
+        self.navigate_downloading_btn = ctk.CTkButton(
             master=self,
             text="Downloading",
             command=lambda: self.place_frame(self.downloading_content_scroll_frame, "downloading")
         )
 
-        self.navigate_downloaded_frame_btn = ctk.CTkButton(
+        self.navigate_downloaded_btn = ctk.CTkButton(
             master=self,
             text="Downloaded",
             command=lambda: self.place_frame(self.downloaded_content_scroll_frame, "downloaded")
@@ -309,9 +318,9 @@ class App(ctk.CTk):
         self.add_url_btn.place(y=4)
         self.video_radio_btn.place(y=5)
         self.playlist_radio_btn.place(y=25 * scale)
-        self.navigate_added_frame_btn.place(y=50 * scale, x=10)
-        self.navigate_downloading_frame_btn.place(y=50 * scale)
-        self.navigate_downloaded_frame_btn.place(y=50 * scale)
+        self.navigate_added_btn.place(y=50 * scale, x=10)
+        self.navigate_downloading_btn.place(y=50 * scale)
+        self.navigate_downloaded_btn.place(y=50 * scale)
         self.place_frame(self.added_content_scroll_frame, "added")
         self.videos_status_count_label.place(x=10, rely=1, y=-20 * scale)
         self.logo_label.place(relx=0.5, rely=0.5, anchor="center")
@@ -349,9 +358,9 @@ class App(ctk.CTk):
         self.downloaded_frame_info_label.configure(font=font_style_1)
 
         font_style_2 = ("Segoe UI", 15 * scale, "bold")
-        self.navigate_added_frame_btn.configure(font=font_style_2)
-        self.navigate_downloading_frame_btn.configure(font=font_style_2)
-        self.navigate_downloaded_frame_btn.configure(font=font_style_2)
+        self.navigate_added_btn.configure(font=font_style_2)
+        self.navigate_downloading_btn.configure(font=font_style_2)
+        self.navigate_downloaded_btn.configure(font=font_style_2)
         self.settings_btn.configure(font=("arial", 25 * scale, "normal"))
         self.context_menu.configure(font=("Segoe UI", 13 * scale, "bold"))
         self.videos_status_count_label.configure(font=("Segoe UI", 11 * scale, "normal"))
@@ -379,9 +388,9 @@ class App(ctk.CTk):
             height=int(18 * scale)
         )
         self.add_url_btn.configure(height=int(40 * scale), width=int(100 * scale))
-        self.navigate_added_frame_btn.configure(height=int(40 * scale))
-        self.navigate_downloading_frame_btn.configure(height=int(40 * scale))
-        self.navigate_downloaded_frame_btn.configure(height=int(40 * scale))
+        self.navigate_added_btn.configure(height=int(40 * scale))
+        self.navigate_downloading_btn.configure(height=int(40 * scale))
+        self.navigate_downloaded_btn.configure(height=int(40 * scale))
         self.settings_btn.configure(width=int(30 * scale), height=int(40 * scale))
         self.context_menu.configure(
             width=int(120 * AppearanceSettings.settings["scale_r"]),
@@ -404,12 +413,12 @@ class App(ctk.CTk):
 
         button_margin = int(3 * scale)
         nav_button_width = int((root_width - 20 - button_margin * 3) / 3)
-        self.navigate_added_frame_btn.configure(width=nav_button_width)
-        self.navigate_downloading_frame_btn.configure(width=nav_button_width)
-        self.navigate_downloaded_frame_btn.configure(width=nav_button_width)
+        self.navigate_added_btn.configure(width=nav_button_width)
+        self.navigate_downloading_btn.configure(width=nav_button_width)
+        self.navigate_downloaded_btn.configure(width=nav_button_width)
 
-        self.navigate_downloading_frame_btn.place(x=nav_button_width + 10 + button_margin)
-        self.navigate_downloaded_frame_btn.place(x=nav_button_width * 2 + 10 + button_margin * 2)
+        self.navigate_downloading_btn.place(x=nav_button_width + 10 + button_margin)
+        self.navigate_downloaded_btn.place(x=nav_button_width * 2 + 10 + button_margin * 2)
 
         self.video_radio_btn.place(x=root_width - 190 * scale)
         self.playlist_radio_btn.place(x=root_width - 190 * scale)
@@ -435,9 +444,9 @@ class App(ctk.CTk):
         self.video_radio_btn.configure(text=LanguageManager.data["video"])
         self.playlist_radio_btn.configure(text=LanguageManager.data["playlist"])
         self.add_url_btn.configure(text=LanguageManager.data["add +"])
-        self.navigate_added_frame_btn.configure(text=LanguageManager.data["added"])
-        self.navigate_downloading_frame_btn.configure(text=LanguageManager.data["downloading"])
-        self.navigate_downloaded_frame_btn.configure(text=LanguageManager.data["downloaded"])
+        self.navigate_added_btn.configure(text=LanguageManager.data["added"] + " (0)")
+        self.navigate_downloading_btn.configure(text=LanguageManager.data["downloading"] + " (0)")
+        self.navigate_downloaded_btn.configure(text=LanguageManager.data["downloaded"] + " (0)")
         self.added_frame_info_label.configure(
             text=LanguageManager.data["added_videos_&_playlists_will_be_display_here"]
         )
@@ -477,13 +486,13 @@ class App(ctk.CTk):
             border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
             text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
-        self.navigate_added_frame_btn.configure(
+        self.navigate_added_btn.configure(
             text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
-        self.navigate_downloading_frame_btn.configure(
+        self.navigate_downloading_btn.configure(
             text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
-        self.navigate_downloaded_frame_btn.configure(
+        self.navigate_downloaded_btn.configure(
             text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
         self.added_frame_info_label.configure(
@@ -536,17 +545,17 @@ class App(ctk.CTk):
             hover=False
         )
 
-        self.navigate_added_frame_btn.configure(
+        self.navigate_added_btn.configure(
             bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"],
             hover=False
         )
-        self.navigate_downloading_frame_btn.configure(
+        self.navigate_downloading_btn.configure(
             bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"],
             hover=False
         )
-        self.navigate_downloaded_frame_btn.configure(
+        self.navigate_downloaded_btn.configure(
             bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"],
             hover=False
@@ -760,7 +769,7 @@ class App(ctk.CTk):
             foreground color of the button to reflect the hover state, using the colors defined in the
             application's appearance settings.
             """
-            self.navigate_added_frame_btn.configure(
+            self.navigate_added_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
                 fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["hover"]
             )
@@ -773,13 +782,13 @@ class App(ctk.CTk):
             foreground color of the button to their normal states, using the colors defined in the application's
             appearance settings.
             """
-            self.navigate_added_frame_btn.configure(
+            self.navigate_added_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"]
             )
 
-        self.navigate_added_frame_btn.bind("<Enter>", on_mouse_enter_navigate_added_frame_btn)
-        self.navigate_added_frame_btn.bind("<Leave>", on_mouse_leave_navigate_added_frame_btn)
+        self.navigate_added_btn.bind("<Enter>", on_mouse_enter_navigate_added_frame_btn)
+        self.navigate_added_btn.bind("<Leave>", on_mouse_leave_navigate_added_frame_btn)
 
         ######################################################################################
 
@@ -794,7 +803,7 @@ class App(ctk.CTk):
             Parameters:
                 _event (tk.Event): The event object.
             """
-            self.navigate_downloading_frame_btn.configure(
+            self.navigate_downloading_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
                 fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["hover"]
             )
@@ -810,13 +819,13 @@ class App(ctk.CTk):
             Parameters:
                 _event (tk.Event): The event object.
             """
-            self.navigate_downloading_frame_btn.configure(
+            self.navigate_downloading_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"]
             )
 
-        self.navigate_downloading_frame_btn.bind("<Enter>", on_mouse_enter_navigate_downloading_frame_btn)
-        self.navigate_downloading_frame_btn.bind("<Leave>", on_mouse_leave_navigate_downloading_frame_btn)
+        self.navigate_downloading_btn.bind("<Enter>", on_mouse_enter_navigate_downloading_frame_btn)
+        self.navigate_downloading_btn.bind("<Leave>", on_mouse_leave_navigate_downloading_frame_btn)
 
         ######################################################################################
 
@@ -831,7 +840,7 @@ class App(ctk.CTk):
             Parameters:
                 _event (tk.Event): The event object.
             """
-            self.navigate_downloaded_frame_btn.configure(
+            self.navigate_downloaded_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
                 fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["hover"]
             )
@@ -847,13 +856,13 @@ class App(ctk.CTk):
             Parameters:
                 _event (tk.Event): The event object.
             """
-            self.navigate_downloaded_frame_btn.configure(
+            self.navigate_downloaded_btn.configure(
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
                 fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"]
             )
 
-        self.navigate_downloaded_frame_btn.bind("<Enter>", on_mouse_enter_navigate_downloaded_frame_btn)
-        self.navigate_downloaded_frame_btn.bind("<Leave>", on_mouse_leave_navigate_downloaded_frame_btn)
+        self.navigate_downloaded_btn.bind("<Enter>", on_mouse_enter_navigate_downloaded_frame_btn)
+        self.navigate_downloaded_btn.bind("<Leave>", on_mouse_leave_navigate_downloaded_frame_btn)
 
         #######################################################################################
 
@@ -1135,9 +1144,9 @@ class App(ctk.CTk):
             self.video_radio_btn.select()
             self.playlist_radio_btn.deselect()
 
-    def update_videos_count_status(self) -> None:
+    def update_active_videos_count_status(self) -> None:
         """
-        Update the status label with the count of loading and downloading videos.
+        Update the status label with the count of active loading and active downloading videos.
         """
         self.videos_status_count_label.configure(
             text=f"{LanguageManager.data['loading']} : {LoadManager.queued_load_count + LoadManager.active_load_count}"
@@ -1145,18 +1154,27 @@ class App(ctk.CTk):
                  f"{LanguageManager.data['downloading']} : {DownloadManager.queued_download_count + 
                                                             DownloadManager.active_download_count}"
         )
+    
+    def update_total_videos_count_status(self, added_video_count, downloading_video_count, downloaded_video_count) -> None:
+        """
+        Update the status label with the count of added loading and added downloading and downloaded videos.
+        """
+        self.navigate_added_btn.configure(text=LanguageManager.data["added"] + f" ({str(added_video_count)})")
+        self.navigate_downloading_btn.configure(text=LanguageManager.data["downloading"] + f" ({str(downloading_video_count)})")
+        self.navigate_downloaded_btn.configure(text=LanguageManager.data["downloaded"] + f" ({str(downloaded_video_count)})")
 
     def add_video_playlist(self) -> None:
         """
         Add a video or playlist to the content.
         """
-        self.is_content_added = True
         self.added_frame_info_label.place_forget()
         yt_url = self.url_entry.get()
         
         # if url entry is nothing just do nothing
         if yt_url.replace(" ", "") == "":
             return
+        
+        self.is_content_added = True
         
         if self.selected_download_mode == "video":
             AddedVideo(

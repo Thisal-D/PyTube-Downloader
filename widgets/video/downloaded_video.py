@@ -6,7 +6,7 @@ import os
 from utils import (
     ValueConvertUtility
 )
-from services import LanguageManager
+from services import LanguageManager, VideoCountTracker
 from settings import AppearanceSettings
 
 
@@ -61,6 +61,7 @@ class DownloadedVideo(Video):
             video_url=video_url
         )
 
+        VideoCountTracker.add_downloaded_video()
         self.set_video_data()
 
     def create_widgets(self):
@@ -192,5 +193,5 @@ class DownloadedVideo(Video):
     def kill(self):
         if self.mode == "playlist":
             self.video_status_callback(self, "removed")
-
+        VideoCountTracker.remove_downloaded_video()
         super().kill()

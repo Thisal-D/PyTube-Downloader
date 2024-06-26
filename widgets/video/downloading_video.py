@@ -12,7 +12,8 @@ from settings import (
 )
 from services import (
     DownloadManager,
-    LanguageManager
+    LanguageManager,
+    VideoCountTracker
 )
 from utils import (
     GuiUtils,
@@ -98,6 +99,7 @@ class DownloadingVideo(Video):
         
         self.set_video_data()
         self.set_waiting()
+        VideoCountTracker.add_downloading_video()
         DownloadManager.register(self)
 
     def download_video(self):
@@ -620,8 +622,9 @@ class DownloadingVideo(Video):
         """
         DownloadManager.unregister_from_active(self)
         DownloadManager.unregister_from_queued(self)
+        VideoCountTracker.remove_downloading_video()
         self.download_state = "removed"
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)
-
+        
         super().kill()
