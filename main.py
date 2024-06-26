@@ -10,7 +10,8 @@ from services import (
     LoadManager,
     ThemeManager,
     LoadingIndicateManager,
-    LanguageManager
+    LanguageManager,
+    VideoCountTracker
 )
 from utils import FileUtility
 
@@ -23,8 +24,9 @@ AppearanceSettings.initialize("data\\appearance.json")
 app = App()
 
 # configure services
-LoadManager.initialize(app.update_videos_count_status)
-DownloadManager.initialize(app.update_videos_count_status)
+LoadManager.initialize(app.update_active_videos_count_status)
+DownloadManager.initialize(app.update_active_videos_count_status)
+VideoCountTracker.initialize(app.update_total_videos_count_status)
 ThemeManager.initialize()
 LoadingIndicateManager.initialize()
 LanguageManager.initialize()

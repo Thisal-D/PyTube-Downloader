@@ -67,7 +67,6 @@ class AddedPlayList(PlayList):
             self.channel = str(self.playlist.owner)
             self.playlist_title = str(self.playlist.title)
             self.channel_url = str(self.playlist.owner_url)
-            self.view_btn.configure(state="normal")
             self.channel_btn.configure(state="normal")
             self.set_playlist_data()
             self.load_videos()
@@ -79,8 +78,8 @@ class AddedPlayList(PlayList):
         for video_url in self.playlist.video_urls:
             video = AddedVideo(
                 root=self.root,
-                master=self.playlist_item_frame,
-                width=self.playlist_item_frame.winfo_width() - 20,
+                master=self.playlist_videos_frame,
+                width=self.playlist_videos_frame.winfo_width() - 20,
                 height=70 * AppearanceSettings.settings["scale_r"],
                 video_url=video_url,
                 video_download_button_click_callback=self.video_download_button_click_callback,
@@ -88,8 +87,13 @@ class AddedPlayList(PlayList):
                 # videos state track
                 video_load_status_callback=self.videos_status_track,
             )
-            video.pack(fill="x", padx=(20, 0), pady=1)
+            if self.last_viewed_index < PlayList.max_videos_per_page:
+                video.pack(fill="x", padx=(20, 0), pady=(1, 0))
+                self.last_viewed_index += 1
             self.videos.append(video)
+            
+        self.configure_videos_tab_view()
+        self.view_btn.configure(state="normal")
 
     def videos_status_track(
             self,
@@ -97,6 +101,7 @@ class AddedPlayList(PlayList):
             state: Literal["waiting", "loading", "loaded", "failed", "removed"]):
         if state == "removed":
             self.videos.remove(video)
+            self.configure_videos_tab_view()
             self.playlist_video_count -= 1
             if len(self.videos) == 0:
                 self.kill()

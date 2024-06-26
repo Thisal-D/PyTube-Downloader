@@ -9,7 +9,8 @@ import time
 from services import (
     LoadManager,
     ThemeManager,
-    LanguageManager
+    LanguageManager,
+    VideoCountTracker
 )
 from settings import (
     AppearanceSettings,
@@ -71,6 +72,7 @@ class AddedVideo(Video):
 
         self.set_waiting()
         LoadManager.register(self)
+        VideoCountTracker.add_added_video()
 
     def reload_video(self):
         self.load_state = None
@@ -487,6 +489,7 @@ class AddedVideo(Video):
         self.load_state = "removed"
         LoadManager.unregister_from_active(self)
         LoadManager.unregister_from_queued(self)
+        VideoCountTracker.remove_added_video()
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
 

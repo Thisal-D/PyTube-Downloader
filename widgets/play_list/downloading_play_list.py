@@ -65,9 +65,9 @@ class DownloadingPlayList(PlayList):
         for added_video in self.added_videos:
             video = DownloadingVideo(
                 root=self.root,
-                master=self.playlist_item_frame,
+                master=self.playlist_videos_frame,
                 height=70 * AppearanceSettings.settings["scale_r"],
-                width=self.playlist_item_frame.winfo_width() - 20,
+                width=self.playlist_videos_frame.winfo_width() - 20,
                 channel_url=added_video.channel_url,
                 video_url=added_video.video_url,
                 # download info
@@ -87,8 +87,12 @@ class DownloadingPlayList(PlayList):
                 video_download_status_callback=self.videos_status_track,
                 video_download_progress_callback=self.videos_progress_track,
             )
-            video.pack(fill="x", padx=(20, 0), pady=1)
+            if self.last_viewed_index < PlayList.max_videos_per_page:
+                video.pack(fill="x", padx=(20, 0), pady=(1, 0))
+                self.last_viewed_index += 1
             self.videos.append(video)
+            
+        self.configure_videos_tab_view()
         self.view_btn.configure(state="normal")
 
     def videos_status_track(
@@ -97,6 +101,7 @@ class DownloadingPlayList(PlayList):
             state: Literal["waiting", "downloading", "paused", "downloaded", "failed", "removed"]):
         if state == "removed":
             self.videos.remove(video)
+            self.configure_videos_tab_view()
             self.playlist_video_count -= 1
             if len(self.videos) == 0:
                 self.kill()

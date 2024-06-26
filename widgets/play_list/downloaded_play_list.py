@@ -4,7 +4,6 @@ from widgets.video.downloading_video import DownloadingVideo
 import customtkinter as ctk
 from typing import Literal, List
 from utils import GuiUtils
-import threading
 from settings import AppearanceSettings
 
 
@@ -40,15 +39,16 @@ class DownloadedPlayList(PlayList):
             playlist_video_count=playlist_video_count,
         )
 
-        threading.Thread(target=self.display_downloaded_widgets, daemon=True).start()
+        # threading.Thread(target=self.display_downloaded_widgets, daemon=True).start()
+        self.display_downloaded_widgets()
 
     def display_downloaded_widgets(self):
         for downloading_video in self.downloading_videos:
             video = DownloadedVideo(
                 root=self.root,
-                master=self.playlist_item_frame,
+                master=self.playlist_videos_frame,
                 height=70 * AppearanceSettings.settings["scale_r"],
-                width=self.playlist_item_frame.winfo_width() - 20,
+                width=self.playlist_videos_frame.winfo_width() - 20,
                 # video info
                 thumbnails=downloading_video.thumbnails,
                 video_title=downloading_video.video_title,
@@ -65,8 +65,11 @@ class DownloadedPlayList(PlayList):
                 mode=downloading_video.mode,
                 video_status_callback=self.videos_status_track,
             )
-            video.pack(fill="x", padx=(20, 0), pady=1)
+            if self.last_viewed_index < PlayList.max_videos_per_page:
+                video.pack(fill="x", padx=(20, 0), pady=(1, 0))
+                self.last_viewed_index += 1
             self.videos.append(video)
+        self.configure_videos_tab_view()
         self.view_btn.configure(state="normal")
 
     # status tracker
@@ -76,6 +79,7 @@ class DownloadedPlayList(PlayList):
             state: Literal["removed"]):
         if state == "removed":
             self.videos.remove(video)
+            self.configure_videos_tab_view()
             self.playlist_video_count -= 1
             if self.playlist_video_count == 0:
                 self.kill()
@@ -109,3 +113,4 @@ class DownloadedPlayList(PlayList):
             video.kill()
             
         super().kill()
+        
