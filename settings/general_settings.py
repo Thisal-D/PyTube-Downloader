@@ -1,5 +1,5 @@
 from typing import Dict
-from utils import JsonUtility
+from utils import (JsonUtility, FileCopy)
 import os
 
 
@@ -36,3 +36,5 @@ class GeneralSettings:
 
         """
         JsonUtility.write_to_file(GeneralSettings.file_path, GeneralSettings.settings)
+        FileCopy.file_copy('backup')
+

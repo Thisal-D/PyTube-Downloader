@@ -1,5 +1,5 @@
 from typing import Dict
-from utils import JsonUtility
+from utils import (JsonUtility, FileCopy)
 
 
 class AppearanceSettings:
@@ -16,6 +16,7 @@ class AppearanceSettings:
         Save the current settings to a file.
         """
         JsonUtility.write_to_file(AppearanceSettings.file_path, AppearanceSettings.settings)
+        FileCopy.file_copy('backup')
 
     @staticmethod
     def initialize(file_path: str) -> None:

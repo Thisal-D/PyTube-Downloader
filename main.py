@@ -3,7 +3,8 @@ import customtkinter as ctk
 from widgets import AlertWindow
 from settings import (
     AppearanceSettings,
-    GeneralSettings
+    GeneralSettings,
+    CheckExistData
 )
 from services import (
     DownloadManager,
@@ -17,6 +18,7 @@ from utils import FileUtility
 
 
 # configure settings
+CheckExistData.check_exist_data()
 GeneralSettings.initialize("data\\general.json")
 AppearanceSettings.initialize("data\\appearance.json")
 
