@@ -10,11 +10,11 @@ class FileCopy:
         current_folder = os.getcwd()
         source_folder = None
         destination_folder = None
-        if direction == 'load':
+        if direction == "load":
             source_folder = documents_folder
-            destination_folder = f'{current_folder}\\data'
-        if direction == 'backup':
-            source_folder = f'{current_folder}\\data'
+            destination_folder = f"{current_folder}\\data"
+        if direction == "backup":
+            source_folder = f"{current_folder}\\data"
             destination_folder = documents_folder
 
         for item in os.listdir(source_folder):
