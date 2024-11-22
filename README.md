@@ -1,8 +1,12 @@
 ![Language](https://img.shields.io/badge/Language-English-blue) [![Chinese](https://img.shields.io/badge/Language-中文-red)](README_zh.md)
 
-# PyTube Downloader
+# PyTube Downloader 
 
-- `v2.0.0` [Download .exe for Windows](https://sourceforge.net/p/pytube-downloader)
+&nbsp; &nbsp;[![Download PyTube Downloader](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/pytube-downloader/files/latest/download)
+
+&nbsp; &nbsp;[![Download PyTube Downloader](https://img.shields.io/sourceforge/dm/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dw/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dt/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download)
+
+&nbsp; &nbsp;`v2.0.0` [Visit to Download .exe for Windows](https://sourceforge.net/p/pytube-downloader)
 
 ---
 

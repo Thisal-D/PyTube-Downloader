@@ -6,4 +6,3 @@ from .image_utility import ImageUtility
 from .settings_validate_utility import SettingsValidateUtility
 from .value_convert_utility import ValueConvertUtility
 from .gui_utils import GuiUtils
-from .file_copy import FileCopy

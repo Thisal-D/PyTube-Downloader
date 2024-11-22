@@ -71,6 +71,7 @@
     "custom_accent_color": "Custom Accent Color",
     "custom_accent_color_alert_text": "* Please Specify Custom Accent Colors for Both Normal and Hover State Using\n One of the Following Formats :\n\t- Hexa-Decimal: #0f0f0f, #0f0f0ff\n\t- Color Names: green, lightgreen",
     "restart_confirmation": "Restart required for changes to take effect..!",
+    "scale_settings_reset_confirmation": "Restart required for resetting scale settings..!",
     "disclaimer": "• This Application Is Intended for Personal Use Only. Please Respect YouTube's \n  Terms of Service and the Rights of Content Creators When Downloading Videos.",
     "language": "Language",
     "shortcuts": "Shortcuts",
@@ -83,5 +84,6 @@
     "toggle_maximize": "Toggle Maximize",
     "quick_exit": "Quick Exit",
     "force_exit": "Force Exit",
-    "minimize_to_tray": "Minimize To Tray"
+    "minimize_to_tray": "Minimize To Tray",
+    "reset": "Reset"
 }
