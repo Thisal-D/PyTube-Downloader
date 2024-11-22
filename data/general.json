@@ -6,7 +6,7 @@
     "create_sep_path_for_playlists": false,
     "create_sep_path_for_qualities": false,
     "create_sep_path_for_videos_audios": false,
-    "download_directory": "C:\\users\\Thisal Dilmith\\downloads\\PyTube Downloader",
+    "download_directory": false,
     "lang_code": "en",
     "language": "English",
     "load_thumbnail": false,
@@ -15,5 +15,5 @@
     "re_download_automatically": false,
     "reload_automatically": false,
     "update_delay": 0.5,
-    "window_geometry": "1323x735+253+99"
+    "window_geometry": "900x500+0+0"
 }
