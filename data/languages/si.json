@@ -71,6 +71,7 @@
     "custom_accent_color": "අභිරුචි යෙදුම් වර්ණය",
     "custom_accent_color_alert_text": "කරුණාකර normal සහ hover යන අවස්තා දෙකටම අභිරුචි යෙදුම් වර්ණ\n පහත ආකෘතිවලින් එකක් භාවිතා කර අතුලත් කරන්න ：\n\t- වර්ණ කේතය: #0f0f0f, #0f0f0ff\n\t- වර්ණ නම: green, lightgreen",
     "restart_confirmation": "වෙනස්කම් බලාත්මක වීමට නැවත ආරම්භ කිරීම අවශ්‍යයි..!",
+    "scale_settings_reset_confirmation": "Restart required for resetting scale settings..!",
     "disclaimer": "• මෙම යෙදුම පුද්ගලික භාවිතය සඳහා පමණි. වීඩියෝ බාගැනීමේදී, කරුණාකර YouTube හි\n සේවා නියමවලට අනුකූල වන අතර අන්තර්ගත නිර්මාපකයන්ගේ අයිතිවාසිකම්වලට ගරු කරන්න.",
     "language": "භාෂාව",
     "shortcuts": "කෙටි මන්",
@@ -83,6 +84,7 @@
     "toggle_maximize": "Maximize කිරීම්/නොකිරීම",
     "quick_exit": "ඉක්මන් පිටවීම",
     "force_exit": "පිටවීම",
-    "minimize_to_tray": "ට්‍රේ එකට Minimize කරන්න"
+    "minimize_to_tray": "ට්‍රේ එකට Minimize කරන්න",
+    "reset": "Reset"
 }
  

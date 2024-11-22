@@ -3,8 +3,7 @@ import customtkinter as ctk
 from widgets import AlertWindow
 from settings import (
     AppearanceSettings,
-    GeneralSettings,
-    CheckExistData
+    GeneralSettings
 )
 from services import (
     DownloadManager,
@@ -17,27 +16,20 @@ from services import (
 from utils import FileUtility
 
 
-# configure settings
-CheckExistData.check_exist_data()
-GeneralSettings.initialize("data\\general.json")
-AppearanceSettings.initialize("data\\appearance.json")
-
 # Initialize app.
 app = App()
 
-# configure services
-LoadManager.initialize(app.update_active_videos_count_status)
-DownloadManager.initialize(app.update_active_videos_count_status)
-VideoCountTracker.initialize(app.update_total_videos_count_status)
-ThemeManager.initialize()
-LoadingIndicateManager.initialize()
+# configure settings
+GeneralSettings.initialize()
+AppearanceSettings.initialize()
 LanguageManager.initialize()
 
 # Check directory accessibility during startup.
 # If accessible, nothing happens if not, show an error message.
 scale = AppearanceSettings.settings["scale_r"]
-DIRECTORIES = ["temp", GeneralSettings.settings["download_directory"]]
+DIRECTORIES = [GeneralSettings.backup_dir, GeneralSettings.settings["download_directory"]]
 for directory in DIRECTORIES:
+    print("Checking Accesibility :", directory)
     if not FileUtility.is_accessible(directory):
         AlertWindow(
             master=app,
@@ -48,6 +40,13 @@ for directory in DIRECTORIES:
             width=int(450 * scale),
             height=int(130 * scale)
         )
+
+# configure services
+LoadManager.initialize(app.update_active_videos_count_status)
+DownloadManager.initialize(app.update_active_videos_count_status)
+VideoCountTracker.initialize(app.update_total_videos_count_status)
+ThemeManager.initialize()
+LoadingIndicateManager.initialize()
 
 # set the theme mode, dark or light or system, by getting from data
 ctk.set_appearance_mode(AppearanceSettings.themes[AppearanceSettings.settings["root"]["theme_mode"]])

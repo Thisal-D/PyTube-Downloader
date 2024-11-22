@@ -193,8 +193,14 @@ class NetworkPanel(ctk.CTkFrame):
             state="disabled",
             height=24,
             width=50,
-            command=self.apply_general_settings,
+            command=self.apply_network_settings,
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
+        )
+        
+        self.settings_reset_button = ctk.CTkButton(
+            master=self, 
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
+            command=self.reset_settings
         )
 
         # use to track anything is changed or not
@@ -221,8 +227,33 @@ class NetworkPanel(ctk.CTkFrame):
 
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
+        
+    def reset_settings(self):
+        self.simultaneous_load_entry.delete(0, 'end')
+        self.simultaneous_load_entry.insert("end", 1)
+        
+        self.simultaneous_download_entry.delete(0, 'end')
+        self.simultaneous_download_entry.insert("end", 1)
+        
+        self.automatic_download_switch.deselect()
+        
+        self.automatic_download_quality_combo_box.configure(state="normal")
+        self.automatic_download_quality_combo_box.set(
+            LanguageManager.data[
+                self.automatic_download_qualities[0]
+            ]
+        )
+        self.automatic_download_quality_combo_box.configure(state="disabled")
+        
+        
+        self.load_thumbnail_switch.deselect()
+        self.reload_automatically_switch.deselect()
+        self.re_download_automatically_switch.deselect()
+        
+        self.apply_network_settings()
+        
 
-    def apply_general_settings(self):
+    def apply_network_settings(self):
         GeneralSettings.settings["max_simultaneous_loads"] = int(self.simultaneous_load_entry.get())
         GeneralSettings.settings["max_simultaneous_downloads"] = int(self.simultaneous_download_entry.get())
         GeneralSettings.settings["automatic_download"]["status"] = self.automatic_download_switch_state.get()
@@ -407,6 +438,10 @@ class NetworkPanel(ctk.CTkFrame):
             button_hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
             progress_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
         )
+        self.settings_reset_button.configure(
+            fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+            hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
+        )
 
     def place_widgets(self):
         scale = AppearanceSettings.settings["scale_r"]
@@ -448,6 +483,9 @@ class NetworkPanel(ctk.CTkFrame):
         self.re_download_automatically_switch.grid(row=7, column=2, pady=(pady, 0), sticky="w")
 
         self.apply_changes_button.grid(row=8, column=3, pady=(pady, 0), sticky="w")
+        
+        self.settings_reset_button.grid(row=9, column=3, pady=(pady+20*scale, 0), sticky="w")
+        
 
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
@@ -459,6 +497,8 @@ class NetworkPanel(ctk.CTkFrame):
         self.reload_automatically_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.re_download_automatically_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.apply_changes_button.configure(width=50 * scale, height=24 * scale)
+        
+        self.settings_reset_button.configure(width=80*scale, height=24 * scale)
 
     def set_widgets_texts(self):
         self.simultaneous_load_label.configure(
@@ -508,7 +548,10 @@ class NetworkPanel(ctk.CTkFrame):
         self.apply_changes_button.configure(
             text=LanguageManager.data["apply"]
         )
-
+        self.settings_reset_button.configure(
+            text=LanguageManager.data["reset"]
+        )
+        
     def update_widgets_text(self):
         self.set_widgets_texts()
 
@@ -541,6 +584,8 @@ class NetworkPanel(ctk.CTkFrame):
 
         button_font = ("Segoe UI", 13 * scale, "bold")
         self.apply_changes_button.configure(font=button_font)
+        
+        self.settings_reset_button.configure(font=("Segoe UI", 11 * scale, "bold"))
 
     def update_widgets_colors(self):
         """Update colors for the widgets."""

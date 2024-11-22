@@ -173,6 +173,12 @@ class AppearancePanel(ctk.CTkFrame):
             number_of_steps=320,
             to=100,
         )
+        
+        self.settings_reset_button = ctk.CTkButton(
+            master=self, 
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"], 
+            command=self.reset_settings
+        )    
 
         # callbacks for settings changes
         self.restart_callback = restart_callback
@@ -190,6 +196,37 @@ class AppearancePanel(ctk.CTkFrame):
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
 
+    def cancel_scale_settings_resetting(self):
+        self.scale_change_slider.set(AppearanceSettings.settings["scale"])
+        self.scale_value_label.configure(text=f"{AppearanceSettings.settings["scale"]} %")
+        
+    def reset_settings(self):
+        self.apply_theme_mode("Dark")
+        self.theme_combo_box.set("Dark")
+        
+        if not self.accent_color_buttons[0].pressed:
+            self.accent_color_buttons[0].on_mouse_enter_self('event')
+            self.apply_accent_color(self.accent_color_buttons[0])
+        
+        self.apply_opacity(100)
+        
+        self.scale_change_slider.set(100)
+        self.scale_value_label.configure(text=f"{100.0} %")
+        if AppearanceSettings.settings["scale"] != 100:
+            from widgets import AlertWindow
+            scale = AppearanceSettings.settings["scale_r"]
+            AlertWindow(
+                master=self.master.master,
+                alert_msg="scale_settings_reset_confirmation",
+                width=int(450 * scale),
+                height=int(130 * scale),
+                ok_button_display=True,
+                cancel_button_display=True,
+                ok_button_callback=self.apply_scale,
+                cancel_button_callback=self.cancel_scale_settings_resetting
+            )
+        
+    
     def release_all_accent_color_buttons(self):
         """
         Release all pressed accent color buttons.
@@ -352,6 +389,10 @@ class AppearancePanel(ctk.CTkFrame):
             fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
             hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
         )
+        self.settings_reset_button.configure(
+            fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+            hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
+        )
 
     def update_widgets_accent_color(self):
         """
@@ -376,7 +417,7 @@ class AppearancePanel(ctk.CTkFrame):
         self.accent_color_label.grid(row=1, column=0, padx=(100, 0), pady=(pady, 0), sticky="nw")
         self.dash2_label.grid(row=1, column=1, padx=(30, 30), pady=(pady, 0), sticky="nw")
         self.accent_color_frame.grid(row=1, column=2, pady=(pady, 0), sticky="w")
-
+        
         # place accent color buttons
         max_columns = 3
         row = 0
@@ -404,7 +445,10 @@ class AppearancePanel(ctk.CTkFrame):
 
         self.opacity_label.grid(row=5, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash5_label.grid(row=5, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
-        self.opacity_change_slider.grid(row=5, column=2, pady=(pady, 0), sticky="w")
+        self.opacity_change_slider.grid(row=5, column=2, pady=(pady, 0), sticky="sw")
+        
+        self.settings_reset_button.grid(row=5, column=3, pady=(pady, 0), padx=(100, 0), sticky="w")
+        
 
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
@@ -421,6 +465,8 @@ class AppearancePanel(ctk.CTkFrame):
         self.scale_change_slider.configure(width=180 * scale, height=18 * scale)
         self.scale_apply_btn.configure(width=50 * scale, height=24 * scale)
         self.opacity_change_slider.configure(width=180 * scale, height=18 * scale)
+        
+        self.settings_reset_button.configure(width=80*scale, height=24 * scale)
 
     def set_widgets_texts(self):
         self.theme_label.configure(text=LanguageManager.data["theme"])
@@ -451,6 +497,9 @@ class AppearancePanel(ctk.CTkFrame):
         self.scale_label.configure(text=LanguageManager.data["scale"])
         self.scale_apply_btn.configure(text=LanguageManager.data["apply"])
         self.opacity_label.configure(text=LanguageManager.data["transparent"])
+        self.settings_reset_button.configure(
+            text=LanguageManager.data["reset"]
+        )
 
     def update_widgets_text(self):
         self.set_widgets_texts()
@@ -480,6 +529,8 @@ class AppearancePanel(ctk.CTkFrame):
         button_font = ("Segoe UI", 13 * scale, "bold")
         self.custom_accent_color_apply_btn.configure(font=button_font)
         self.scale_apply_btn.configure(font=button_font)
+        
+        self.settings_reset_button.configure(font=("Segoe UI", 11 * scale, "bold"))
 
     # set default values to widgets
     def set_widgets_values(self):

@@ -93,10 +93,12 @@ class GeneralPanel(ctk.CTkFrame):
                     )
                 )
             self.shortcut_keys_widgets_info.append(shortcut_keys_widgets_info_dict)
-            
+        
+        self.settings_reset_button = ctk.CTkButton(master=self, text_color=AppearanceSettings.settings["settings_panel"]["text_color"], command=self.reset_settings)    
+        
         # callbacks for settings changes
         self.general_settings_change_callback = general_settings_change_callback
-
+        
         self.set_widgets_fonts()
         self.set_widgets_texts()
         self.set_widgets_sizes()
@@ -107,7 +109,12 @@ class GeneralPanel(ctk.CTkFrame):
         # Register widget with ThemeManager
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
-
+    
+    def reset_settings(self):
+        # Reset language to english and apply it
+        self.languages_combo_box.set("English")
+        self.apply_language("English")
+        
     def apply_language(self, language: str) -> None:
         lang_code = self.language_data[language]
         if lang_code != GeneralSettings.settings["lang_code"]:
@@ -124,6 +131,10 @@ class GeneralPanel(ctk.CTkFrame):
             button_hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
             border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
             dropdown_hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
+        )
+        self.settings_reset_button.configure(
+            fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+            hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
         )
 
     def update_widgets_accent_color(self):
@@ -159,6 +170,8 @@ class GeneralPanel(ctk.CTkFrame):
             shortcut_widget_info["key_frame"].grid(row=i, column=2, pady=(4 * scale, 0), sticky="w")
             for button in shortcut_widget_info["buttons"]:
                 button.pack(side="left", padx=(2 * scale, 0))
+                
+        self.settings_reset_button.grid(row=2, column=2, padx=(100, 0), pady=(pady, 0), sticky="e")
         
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
@@ -170,12 +183,18 @@ class GeneralPanel(ctk.CTkFrame):
             for button in shortcut_widget_info["buttons"]:
                 button.configure(width=1, height=24 * scale)
 
+        self.settings_reset_button.configure(width=80*scale, height=24 * scale)
+        
     def set_widgets_texts(self):
         self.language_label.configure(text=LanguageManager.data["language"])
         self.shortcut_label.configure(text=LanguageManager.data["shortcuts"])
 
         for i, shortcut_widget_info in enumerate(self.shortcut_keys_widgets_info):
             shortcut_widget_info["label"].configure(text=LanguageManager.data[self.shortcut_keys_data[i]["desc"]])
+            
+        self.settings_reset_button.configure(
+            text=LanguageManager.data["reset"]
+        )
         
     def update_widgets_text(self):
         self.set_widgets_texts()
@@ -201,6 +220,9 @@ class GeneralPanel(ctk.CTkFrame):
         for shortcut_widget_info in self.shortcut_keys_widgets_info:
             for button in shortcut_widget_info["buttons"]:
                 button.configure(font=value_font)
+                
+        self.settings_reset_button.configure(font=("Segoe UI", 11 * scale, "bold"))
+        
 
     # set default values to widgets
     def set_widgets_values(self):

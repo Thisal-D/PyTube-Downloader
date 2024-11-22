@@ -126,9 +126,15 @@ class DownloadsPanel(ctk.CTkFrame):
         self.apply_changes_button = ctk.CTkButton(
             master=self,
             state="disabled",
-            command=self.apply_general_settings,
+            command=self.apply_downloads_settings,
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
         )
+        
+        self.settings_reset_button = ctk.CTkButton(
+            master=self, 
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
+            command=self.reset_settings
+        )    
         
         self.download_path_changed: bool = False
         self.create_sep_path_for_qualities_state_changed: bool = False
@@ -150,7 +156,17 @@ class DownloadsPanel(ctk.CTkFrame):
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
 
-    def apply_general_settings(self):
+    def reset_settings(self):
+        self.download_path_entry.delete(0, "end")
+        self.download_path_entry.insert("end", GeneralSettings.default_download_dir)
+        
+        self.create_sep_path_for_videos_audios_switch.deselect()
+        self.create_sep_path_for_qualities_switch.deselect()
+        self.create_sep_path_for_playlists_switch.deselect()
+        
+        self.apply_downloads_settings()
+        
+    def apply_downloads_settings(self):
         GeneralSettings.settings["download_directory"] = FileUtility.format_path(self.download_path_entry.get())
         GeneralSettings.settings["create_sep_path_for_qualities"] = (
             self.create_sep_path_for_qualities_switch.get()
@@ -288,6 +304,10 @@ class DownloadsPanel(ctk.CTkFrame):
         self.create_sep_path_for_playlists_info_label.configure(
             text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
+        self.settings_reset_button.configure(
+            fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+            hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
+        )
         
     def update_widgets_accent_color(self):
         self.set_widgets_accent_color()
@@ -331,6 +351,13 @@ class DownloadsPanel(ctk.CTkFrame):
             pady=(pady, 0), padx=(20 + 170 * scale, 0),
             sticky="w"
         )
+        
+        self.settings_reset_button.grid(
+            row=8, column=2,
+            columnspan=2,
+            pady=(pady + 30*scale, 0), padx=(20 + 170 * scale, 0),
+            sticky="w"
+        )
 
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
@@ -341,6 +368,8 @@ class DownloadsPanel(ctk.CTkFrame):
         self.create_sep_path_for_qualities_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.create_sep_path_for_playlists_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.apply_changes_button.configure(width=50 * scale, height=24 * scale)
+        
+        self.settings_reset_button.configure(width=80*scale, height=24 * scale)
 
     def set_widgets_texts(self):
         self.download_path_label.configure(
@@ -366,6 +395,9 @@ class DownloadsPanel(ctk.CTkFrame):
         )
         self.apply_changes_button.configure(
             text=LanguageManager.data["apply"]
+        )
+        self.settings_reset_button.configure(
+            text=LanguageManager.data["reset"]
         )
 
     def update_widgets_text(self):
@@ -395,3 +427,5 @@ class DownloadsPanel(ctk.CTkFrame):
 
         button_font2 = ("Segoe UI", 28 * scale, "bold")
         self.download_path_choose_button.configure(font=button_font2)
+        
+        self.settings_reset_button.configure(font=("Segoe UI", 11 * scale, "bold"))
