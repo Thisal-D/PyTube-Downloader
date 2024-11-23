@@ -1,7 +1,7 @@
 import tkinter as tk
 from widgets.video import Video
 import customtkinter as ctk
-import pytube
+import pytubefix as pytube
 import threading
 from typing import Literal, Union, List, Callable, Tuple, Dict
 from PIL import Image
