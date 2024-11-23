@@ -69,6 +69,7 @@ PyTube 下载器是一款用户友好的应用程序，使用户能够轻松下�
   - tkinter
   - customtkinter
   - pytube
+  - pytubefix
   - pillow
   - pyautogui
   - pystray

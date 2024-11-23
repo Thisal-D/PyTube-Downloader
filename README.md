@@ -77,6 +77,7 @@ PyTube Downloader is a user-friendly application that allows users to download Y
   - tkinter
   - customtkinter
   - pytube
+  - pytubefix
   - pillow
   - pyautogui
   - pystray
