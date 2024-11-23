@@ -5,3 +5,4 @@ pytube
 pyautogui
 pystray
 pyperclip
+pytubefix
