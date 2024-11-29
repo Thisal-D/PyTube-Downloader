@@ -6,14 +6,15 @@ from .play_list import AddedPlayList
 from .play_list import DownloadingPlayList
 from .play_list import DownloadedPlayList
 
-from .components import GeneralPanel
 from .components import AccentColorButton
-from .components import AppearancePanel
-from .components import NetworkPanel
-from .components import DownloadsPanel
 from .components import AboutPanel
-from .components import NavigationPanel
 from .components import ContributorProfileWidget
+
+from .setting_panels import AppearancePanel
+from .setting_panels import NetworkPanel
+from .setting_panels import NavigationPanel
+from .setting_panels import GeneralPanel
+from .setting_panels import DownloadsPanel
 
 from .core_widgets import SettingPanel
 from .core_widgets import AlertWindow
