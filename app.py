@@ -30,8 +30,7 @@ from settings import (
 )
 from utils import (
     FileUtility,
-    DataRetriveUtility,
-    GuiUtils
+    DataRetriveUtility
 )
 
 
