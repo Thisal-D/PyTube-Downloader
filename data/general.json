@@ -6,14 +6,14 @@
     "create_sep_path_for_playlists": false,
     "create_sep_path_for_qualities": false,
     "create_sep_path_for_videos_audios": false,
-    "download_directory": "D:\\PyTube Downloader",
+    "download_directory": false,
     "lang_code": "en",
     "language": "English",
-    "load_thumbnail": true,
+    "load_thumbnail": false,
     "max_simultaneous_downloads": 1,
-    "max_simultaneous_loads": 10,
+    "max_simultaneous_loads": 1,
     "re_download_automatically": false,
     "reload_automatically": false,
     "update_delay": 0.5,
-    "window_geometry": "1485x825+288+12"
+    "window_geometry": "900x500+0+0"
 }
