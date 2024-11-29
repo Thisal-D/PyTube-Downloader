@@ -34,7 +34,7 @@
             ]
         }
     },
-    "opacity": 100.0,
+    "opacity": 100,
     "opacity_r": 1.0,
     "radio_btn": {
         "text_color": {
@@ -51,8 +51,8 @@
     "root": {
         "accent_color": {
             "default": true,
-            "hover": "#903efb",
-            "normal": "#7a14ff"
+            "hover": "#5f4ff1",
+            "normal": "#412ff0"
         },
         "fg_color": {
             "hover": [

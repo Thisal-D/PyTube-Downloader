@@ -85,5 +85,6 @@
     "quick_exit": "Quick Exit",
     "force_exit": "Force Exit",
     "minimize_to_tray": "Minimize To Tray",
-    "reset": "Reset"
+    "reset": "Reset",
+    "update_alert": "A new update is available! \nVisit the official website to download the \nlatest version."
 }

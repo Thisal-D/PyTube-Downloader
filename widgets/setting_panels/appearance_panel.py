@@ -201,8 +201,8 @@ class AppearancePanel(ctk.CTkFrame):
         self.scale_value_label.configure(text=f"{AppearanceSettings.settings["scale"]} %")
         
     def reset_settings(self):
-        self.apply_theme_mode("Dark")
-        self.theme_combo_box.set("Dark")
+        self.apply_theme_mode(self.theme_combo_box.cget("values")[0])
+        self.theme_combo_box.set(self.theme_combo_box.cget("values")[0])
         
         if not self.accent_color_buttons[0].pressed:
             self.accent_color_buttons[0].on_mouse_enter_self('event')
