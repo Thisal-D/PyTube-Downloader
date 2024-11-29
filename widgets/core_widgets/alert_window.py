@@ -1,11 +1,16 @@
 import customtkinter as ctk
+import time
 from PIL import Image
 from typing import Callable
 from settings import AppearanceSettings
 from services import LanguageManager
 
-
 class AlertWindow(ctk.CTkToplevel):
+    """
+    Use to track any alert windows running or not
+    """
+    Running = False
+    
     def __init__(
             self,
             master: ctk.CTk = None,
@@ -15,6 +20,7 @@ class AlertWindow(ctk.CTkToplevel):
             cancel_button_display: bool = None,
             cancel_button_callback: Callable = None,
             callback: Callable = None,
+            wait_for_previous: bool = False,
             width: int = 400,
             height: int = 200):
 
@@ -24,6 +30,14 @@ class AlertWindow(ctk.CTkToplevel):
             width=width,
             height=height)
 
+        # If ensure_previous_closed is true, wait until the previous alert window is closed
+        if wait_for_previous:
+            while AlertWindow.Running :
+                time.sleep(0.5)
+        
+        # Start the alert window
+        AlertWindow.Running = True
+        
         scale = AppearanceSettings.settings["scale_r"]
 
         self.master: ctk.CTk = master
@@ -106,6 +120,7 @@ class AlertWindow(ctk.CTkToplevel):
         self.unbind("<Configure>")
         self.master.unbind("<Configure>")
         self.destroy()
+        AlertWindow.Running = False
         if self.callback is not None:
             self.callback()
 

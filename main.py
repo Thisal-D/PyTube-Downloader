@@ -13,7 +13,9 @@ from services import (
     LanguageManager,
     VideoCountTracker
 )
-from utils import FileUtility
+from utils import (
+    FileUtility
+)
 
 
 # Initialize app.
@@ -80,5 +82,10 @@ app.set_widgets_fonts()
 app.bind_widgets_events()
 # bind shortcut keys
 app.bind_keyboard_shortcuts()
-# just rut the app
+# Check app updates       
+app.run_update_check()
+# just run the app
 app.run()
+
+# Codes under here will only execute when the app is closed
+ 

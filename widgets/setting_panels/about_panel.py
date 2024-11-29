@@ -6,7 +6,7 @@ import random
 import customtkinter as ctk
 from PIL import Image
 from utils import (
-    GitHubUtility,
+    DataRetriveUtility,
     JsonUtility,
     FileUtility,
     ImageUtility,
@@ -100,13 +100,14 @@ class AboutPanel(ctk.CTkFrame):
             scrollbar_fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
-
+   
         self.disclaimer_label = ctk.CTkLabel(
             master=self,
             justify="left",
             text="",
             text_color=AppearanceSettings.settings["settings_panel"]["warning_color"]["normal"]
         )
+        
         self.contribute_data_retrieve_status = None
         self.app_info: Dict = JsonUtility.read_from_file("data\\info.json")
         self.place_widgets()
@@ -144,7 +145,7 @@ class AboutPanel(ctk.CTkFrame):
             self.app_info["contributors"] = {}
 
         # retrieve contributors data from GitHub repo as list[dict]
-        contributors_data = GitHubUtility.get_contributors_data()
+        contributors_data = DataRetriveUtility.get_contributors_data()
         # if it success -> return Dict
         # if it fails -> return None
         if contributors_data is not None:
@@ -280,13 +281,14 @@ class AboutPanel(ctk.CTkFrame):
         self.contributors_title_label.grid(row=3, column=0, padx=(100, 0), pady=(pady, 0), sticky="nw")
         self.dash4_label.grid(row=3, column=1, padx=(30, 30), pady=(pady, 0), sticky="nw")
         self.contributors_status_label.grid(row=3, column=2, pady=(pady, 0), sticky="w")
+
         self.disclaimer_label.place(x=100, rely=1, y=-60 * scale)
 
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
         self.contributors_frame.configure(height=200 * scale, width=500 * scale)
         self.contributors_frame._scrollbar.grid_forget()
-
+    
     def set_widgets_texts(self):
         self.name_title_label.configure(text=LanguageManager.data["name"])
         self.version_title_label.configure(text=LanguageManager.data["version"])
@@ -297,6 +299,7 @@ class AboutPanel(ctk.CTkFrame):
         elif self.contribute_data_retrieve_status is None:
             self.contributors_status_label.configure(text=LanguageManager.data["loading"])
         self.disclaimer_label.configure(text="  " + LanguageManager.data["disclaimer"])
+        
 
     def update_widgets_text(self):
         self.set_widgets_texts()
@@ -320,5 +323,5 @@ class AboutPanel(ctk.CTkFrame):
         self.dash4_label.configure(font=title_font)
         self.contributors_status_label.configure(font=title_font)
 
-        value_font = ("Segoe UI", 13 * scale, "normal")
+        value_font = ("Segoe UI", int(13 * scale), "normal")
         self.disclaimer_label.configure(font=value_font)

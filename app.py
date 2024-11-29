@@ -3,6 +3,7 @@ import customtkinter as ctk
 import tkinter as tk
 import threading
 import time
+import webbrowser
 from typing import Literal
 import pyautogui
 from widgets import (
@@ -28,7 +29,8 @@ from settings import (
     GeneralSettings,
 )
 from utils import (
-    FileUtility
+    FileUtility,
+    DataRetriveUtility
 )
 
 
@@ -1441,6 +1443,7 @@ class App(ctk.CTk):
             ok_button_callback=self.on_app_closing,
             cancel_button_callback=self.cancel_app_closing,
             callback=self.cancel_app_closing,
+            wait_for_previous=True,
             width=int(450 * scale),
             height=int(130 * scale),
         )
@@ -1477,3 +1480,37 @@ class App(ctk.CTk):
         Clears temporarily saved files, such as thumbnails.
         """
         FileUtility.delete_files("temp\\thumbnails", ["this directory is necessary"])
+    
+    def open_update_download_page(self) -> None:
+        """
+        Open website for download latest version
+        """
+        webbrowser.open("https://sourceforge.net/projects/pytube-downloader/files/latest/download")
+        
+    def check_for_updates(self) -> None:
+        """
+        Update the version of the application.
+        """
+        # Check the app is updated or not
+        latest_version = DataRetriveUtility.get_latest_version()
+        current_version = DataRetriveUtility.get_current_version()
+        scale = AppearanceSettings.settings["scale_r"]
+        if latest_version is not None:
+            if latest_version != current_version:
+                AlertWindow(
+                    master=self,
+                    alert_msg="update_alert",
+                    ok_button_display=True,
+                    ok_button_callback=self.open_update_download_page,
+                    cancel_button_display=True,
+                    wait_for_previous=True,
+                    width=int(450 * scale),
+                    height=int(130 * scale)
+                )
+                
+    def run_update_check(self):
+        """
+        Run the update check in a separate thread.
+        """
+        self.update_check_thread = threading.Thread(target=self.check_for_updates, daemon=True)
+        self.update_check_thread.start()
