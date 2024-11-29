@@ -29,7 +29,7 @@ LanguageManager.initialize()
 scale = AppearanceSettings.settings["scale_r"]
 DIRECTORIES = [GeneralSettings.backup_dir, GeneralSettings.settings["download_directory"]]
 for directory in DIRECTORIES:
-    print("Checking Accesibility :", directory)
+    # print("Checking Accesibility :", directory)
     if not FileUtility.is_accessible(directory):
         AlertWindow(
             master=app,
