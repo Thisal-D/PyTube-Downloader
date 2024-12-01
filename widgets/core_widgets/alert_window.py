@@ -35,6 +35,9 @@ class AlertWindow(ctk.CTkToplevel):
         if wait_for_previous:
             while AlertWindow.Running :
                 time.sleep(0.5)
+                
+        if not master.is_app_running:
+            return
         
         # Start the alert window
         AlertWindow.Running = True
@@ -125,6 +128,7 @@ class AlertWindow(ctk.CTkToplevel):
         AlertWindow.Running = False
         if self.callback is not None:
             self.callback()
+            
         if self.original_configure_callback  is not None:
             self.master.bind("<Configure>", self.original_configure_callback )
 

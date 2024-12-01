@@ -13,10 +13,6 @@ from services import (
     LanguageManager,
     VideoCountTracker
 )
-from utils import (
-    FileUtility
-)
-
 
 # Initialize app.
 app = App()
@@ -26,22 +22,11 @@ GeneralSettings.initialize()
 AppearanceSettings.initialize()
 LanguageManager.initialize()
 
+scale = AppearanceSettings.settings["scale_r"]
+
 # Check directory accessibility during startup.
 # If accessible, nothing happens if not, show an error message.
-scale = AppearanceSettings.settings["scale_r"]
-DIRECTORIES = [GeneralSettings.backup_dir, GeneralSettings.settings["download_directory"]]
-for directory in DIRECTORIES:
-    # print("Checking Accesibility :", directory)
-    if not FileUtility.is_accessible(directory):
-        AlertWindow(
-            master=app,
-            alert_msg="run_as_admin_mode",
-            ok_button_display=True,
-            ok_button_callback=app.on_app_closing,
-            callback=app.on_app_closing,
-            width=int(450 * scale),
-            height=int(130 * scale)
-        )
+app.run_accessibility_check()
 
 # configure services
 LoadManager.initialize(app.update_active_videos_count_status)

@@ -70,7 +70,11 @@ class App(ctk.CTk):
         # this var used to track status of geometry tracker. it's running or not
         # if it's running already running it's not be start again
         self.is_geometry_changes_tracker_running = False
-
+        
+        # Track app accessibility to all directories required
+        self.is_accessible_to_required_dirs  = True
+        self.is_app_running = True
+        
         # download method
         self.selected_download_mode = "video"
 
@@ -1399,10 +1403,12 @@ class App(ctk.CTk):
         Args:
             restart (bool, optional): Whether to restart the application. Defaults to False.
         """
-        GeneralSettings.settings['window_geometry'] = self.geometry()
-        GeneralSettings.save_settings()
-        self.clear_temporally_saved_files()
+        if self.is_accessible_to_required_dirs :
+            GeneralSettings.settings['window_geometry'] = self.geometry()
+            GeneralSettings.save_settings()
+            self.clear_temporally_saved_files()
         self.destroy()
+        self.is_app_running = False
         if not restart:
             os._exit(0)
 
@@ -1516,3 +1522,30 @@ class App(ctk.CTk):
         """
         self.update_check_thread = threading.Thread(target=self.check_for_updates, daemon=True)
         self.update_check_thread.start()
+
+    def check_accessibility(self):
+        scale = AppearanceSettings.settings["scale_r"]
+        DIRECTORIES = [GeneralSettings.backup_dir, GeneralSettings.settings["download_directory"], "data", "assets", "temp"]
+        for directory in DIRECTORIES:
+            # print("Checking Accesibility :", directory)
+            if not FileUtility.is_accessible(directory):
+                self.is_accessible_to_required_dirs  = False
+                AlertWindow(
+                    master=self,
+                    original_configure_callback=self.run_geometry_changes_tracker,
+                    alert_msg="run_as_admin_mode",
+                    ok_button_display=True,
+                    ok_button_callback=self.on_app_closing,
+                    wait_for_previous=True,
+                    callback=self.on_app_closing,
+                    width=int(450 * scale),
+                    height=int(130 * scale)
+                )
+                
+    def run_accessibility_check(self):
+        """
+        Run the accessibilit check in a separate thread.
+        """
+        self.update_check_thread = threading.Thread(target=self.check_accessibility, daemon=True)
+        self.update_check_thread.start()
+        
