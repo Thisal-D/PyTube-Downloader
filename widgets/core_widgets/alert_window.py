@@ -14,6 +14,7 @@ class AlertWindow(ctk.CTkToplevel):
     def __init__(
             self,
             master: ctk.CTk = None,
+            original_configure_callback : Callable = None,
             alert_msg: str = "something_went_wrong",
             ok_button_display: bool = None,
             ok_button_callback: Callable = None,
@@ -41,6 +42,7 @@ class AlertWindow(ctk.CTkToplevel):
         scale = AppearanceSettings.settings["scale_r"]
 
         self.master: ctk.CTk = master
+        self.original_configure_callback  = original_configure_callback 
         self.width = width
         self.height = height
         self.callback = callback
@@ -123,6 +125,8 @@ class AlertWindow(ctk.CTkToplevel):
         AlertWindow.Running = False
         if self.callback is not None:
             self.callback()
+        if self.original_configure_callback  is not None:
+            self.master.bind("<Configure>", self.original_configure_callback )
 
     def on_click_ok_button(self):
         if self.ok_button_callback is not None:
