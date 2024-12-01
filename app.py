@@ -1437,6 +1437,7 @@ class App(ctk.CTk):
         scale = AppearanceSettings.settings["scale_r"]
         AlertWindow(
             master=self,
+            original_configure_callback=self.run_geometry_changes_tracker,
             alert_msg="exit_confirmation",
             ok_button_display=True,
             cancel_button_display=True,
@@ -1499,6 +1500,7 @@ class App(ctk.CTk):
             if latest_version != current_version:
                 AlertWindow(
                     master=self,
+                    original_configure_callback=self.run_geometry_changes_tracker,
                     alert_msg="update_alert",
                     ok_button_display=True,
                     ok_button_callback=self.open_update_download_page,

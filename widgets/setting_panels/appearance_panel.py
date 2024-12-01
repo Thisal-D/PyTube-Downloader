@@ -218,6 +218,7 @@ class AppearancePanel(ctk.CTkFrame):
             scale = AppearanceSettings.settings["scale_r"]
             AlertWindow(
                 master=self.master.master,
+                original_configure_callback=self.master.master.run_geometry_changes_tracker,
                 alert_msg="scale_settings_reset_confirmation",
                 width=int(450 * scale),
                 height=int(130 * scale),
@@ -314,6 +315,7 @@ class AppearancePanel(ctk.CTkFrame):
         scale = AppearanceSettings.settings["scale_r"]
         AlertWindow(
             master=self.master.master,
+            original_configure_callback=self.master.master.run_geometry_changes_tracker,
             alert_msg="restart_confirmation",
             width=int(450 * scale),
             height=int(130 * scale),
