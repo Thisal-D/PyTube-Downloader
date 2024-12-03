@@ -34,7 +34,7 @@ class Video(ctk.CTkFrame):
             video_title: str = "-------",
             channel: str = "-------",
             thumbnails: List[PhotoImage] = (None, None),
-            notification_thumbnail_image_path: str = None,
+            notification_thumbnail_image_path: str = "",
             channel_url: str = "-------",
             length: int = 0):
 
