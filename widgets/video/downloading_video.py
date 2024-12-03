@@ -42,7 +42,7 @@ class DownloadingVideo(Video):
             channel_url: str = "-------",
             length: int = 0,
             thumbnails: List[PhotoImage] = (None, None),
-            notification_thumbnail_image_path: str = None,
+            notification_thumbnail_image_path: str = "",
             # video stream data
             video_stream_data: property = None,
             # video download callback utils @ only use if mode is video

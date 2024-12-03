@@ -12,10 +12,7 @@ class NotificationManager():
     
     # Application identifier for the toast notifications
     APP_ID = "PyTube Downloader"
-    
-    # Paths to the audio files for downloaded and failure notifications
-    COMPLETED_AUDIO_PATH = os.path.abspath("assets\\sounds\\completed.wav")
-    FAILED_AUDIO_PATH = os.path.abspath("assets\\sounds\\failed.ogg")
+
     queued_notifications = []
     running = False
     notification_duration = 6
@@ -111,6 +108,7 @@ class NotificationManager():
                     'valueStringOverride': "{}/{} Videos".format(completed_videos_count, total_videos_count)  # Videos completed/total
                 },
                 duration="short",
+                on_click=abs_file_path,  # Action on click
                 image=thumbnail_path,  # Thumbnail image
                 buttons=buttons,  # Buttons
             )
