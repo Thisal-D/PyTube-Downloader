@@ -246,7 +246,7 @@ class NetworkPanel(ctk.CTkFrame):
         self.automatic_download_quality_combo_box.configure(state="disabled")
         
         
-        self.load_thumbnail_switch.deselect()
+        self.load_thumbnail_switch.select()
         self.reload_automatically_switch.deselect()
         self.re_download_automatically_switch.deselect()
         
