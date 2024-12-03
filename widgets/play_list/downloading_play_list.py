@@ -5,8 +5,11 @@ from widgets.play_list import PlayList
 from widgets.video.downloading_video import DownloadingVideo
 from widgets.video.added_video import AddedVideo
 from utils import GuiUtils
-from settings import AppearanceSettings
-from services import LanguageManager
+from settings import AppearanceSettings, GeneralSettings
+from services import (
+    LanguageManager,
+    NotificationManager
+)
 
 
 class DownloadingPlayList(PlayList):
@@ -77,6 +80,7 @@ class DownloadingPlayList(PlayList):
                 video_title=added_video.video_title,
                 channel=added_video.channel,
                 thumbnails=added_video.thumbnails,
+                notification_thumbnail_image_path=added_video.notification_thumbnail_image_path,
                 video_stream_data=added_video.video_stream_data,
                 length=added_video.length,
                 # download mode
@@ -121,7 +125,8 @@ class DownloadingPlayList(PlayList):
             if video in self.downloading_videos:
                 self.downloading_videos.remove(video)
             if video in self.paused_videos:
-                self.paused_videos.remove(video)
+                self.paused_videos.remove(video)            
+            self.show_notification_for_video_state(self.failed_videos[-1])
         elif state == "downloading":
             self.downloading_videos.append(video)
             if video in self.waiting_videos:
@@ -141,6 +146,7 @@ class DownloadingPlayList(PlayList):
         elif state == "downloaded":
             self.downloaded_videos.append(video)
             self.downloading_videos.remove(video)
+            self.show_notification_for_video_state(self.downloaded_videos[-1])
 
         # if len is 0 that means all videos are remove :D
         if len(self.videos) != 0:
@@ -166,7 +172,7 @@ class DownloadingPlayList(PlayList):
             if len(self.downloading_videos) == 0 and len(self.waiting_videos) == 0 and \
                     len(self.failed_videos) == 0 and len(self.paused_videos) == 0:
                 self.set_downloading_completed()
-
+                
     def videos_progress_track(self):
         total_completion: float = 0
         for video in self.videos:
@@ -224,6 +230,30 @@ class DownloadingPlayList(PlayList):
         )
         self.playlist_download_complete_callback(self)
         self.kill()
+        
+    def show_notification_for_video_state(self, video: DownloadingVideo):
+        if video.download_state == "downloaded":
+            if self.playlist_video_count == len(self.downloaded_videos):
+                status_message = "Download Completed..!"
+            else:
+                status_message = "Downloading..."
+        elif video.download_state == "failed":
+            status_message = "Download Failed..!"
+        # Show Download completed Notification
+        NotificationManager.register(
+            playlist_title=self.playlist_title,
+            video_title=video.video_title,
+            channel_name=self.channel,
+            status_message=status_message,
+            total_videos_count=self.playlist_video_count,
+            completed_videos_count=len(self.downloaded_videos),
+            download_directory=video.download_directory,
+            download_file_name=video.download_file_name,
+            downloaded_file_size=video.bytes_downloaded,
+            download_mode=video.mode,
+            download_status=video.download_state,
+            thumbnail_path=video.notification_thumbnail_image_path
+        )
 
     # create widgets
     def create_widgets(self):

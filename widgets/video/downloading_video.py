@@ -13,7 +13,8 @@ from settings import (
 from services import (
     DownloadManager,
     LanguageManager,
-    VideoCountTracker
+    VideoCountTracker,
+    NotificationManager
 )
 from utils import (
     GuiUtils,
@@ -41,6 +42,7 @@ class DownloadingVideo(Video):
             channel_url: str = "-------",
             length: int = 0,
             thumbnails: List[PhotoImage] = (None, None),
+            notification_thumbnail_image_path: str = None,
             # video stream data
             video_stream_data: property = None,
             # video download callback utils @ only use if mode is video
@@ -81,6 +83,7 @@ class DownloadingVideo(Video):
         self.file_size: int = 0
         self.converted_file_size: str = "0 B"
         self.download_file_name: str = ""
+        self.download_directory: str = ""
         # Track automatically re download count
         self.automatically_re_download_count = 0
 
@@ -94,7 +97,8 @@ class DownloadingVideo(Video):
             thumbnails=thumbnails,
             video_title=video_title,
             channel=channel,
-            length=length
+            length=length,
+            notification_thumbnail_image_path = notification_thumbnail_image_path
         )
         
         self.set_video_data()
@@ -170,28 +174,28 @@ class DownloadingVideo(Video):
         Download the video.
         """
 
-        download_directory = f"{GeneralSettings.settings['download_directory']}\\"
+        self.download_directory = f"{GeneralSettings.settings['download_directory']}\\"
         if self.mode == "playlist" and GeneralSettings.settings["create_sep_path_for_playlists"]:
-            download_directory += (
+            self.download_directory += (
                 f"{FileUtility.sanitize_filename(self.channel)} - "
                 f"{FileUtility.sanitize_filename(self.playlist_title)}\\"
             )
         else:
             if GeneralSettings.settings["create_sep_path_for_videos_audios"]:
-                download_directory += f"{self.download_type}s\\"
+                self.download_directory += f"{self.download_type}s\\"
 
             if GeneralSettings.settings["create_sep_path_for_qualities"]:
-                download_directory += f"{self.download_quality}\\"
+                self.download_directory += f"{self.download_quality}\\"
 
-        if not os.path.exists(download_directory):
+        if not os.path.exists(self.download_directory):
             try:
-                FileUtility.create_directory(download_directory)
+                FileUtility.create_directory(self.download_directory)
             except Exception as error:
                 print(f"downloading_play_list.py L-187 : {error}")
                 self.set_downloading_failed()
                 return
 
-        self.download_file_name = download_directory + (
+        self.download_file_name = self.download_directory + (
             f"{FileUtility.sanitize_filename(f"{self.channel} - {self.video_title}")}"
         )
         
@@ -323,6 +327,7 @@ class DownloadingVideo(Video):
             return
         
         self.download_state = "failed"
+    
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)
             
@@ -339,6 +344,9 @@ class DownloadingVideo(Video):
                 anchor="w",
                 relx=1,
                 x=-80 * AppearanceSettings.settings["scale_r"])
+        
+        if self.mode == "video":
+            self.show_notification()
 
     def set_waiting(self):
         """
@@ -360,7 +368,7 @@ class DownloadingVideo(Video):
         """
         Set the status to 'downloaded' if the download is downloaded.
         """
-
+         
         DownloadManager.unregister_from_active(self)
         self.pause_resume_btn.place_forget()
         self.download_state = "downloaded"
@@ -369,8 +377,29 @@ class DownloadingVideo(Video):
             self.video_download_status_callback(self, self.download_state)
         if self.mode == "video":
             self.video_download_complete_callback(self)
+            self.show_notification()
             self.kill()
-
+    
+    def show_notification(self):
+        if self.download_state == "downloaded":
+            status_message = "Download Completed..!"
+        else:
+            status_message = "Download Failed..!"
+        # Show Download completed Notification
+        NotificationManager.register(
+            video_title=self.video_title,
+            channel_name=self.channel,
+            status_message=status_message,
+            download_type="{}/{}".format(self.download_type, self.download_quality),
+            file_size=self.file_size,
+            download_directory=self.download_directory,
+            download_file_name=self.download_file_name,
+            downloaded_file_size=self.bytes_downloaded,
+            download_mode=self.mode,
+            download_status=self.download_state,
+            thumbnail_path=self.notification_thumbnail_image_path
+        )
+    
     # create widgets
     def create_widgets(self):
         """
@@ -597,6 +626,7 @@ class DownloadingVideo(Video):
         del self.file_size
         del self.converted_file_size
         del self.download_file_name
+        del self.download_directory
         # Track automatically re download count
         del self.automatically_re_download_count
 
