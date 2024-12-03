@@ -126,7 +126,7 @@ class DownloadingPlayList(PlayList):
                 self.downloading_videos.remove(video)
             if video in self.paused_videos:
                 self.paused_videos.remove(video)            
-            self.show_notification_for_video_state(self.failed_videos[-1])
+            self.show_notification(self.failed_videos[-1])
         elif state == "downloading":
             self.downloading_videos.append(video)
             if video in self.waiting_videos:
@@ -146,7 +146,7 @@ class DownloadingPlayList(PlayList):
         elif state == "downloaded":
             self.downloaded_videos.append(video)
             self.downloading_videos.remove(video)
-            self.show_notification_for_video_state(self.downloaded_videos[-1])
+            self.show_notification(self.downloaded_videos[-1])
 
         # if len is 0 that means all videos are remove :D
         if len(self.videos) != 0:
@@ -231,29 +231,30 @@ class DownloadingPlayList(PlayList):
         self.playlist_download_complete_callback(self)
         self.kill()
         
-    def show_notification_for_video_state(self, video: DownloadingVideo):
-        if video.download_state == "downloaded":
-            if self.playlist_video_count == len(self.downloaded_videos):
-                status_message = "Download Completed..!"
-            else:
-                status_message = "Downloading..."
-        elif video.download_state == "failed":
-            status_message = "Download Failed..!"
-        # Show Download completed Notification
-        NotificationManager.register(
-            playlist_title=self.playlist_title,
-            video_title=video.video_title,
-            channel_name=self.channel,
-            status_message=status_message,
-            total_videos_count=self.playlist_video_count,
-            completed_videos_count=len(self.downloaded_videos),
-            download_directory=video.download_directory,
-            download_file_name=video.download_file_name,
-            downloaded_file_size=video.bytes_downloaded,
-            download_mode=video.mode,
-            download_status=video.download_state,
-            thumbnail_path=video.notification_thumbnail_image_path
-        )
+    def show_notification(self, video: DownloadingVideo):
+        if GeneralSettings.settings["alerts"]:
+            if video.download_state == "downloaded":
+                if self.playlist_video_count == len(self.downloaded_videos):
+                    status_message = "Download Completed..!"
+                else:
+                    status_message = "Downloading..."
+            elif video.download_state == "failed":
+                status_message = "Download Failed..!"
+            # Show Download completed Notification
+            NotificationManager.register(
+                playlist_title=self.playlist_title,
+                video_title=video.video_title,
+                channel_name=self.channel,
+                status_message=status_message,
+                total_videos_count=self.playlist_video_count,
+                completed_videos_count=len(self.downloaded_videos),
+                download_directory=video.download_directory,
+                download_file_name=video.download_file_name,
+                downloaded_file_size=video.bytes_downloaded,
+                download_mode=video.mode,
+                download_status=video.download_state,
+                thumbnail_path=video.notification_thumbnail_image_path
+            )
 
     # create widgets
     def create_widgets(self):

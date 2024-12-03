@@ -86,5 +86,6 @@
     "force_exit": "Force Exit",
     "minimize_to_tray": "Minimize To Tray",
     "reset": "Reset",
-    "update_alert": "A new update is available! \nVisit the official website to download the \nlatest version."
+    "update_alert": "A new update is available! \nVisit the official website to download the \nlatest version.",
+    "alerts" : "Alerts"
 }

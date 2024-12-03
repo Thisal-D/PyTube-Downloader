@@ -1,4 +1,5 @@
-{
+{   
+    "alerts": true,    
     "automatic_download": {
         "quality": 0,
         "status": "disable"
@@ -15,5 +16,5 @@
     "re_download_automatically": false,
     "reload_automatically": false,
     "update_delay": 0.5,
-    "window_geometry": "900x500+0+0"
+    "window_geometry": "900x500+-7+0"
 }

@@ -77,7 +77,7 @@ class SettingPanel(ctk.CTkFrame):
         self.set_widgets_accent_color()
         self.set_widgets_sizes()
         self.place_widgets()
-
+        
     def place_widgets(self) -> None:
         self.navigation_panel.pack(side="left", fill="y")
         self.vertical_line.pack(side="left", fill="y")
