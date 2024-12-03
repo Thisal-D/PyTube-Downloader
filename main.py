@@ -14,6 +14,7 @@ from services import (
     VideoCountTracker
 )
 
+
 # Initialize app.
 app = App()
 

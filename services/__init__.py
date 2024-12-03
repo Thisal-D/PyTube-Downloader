@@ -4,3 +4,4 @@ from .download_manager import DownloadManager
 from .theme_manager import ThemeManager
 from .language_manager import LanguageManager
 from .video_count_tracker import VideoCountTracker
+from .notification_manager import NotificationManager

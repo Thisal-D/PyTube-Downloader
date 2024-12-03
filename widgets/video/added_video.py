@@ -61,7 +61,7 @@ class AddedVideo(Video):
         self.mode: Literal["video", "playlist"] = mode
         # Track automatically reload count
         self.automatically_reload_count: int = 0
-
+        
         super().__init__(
             root=root,
             master=master,
@@ -119,11 +119,13 @@ class AddedVideo(Video):
         else:
             is_thumbnail_need_to_crop = False
 
+        self.notification_thumbnail_image_path = FileUtility.get_available_file_name(thumbnail_save_directory + file_name + "-normal-notify-changed.png")
         if is_thumbnail_need_to_crop:
             ignore_pos = int(image_height * 0.25 / 2)
             start_pos = (0, ignore_pos)
             end_pos = (image_width, image_height - ignore_pos)
             thumbnail = ImageUtility.crop_image(image=thumbnail, start_position=start_pos, end_position=end_pos)
+            thumbnail.save(self.notification_thumbnail_image_path)
 
         thumbnail_hover = ImageUtility.create_image_with_hover_effect(image=thumbnail, intensity_increase=50)
 

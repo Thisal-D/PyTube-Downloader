@@ -1228,6 +1228,7 @@ class App(ctk.CTk):
             video_stream_data=video.video_stream_data,
             length=video.length,
             thumbnails=video.thumbnails,
+            notification_thumbnail_image_path=video.notification_thumbnail_image_path,
             # download info
             download_quality=video.download_quality,
             download_type=video.download_type,

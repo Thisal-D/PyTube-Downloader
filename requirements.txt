@@ -6,3 +6,4 @@ pyautogui
 pystray
 pyperclip
 pytubefix
+win11toast

@@ -34,6 +34,7 @@ class Video(ctk.CTkFrame):
             video_title: str = "-------",
             channel: str = "-------",
             thumbnails: List[PhotoImage] = (None, None),
+            notification_thumbnail_image_path: str = None,
             channel_url: str = "-------",
             length: int = 0):
 
@@ -64,6 +65,8 @@ class Video(ctk.CTkFrame):
         self.video_length_label: Union[ctk.CTkLabel, None] = None
         self.thumbnail_btn: Union[ThumbnailButton, None] = None
         self.remove_btn: Union[ctk.CTkButton, None] = None
+        
+        self.notification_thumbnail_image_path: str = notification_thumbnail_image_path # for notification
 
         from widgets import ContextMenu
         self.context_menu: Union['ContextMenu', None] = None
