@@ -344,7 +344,7 @@ class DownloadingVideo(Video):
                 anchor="w",
                 relx=1,
                 x=-80 * AppearanceSettings.settings["scale_r"])
-        
+
         if self.mode == "video":
             self.show_notification()
 
@@ -381,24 +381,25 @@ class DownloadingVideo(Video):
             self.kill()
     
     def show_notification(self):
-        if self.download_state == "downloaded":
-            status_message = "Download Completed..!"
-        else:
-            status_message = "Download Failed..!"
-        # Show Download completed Notification
-        NotificationManager.register(
-            video_title=self.video_title,
-            channel_name=self.channel,
-            status_message=status_message,
-            download_type="{}/{}".format(self.download_type, self.download_quality),
-            file_size=self.file_size,
-            download_directory=self.download_directory,
-            download_file_name=self.download_file_name,
-            downloaded_file_size=self.bytes_downloaded,
-            download_mode=self.mode,
-            download_status=self.download_state,
-            thumbnail_path=self.notification_thumbnail_image_path
-        )
+        if GeneralSettings.settings["alerts"]:
+            if self.download_state == "downloaded":
+                status_message = "Download Completed..!"
+            else:
+                status_message = "Download Failed..!"
+            # Show Download completed Notification
+            NotificationManager.register(
+                video_title=self.video_title,
+                channel_name=self.channel,
+                status_message=status_message,
+                download_type="{}/{}".format(self.download_type, self.download_quality),
+                file_size=self.file_size,
+                download_directory=self.download_directory,
+                download_file_name=self.download_file_name,
+                downloaded_file_size=self.bytes_downloaded,
+                download_mode=self.mode,
+                download_status=self.download_state,
+                thumbnail_path=self.notification_thumbnail_image_path
+            )
     
     # create widgets
     def create_widgets(self):

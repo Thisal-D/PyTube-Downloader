@@ -94,6 +94,27 @@ class GeneralPanel(ctk.CTkFrame):
                 )
             self.shortcut_keys_widgets_info.append(shortcut_keys_widgets_info_dict)
         
+        self.alerts_state_label = ctk.CTkLabel(
+            master=self,
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
+        )
+
+        self.dash3_label = ctk.CTkLabel(
+            master=self,
+            text=":",
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"]
+        )
+
+        self.alerts_state_switch_state = ctk.BooleanVar(value=None)
+        self.alerts_state_change_switch = ctk.CTkSwitch(
+            master=self,
+            text="",
+            command=self.change_alerts_state,
+            onvalue=True,
+            offvalue=False,
+            variable=self.alerts_state_switch_state
+        )
+        
         self.settings_reset_button = ctk.CTkButton(master=self, text_color=AppearanceSettings.settings["settings_panel"]["text_color"], command=self.reset_settings)    
         
         # callbacks for settings changes
@@ -113,7 +134,14 @@ class GeneralPanel(ctk.CTkFrame):
     def reset_settings(self):
         # Reset language to english and apply it
         self.languages_combo_box.set("English")
+        self.alerts_state_change_switch.select()
+        self.change_alerts_state()
+        
         self.apply_language("English")
+        
+    def change_alerts_state(self):
+        GeneralSettings.settings["alerts"] = self.alerts_state_switch_state.get()
+        self.general_settings_change_callback()
         
     def apply_language(self, language: str) -> None:
         lang_code = self.language_data[language]
@@ -135,6 +163,12 @@ class GeneralPanel(ctk.CTkFrame):
         self.settings_reset_button.configure(
             fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
             hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
+        )
+    
+        self.alerts_state_change_switch.configure(
+            button_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+            button_hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
+            progress_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
         )
 
     def update_widgets_accent_color(self):
@@ -170,8 +204,12 @@ class GeneralPanel(ctk.CTkFrame):
             shortcut_widget_info["key_frame"].grid(row=i, column=2, pady=(4 * scale, 0), sticky="w")
             for button in shortcut_widget_info["buttons"]:
                 button.pack(side="left", padx=(2 * scale, 0))
-                
-        self.settings_reset_button.grid(row=2, column=2, padx=(100, 0), pady=(pady, 0), sticky="e")
+        
+        self.alerts_state_label.grid(row=2, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
+        self.dash3_label.grid(row=2, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
+        self.alerts_state_change_switch.grid(row=2, column=2, padx=(0, 0), pady=(pady, 0), sticky="w")
+        
+        self.settings_reset_button.grid(row=3, column=2, padx=(100, 0), pady=(pady, 0), sticky="s")
         
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
@@ -183,6 +221,8 @@ class GeneralPanel(ctk.CTkFrame):
             for button in shortcut_widget_info["buttons"]:
                 button.configure(width=1, height=24 * scale)
 
+        self.alerts_state_change_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
+        
         self.settings_reset_button.configure(width=80*scale, height=24 * scale)
         
     def set_widgets_texts(self):
@@ -196,6 +236,10 @@ class GeneralPanel(ctk.CTkFrame):
             text=LanguageManager.data["reset"]
         )
         
+        self.alerts_state_label.configure(
+            text=LanguageManager.data["alerts"]
+        )
+        
     def update_widgets_text(self):
         self.set_widgets_texts()
 
@@ -207,7 +251,8 @@ class GeneralPanel(ctk.CTkFrame):
         self.dash1_label.configure(font=title_font)
         self.shortcut_label.configure(font=title_font)
         self.dash2_label.configure(font=title_font)
-
+        self.alerts_state_label.configure(font=title_font)
+        
         value_font = ("Segoe UI", 13 * scale, "normal")
         self.languages_combo_box.configure(font=value_font, dropdown_font=value_font)
         
@@ -230,3 +275,7 @@ class GeneralPanel(ctk.CTkFrame):
         set values for widgets using saved settings.
         """
         self.languages_combo_box.set(GeneralSettings.settings["language"])
+        
+        if GeneralSettings.settings["alerts"]:
+            self.alerts_state_change_switch.select()
+            self.alerts_state_switch_state.set(True)
