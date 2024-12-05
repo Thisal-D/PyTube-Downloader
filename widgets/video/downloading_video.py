@@ -383,9 +383,10 @@ class DownloadingVideo(Video):
     def show_notification(self):
         if GeneralSettings.settings["alerts"]:
             if self.download_state == "downloaded":
-                status_message = "Download Completed..!"
+                status_message = LanguageManager.data["download_completed_notifi"]
             else:
-                status_message = "Download Failed..!"
+                status_message = LanguageManager.data["download_failed_notifi"]
+        
             # Show Download completed Notification
             NotificationManager.register(
                 video_title=self.video_title,

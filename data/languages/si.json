@@ -87,6 +87,9 @@
     "minimize_to_tray": "ට්‍රේ එකට Minimize කරන්න",
     "reset": "නෑවත සකසන්න",
     "update_alert": "නව අනුවාදයක් තිබේ!\nනවතම අනුවාදය බාගැනීමට කරුණාකර \nනිල වෙබ් අඩවියට පිවිසෙන්න.",
-    "alerts": "දැනුම්දීම්"
+    "alerts": "දැනුම්දීම්",
+    "download_completed_notifi": "භාගත කිරීම සම්පූර්ණයි...",
+    "download_failed_notifi": "භාගත කිරීම අසාර්ථක විය...",
+    "downloading_notifi": "භාගත කරමින්..."
 }
  
