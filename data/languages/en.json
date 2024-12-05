@@ -87,5 +87,8 @@
     "minimize_to_tray": "Minimize To Tray",
     "reset": "Reset",
     "update_alert": "A new update is available! \nVisit the official website to download the \nlatest version.",
-    "alerts" : "Alerts"
+    "alerts" : "Alerts",
+    "download_completed_notifi" : "Download Completed...",
+    "download_failed_notifi" : "Download Failed...",
+    "downloading_notifi" : "Downloading..."
 }

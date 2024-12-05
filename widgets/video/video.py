@@ -119,8 +119,8 @@ class Video(ctk.CTkFrame):
         self.close_context_menu_directly("event")
 
     def remove(self):
-        self.kill()
         self.close_context_menu_directly("event")
+        self.kill()
 
     def create_widgets(self):
         """Create widgets."""
