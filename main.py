@@ -1,6 +1,5 @@
 from app import App
 import customtkinter as ctk
-from widgets import AlertWindow
 from settings import (
     AppearanceSettings,
     GeneralSettings

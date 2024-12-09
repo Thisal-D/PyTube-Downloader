@@ -227,6 +227,10 @@ class AddedPlayList(PlayList):
             
         self.resolution_select_menu.configure(command=self.select_download_option)
 
+    def download_playlist(self):
+        self.root.fade_effect()
+        self.playlist_download_button_click_callback(self)
+        
     def select_download_option(self, e):
         selected_index = self.resolution_select_menu.cget("values").index(e)
         if selected_index != 0:
@@ -250,7 +254,7 @@ class AddedPlayList(PlayList):
             master=self.sub_frame,
             state="disabled",
             hover=False,
-            command=lambda: self.playlist_download_button_click_callback(self)
+            command=self.download_playlist
         )
         self.status_label = ctk.CTkLabel(master=self.sub_frame)
         self.reload_btn = ctk.CTkButton(

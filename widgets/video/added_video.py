@@ -211,6 +211,10 @@ class AddedVideo(Video):
         except Exception as error:
             print(f"added_video.py L-201 : {error}")
             self.set_loading_failed()
+            
+    def download_video(self):
+        self.root.fade_effect()
+        self.video_download_button_click_callback(self)
 
     def choose_download_type(self, e: str):
         self.download_quality = e.replace(" ", "").split("|")[0]
@@ -310,7 +314,7 @@ class AddedVideo(Video):
             master=self.sub_frame,
             state="disabled",
             hover=False,
-            command=lambda: self.video_download_button_click_callback(self),
+            command=self.download_video
         )
         self.status_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.reload_btn = ctk.CTkButton(master=self, text="⟳", command=self.reload_video, hover=False)

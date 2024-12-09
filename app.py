@@ -1169,6 +1169,29 @@ class App(ctk.CTk):
         self.navigate_downloading_btn.configure(text=LanguageManager.data["downloading"] + f" ({str(downloading_video_count)})")
         self.navigate_downloaded_btn.configure(text=LanguageManager.data["downloaded"] + f" ({str(downloaded_video_count)})")
 
+    def fade_effect(self) -> None:
+        """
+        Apply a fade effect to the application.
+        """
+        fade_out_to = AppearanceSettings.settings["opacity_r"] - 0.15
+        
+        def fade_out(alpha):
+            print(alpha)
+            if alpha > fade_out_to:
+                self.attributes("-alpha", alpha)
+                self.after(25, fade_out, alpha - 0.025)
+            else:
+                fade_in(fade_out_to)
+
+        def fade_in(alpha):
+            if AppearanceSettings.settings["opacity_r"] >= alpha:
+                self.attributes("-alpha", alpha)
+                self.after(25, fade_in, alpha + 0.025)
+            else:
+                self.attributes("-alpha", AppearanceSettings.settings["opacity_r"])
+            
+        fade_out(AppearanceSettings.settings["opacity_r"])
+        
     def add_video_playlist(self) -> None:
         """
         Add a video or playlist to the content.
@@ -1181,6 +1204,9 @@ class App(ctk.CTk):
             return
         
         self.is_content_added = True
+        
+        # Show fade effect
+        self.fade_effect()
         
         if self.selected_download_mode == "video":
             AddedVideo(
@@ -1215,6 +1241,7 @@ class App(ctk.CTk):
         """
         self.is_content_downloading = True
         self.downloading_frame_info_label.place_forget()
+        
         DownloadingVideo(
             root=self,
             master=self.downloading_content_scroll_frame,
