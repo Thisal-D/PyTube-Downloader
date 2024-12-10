@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import threading
 from typing import List, Literal, Union, Callable
 from widgets.play_list import PlayList
 from widgets.video.downloading_video import DownloadingVideo
