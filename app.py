@@ -1176,7 +1176,6 @@ class App(ctk.CTk):
         fade_out_to = AppearanceSettings.settings["opacity_r"] - 0.15
         
         def fade_out(alpha):
-            print(alpha)
             if alpha > fade_out_to:
                 self.attributes("-alpha", alpha)
                 self.after(25, fade_out, alpha - 0.025)
