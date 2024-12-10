@@ -62,7 +62,7 @@ class DownloadingPlayList(PlayList):
 
         self.channel_btn.configure(state="normal")
         self.indicate_waiting()
-        threading.Thread(target=self.download_videos, daemon=True).start()
+        self.download_videos()
 
     def download_videos(self):
         for added_video in self.added_videos:

@@ -2,6 +2,7 @@ from widgets.play_list import PlayList
 from widgets.video.downloaded_video import DownloadedVideo
 from widgets.video.downloading_video import DownloadingVideo
 import customtkinter as ctk
+import threading
 from typing import Literal, List
 from utils import GuiUtils
 from settings import AppearanceSettings
@@ -39,7 +40,6 @@ class DownloadedPlayList(PlayList):
             playlist_video_count=playlist_video_count,
         )
 
-        # threading.Thread(target=self.display_downloaded_widgets, daemon=True).start()
         self.display_downloaded_widgets()
 
     def display_downloaded_widgets(self):
