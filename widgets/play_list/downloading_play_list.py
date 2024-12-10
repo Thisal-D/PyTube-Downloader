@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import threading
 from typing import List, Literal, Union, Callable
 from widgets.play_list import PlayList
 from widgets.video.downloading_video import DownloadingVideo
@@ -62,7 +61,7 @@ class DownloadingPlayList(PlayList):
 
         self.channel_btn.configure(state="normal")
         self.indicate_waiting()
-        threading.Thread(target=self.download_videos, daemon=True).start()
+        self.download_videos()
 
     def download_videos(self):
         for added_video in self.added_videos:

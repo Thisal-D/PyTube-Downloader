@@ -39,7 +39,6 @@ class DownloadedPlayList(PlayList):
             playlist_video_count=playlist_video_count,
         )
 
-        # threading.Thread(target=self.display_downloaded_widgets, daemon=True).start()
         self.display_downloaded_widgets()
 
     def display_downloaded_widgets(self):
