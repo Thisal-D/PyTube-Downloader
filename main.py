@@ -10,7 +10,8 @@ from services import (
     ThemeManager,
     LoadingIndicateManager,
     LanguageManager,
-    VideoCountTracker
+    VideoCountTracker,
+    VideoConvertManager
 )
 
 
@@ -32,6 +33,7 @@ app.run_accessibility_check()
 LoadManager.initialize(app.update_active_videos_count_status)
 DownloadManager.initialize(app.update_active_videos_count_status)
 VideoCountTracker.initialize(app.update_total_videos_count_status)
+VideoConvertManager.initialize()
 ThemeManager.initialize()
 LoadingIndicateManager.initialize()
 

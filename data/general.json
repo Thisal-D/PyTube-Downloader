@@ -1,5 +1,5 @@
-{   
-    "alerts": true,    
+{
+    "alerts": true,
     "automatic_download": {
         "quality": 0,
         "status": "disable"
@@ -13,6 +13,7 @@
     "load_thumbnail": true,
     "max_simultaneous_downloads": 1,
     "max_simultaneous_loads": 1,
+    "max_simultaneous_converts": 1,
     "re_download_automatically": false,
     "reload_automatically": false,
     "update_delay": 0.5,

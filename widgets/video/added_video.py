@@ -44,6 +44,7 @@ class AddedVideo(Video):
         # download info
         self.download_quality: Literal["128kbps", "360p", "720p"] = "720p"
         self.download_type: Literal["Audio", "Video"] = "Video"
+        self.selected_download_type_info: Dict = None
         # callback utils
         self.video_download_button_click_callback: Callable = video_download_button_click_callback
         self.video_load_status_callback: Callable = video_load_status_callback
@@ -217,11 +218,15 @@ class AddedVideo(Video):
         self.video_download_button_click_callback(self)
 
     def choose_download_type(self, e: str):
+        selected_download_index = self.resolution_select_menu.cget("values").index(self.resolution_select_menu.get())
         self.download_quality = e.replace(" ", "").split("|")[0]
         if "kbps" in self.download_quality:
             self.download_type = "Audio"
         elif "p" in self.download_quality:
             self.download_type = "Video"
+            
+        self.selected_download_type_info = self.support_download_types[selected_download_index]
+        # print("selected_download_type_info", self.selected_download_type_info)
 
     def set_waiting(self):
         self.thumbnail_btn.run_loading_animation()

@@ -1,9 +1,12 @@
 from widgets.video import Video
 import customtkinter as ctk
 import threading
+import subprocess
 import os
+import sys
+import re
 from tkinter import PhotoImage
-from typing import Literal, List, Union
+from typing import Literal, List, Union, Dict
 from pytube import request as pytube_request
 import time
 from settings import (
@@ -14,7 +17,8 @@ from services import (
     DownloadManager,
     LanguageManager,
     VideoCountTracker,
-    NotificationManager
+    NotificationManager,
+    VideoConvertManager
 )
 from utils import (
     GuiUtils,
@@ -35,6 +39,7 @@ class DownloadingVideo(Video):
             # download quality & type
             download_quality: Literal["128kbps", "360p", "720p"] = "720p",
             download_type: Literal["Video", "Audio"] = "Video",
+            download_type_info: Dict = None,
             # video details
             video_title: str = "-------",
             channel: str = "-------",
@@ -65,6 +70,7 @@ class DownloadingVideo(Video):
         self.download_quality: Literal["128kbps", "360p", "720p"] = download_quality
         self.download_type: Literal["Video", "Audio"] = download_type
         self.video_stream_data: property = video_stream_data
+        self.download_type_info = download_type_info
         # download mode
         self.playlist_title: str = playlist_title
         self.mode: Literal["video", "playlist"] = mode
@@ -86,6 +92,14 @@ class DownloadingVideo(Video):
         self.download_directory: str = ""
         # Track automatically re download count
         self.automatically_re_download_count = 0
+        
+        self.audio_for_video_download_completed: bool = False
+        self.video_download_completed: bool = False
+        self.audio_download_completed: bool = False
+        self.audio_only_file_name: str = ""
+        self.video_only_file_name: str = ""
+        self.total_bytes_downloaded: int = 0
+        self.converted_file_name: str = ""
 
         super().__init__(
             root=root,
@@ -110,7 +124,7 @@ class DownloadingVideo(Video):
         """
         Start the video download process.
         """
-        threading.Thread(target=self.retrieve_file, daemon=True).start()
+        threading.Thread(target=self.configure_downloading, daemon=True).start()
         self.set_pause_btn()
         self.pause_resume_btn.place(
             rely=0.5,
@@ -168,13 +182,19 @@ class DownloadingVideo(Video):
                 text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
                 text=LanguageManager.data["downloaded"]
             )
-
-    def retrieve_file(self):
-        """
-        Download the video.
-        """
-
+            
+    def configure_downloading(self):
+        # print("Configure Downloading : configure_downloading()")
+        self.download_type_label.configure(text=f"{LanguageManager.data[self.download_type.lower()]} : "
+                                                f"{self.download_quality}")
+        self.file_size = self.download_type_info["size"]
+        self.converted_file_size = ValueConvertUtility.convert_size(self.file_size, 2)
+        self.download_file_name = FileUtility.get_available_file_name(self.download_file_name)
+        self.set_downloading_progress()
+        
         self.download_directory = f"{GeneralSettings.settings['download_directory']}\\"
+        
+        
         if self.mode == "playlist" and GeneralSettings.settings["create_sep_path_for_playlists"]:
             self.download_directory += (
                 f"{FileUtility.sanitize_filename(self.channel)} - "
@@ -191,7 +211,7 @@ class DownloadingVideo(Video):
             try:
                 FileUtility.create_directory(self.download_directory)
             except Exception as error:
-                print(f"downloading_play_list.py L-187 : {error}")
+                print(f"downloading_video.py L-213 : {error}")
                 self.set_downloading_failed()
                 return
 
@@ -199,29 +219,72 @@ class DownloadingVideo(Video):
             f"{FileUtility.sanitize_filename(f"{self.channel} - {self.video_title}")}"
         )
         
+        while (self.download_state == "downloading"):
+            self.set_download_files_info()
+            
+    def set_for_converting(self):
+        DownloadManager.unregister_from_active(self)
+        self.pause_resume_btn.place_forget()
+        VideoConvertManager.register(self)
+            
+    def set_download_files_info(self):
+        """
+        Download the video.
+        """
+
+        # print("Set Download Files Info : set_download_files_info()")
         try:
-            if self.download_type == "Video":
-                stream = self.video_stream_data.get_by_resolution(self.download_quality)
-                self.download_file_name += ".mp4"
-            else:
-                stream = self.video_stream_data.get_audio_only()
-                self.download_file_name += ".mp3"
+            if self.download_type_info["type"] == "video" and not self.video_download_completed:
+                    if not self.download_type_info["inbuilt_audio"]:
+                        self.video_only_file_name =  FileUtility.get_available_file_name(f"{GeneralSettings.settings['download_directory']}\\temp-audio.mp3")
+                        current_download_file_name = self.video_only_file_name
+                        current_download_type = "video_only"
+                    else:
+                        self.download_file_name =  FileUtility.get_available_file_name(self.download_file_name + ".mp4")
+                        current_download_file_name = self.download_file_name
+                        current_download_type = "video"
+                    current_stream = self.video_stream_data.get_by_itag(self.download_type_info["itag"])
+                    
+            elif self.download_type_info["type"] == "video" and self.video_download_completed:
+                if not self.audio_for_video_download_completed:
+                    self.audio_only_file_name =  FileUtility.get_available_file_name(f"{GeneralSettings.settings['download_directory']}\\temp-audio.mp3")
+                    current_download_file_name = self.audio_only_file_name
+                    current_stream = self.video_stream_data.get_audio_only()
+                    current_download_type = "audio_for_video"
+                        
+            elif  self.download_type_info["type"] == "audio" and not self.audio_download_completed:
+                self.download_file_name =  FileUtility.get_available_file_name(self.download_file_name + ".mp3")
+                current_download_file_name = self.download_file_name
+                current_stream = self.video_stream_data.get_audio_only()
+                current_download_type = "audio"
+        
         except Exception as error:
-            print(f"downloading_play_list.py L-205 : {error}")
+            print(f"downloading_video.py L-261 : {error}")
             self.set_downloading_failed()
             return
+    
+        if  self.download_type_info["type"] == "video" and self.video_download_completed and self.audio_for_video_download_completed and not self.download_type_info["inbuilt_audio"]:
+            self.set_for_converting()
+            
+        if  self.download_type_info["type"] == "video" and self.video_download_completed and self.download_type_info["inbuilt_audio"]:
+            self.set_downloading_completed()
+            
+        elif self.download_type_info["type"] == "audio" and self.audio_download_completed:
+            self.set_downloading_completed()
+        else:
+            self.download_file(
+                download_stream=current_stream, 
+                download_file_name=current_download_file_name, 
+                download_file_size=current_stream.filesize,
+                download_type=current_download_type
+            )
 
+    def download_file(self, download_stream, download_file_name: str, download_file_size: int, download_type: Literal["audio", "video", "video_only", "audio_for_video"] = None):        
+        # print("Called Download File : download_file()")
         self.bytes_downloaded = 0
-        self.download_type_label.configure(text=f"{LanguageManager.data[self.download_type.lower()]} : "
-                                                f"{self.download_quality}")
-        self.file_size = stream.filesize
-        self.converted_file_size = ValueConvertUtility.convert_size(self.file_size, 2)
-        self.download_file_name = FileUtility.get_available_file_name(self.download_file_name)
-        self.set_downloading_progress()
-
         try:
-            with open(self.download_file_name, "wb") as self.video_file:
-                stream = pytube_request.stream(stream.url)
+            with open(download_file_name, "wb") as self.downloading_file:
+                stream = pytube_request.stream(download_stream.url)
                 while 1:
                     try:
                         time_s = time.time()
@@ -241,30 +304,105 @@ class DownloadingVideo(Video):
                         chunk = next(stream, None)
                         time_e = time.time()
                         if chunk:
-                            self.video_file.write(chunk)
+                            self.downloading_file.write(chunk)
                             self.net_speed_label.configure(
                                 text=ValueConvertUtility.convert_size(
-                                    ((self.bytes_downloaded + len(chunk)) - self.bytes_downloaded) / (time_e - time_s),
+                                    len(chunk) / (time_e - time_s),
                                     1
                                 ) + "/s"
                             )
                             self.bytes_downloaded += len(chunk)
+                            self.total_bytes_downloaded += len(chunk)
                             self.set_downloading_progress()
                         else:
-                            if self.bytes_downloaded == self.file_size:
-                                self.set_downloading_completed()
+                            if self.bytes_downloaded == download_file_size:
+                                if download_type == "audio":
+                                    self.audio_download_completed = True
+                                elif download_type == "video":
+                                    self.video_download_completed = True
+                                    self.audio_for_video_download_completed = True
+                                elif download_type == "video_only":
+                                    self.video_download_completed = True
+                                elif download_type == "audio_for_video":
+                                    self.audio_for_video_download_completed = True
                                 break
                             else:
                                 self.set_downloading_failed()
                                 break
                     except Exception as error:
-                        print(f"downloading_video.py L-235 : {error}")
+                        print(f"downloading_video.py L-332 : {error}")
                         self.set_downloading_failed()
                         break
         except Exception as error:
-            print(f"downloading_video.py L-239 : {error}")
+            print(f"downloading_video.py L-336 : {error}")
             self.set_downloading_failed()
+    
+    def convert_video(self):
+        try:
+            self.status_label.configure(text="Converting")
+            
+            self.download_file_name = FileUtility.get_available_file_name(
+                self.download_file_name + ".mp4"
+            )
+            
+            self.converted_file_name = FileUtility.get_available_file_name(f"{GeneralSettings.settings['download_directory']}\\temp-converting.mp4")
+            
+            command = [
+                VideoConvertManager.FFMPEG_PATH,
+                "-i", self.video_only_file_name,
+                "-i", self.audio_only_file_name,
+                "-map", "0:v:0",  # Map the video stream from the first input (video file)
+                "-map", "1:a:0",  # Map the audio stream from the second input (audio file)
+                "-c:v", "copy",
+                "-c:a", "aac",
+                self.converted_file_name,
+                "-y"  # Overwrite the output file if it exists
+            ]
 
+            # Start the process
+            process = subprocess.Popen(
+                command,
+                stderr=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
+                universal_newlines=True,
+                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+            )
+
+            duration = None
+            progress = 0
+
+            # Read FFmpeg output in real-time
+            for line in process.stderr:
+                # Extract total duration
+                if duration is None:
+                    duration_match = re.search(r"Duration: (\d+):(\d+):(\d+\.\d+)", line)
+                    if duration_match:
+                        hours, minutes, seconds = map(float, duration_match.groups())
+                        duration = hours * 3600 + minutes * 60 + seconds
+
+                # Extract current time
+                time_match = re.search(r"time=(\d+):(\d+):(\d+\.\d+)", line)
+                if time_match and duration:
+                    hours, minutes, seconds = map(float, time_match.groups())
+                    current_time = hours * 3600 + minutes * 60 + seconds
+                    progress = (current_time / duration) * 100
+
+                    # Invoke the callback with progress
+                    self.set_convert_progress(progress)
+
+            # Wait for the process to finish
+            process.wait()
+
+            # Check if the process was successful
+            if process.returncode == 0:
+                self.set_converting_completed()
+                self.set_downloading_completed()
+            else:
+                self.set_downloading_failed()
+        except Exception as error:
+            print("downloading_video.py L-400 : ", error)
+            self.set_converting_failed()
+     
     def set_resume_btn(self):
         """
         Set the resume button.
@@ -303,17 +441,21 @@ class DownloadingVideo(Video):
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)
         self.display_status()
+        
+    def set_convert_progress(self, progress):
+        self.download_percentage_label.configure(text=f"{round(progress, 2)} %")
+        self.download_progress_bar.set(progress/100)
 
     def set_downloading_progress(self):
         """
         Set the progress of the downloading process.
         """
 
-        completed_percentage = self.bytes_downloaded / self.file_size
+        completed_percentage = self.total_bytes_downloaded / self.download_type_info["size"]
         self.download_progress_bar.set(completed_percentage)
         self.download_percentage_label.configure(text=f"{round(completed_percentage * 100, 2)} %")
         self.download_progress_label.configure(
-            text=f"{ValueConvertUtility.convert_size(self.bytes_downloaded, 2)} / {self.converted_file_size}"
+            text=f"{ValueConvertUtility.convert_size(self.total_bytes_downloaded, 2)} / {self.converted_file_size}"
         )
         if self.mode == "playlist":
             self.video_download_progress_callback()
@@ -347,6 +489,9 @@ class DownloadingVideo(Video):
 
         if self.mode == "video":
             self.show_notification()
+            
+    def set_converting_failed(self):
+        self.set_downloading_failed()
 
     def set_waiting(self):
         """
@@ -363,7 +508,7 @@ class DownloadingVideo(Video):
         self.net_speed_label.configure(text="")
         self.download_progress_label.configure(text="")
         self.download_type_label.configure(text="")
-
+    
     def set_downloading_completed(self):
         """
         Set the status to 'downloaded' if the download is downloaded.
@@ -379,6 +524,16 @@ class DownloadingVideo(Video):
             self.video_download_complete_callback(self)
             self.show_notification()
             self.kill()
+    
+    def rename_to_original_name(self):
+        self.download_file_name = FileUtility.get_available_file_name(self.download_file_name + ".mp4")
+        os.rename(self.converted_file_name, self.download_file_name)
+    
+    def set_converting_completed(self):
+        self.rename_to_original_name()
+        self.set_convert_progress(100)
+        self.status_label.configure(text="Converted")
+        VideoConvertManager.unregister_from_active(self)
     
     def show_notification(self):
         if GeneralSettings.settings["alerts"]:
@@ -396,7 +551,7 @@ class DownloadingVideo(Video):
                 file_size=self.file_size,
                 download_directory=self.download_directory,
                 download_file_name=self.download_file_name,
-                downloaded_file_size=self.bytes_downloaded,
+                downloaded_file_size=self.total_bytes_downloaded,
                 download_mode=self.mode,
                 download_status=self.download_state,
                 thumbnail_path=self.notification_thumbnail_image_path
@@ -654,6 +809,8 @@ class DownloadingVideo(Video):
         """
         DownloadManager.unregister_from_active(self)
         DownloadManager.unregister_from_queued(self)
+        VideoConvertManager.unregister_from_active(self)
+        VideoConvertManager.unregister_from_queued(self)
         VideoCountTracker.remove_downloading_video()
         self.download_state = "removed"
         if self.mode == "playlist":

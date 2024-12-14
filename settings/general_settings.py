@@ -27,6 +27,7 @@ class GeneralSettings:
         "language": "English",
         "load_thumbnail": True,
         "max_simultaneous_downloads": 1,
+        "max_simultaneous_converts": 1,
         "max_simultaneous_loads": 1,
         "re_download_automatically": False,
         "reload_automatically": False,

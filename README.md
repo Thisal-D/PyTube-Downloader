@@ -10,28 +10,20 @@
 
 ---
 
-PyTube Downloader is a user-friendly application that allows users to download YouTube videos with ease. It features a simple and intuitive user interface, making the downloading process straightforward for all users.
+
+**PyTube Downloader is a simple, user-friendly app that lets you easily download YouTube videos and entire playlists with one click. Choose from a variety of video and audio formats, including resolutions from 144p to 8K quality. It also supports simultaneous downloads, allowing you to save time and download multiple videos at once.**
 
 ---
 
 ## Features
 
-- **Easy Downloading:** Download YouTube videos effortlessly by pasting the video URL into the application.
 - **Playlist Downloading:** Download entire playlists using just the playlist URL.
-- **Format Selection:** Choose from various video and audio formats for downloading.
+- **Format Selection:** Choose from various video and audio formats for downloading, from `144p` to `8K` quality.
 - **Progress Tracking:** Track the download progress within the application.
 - **Simultaneous Downloads:** Download multiple YouTube videos simultaneously, saving time and increasing efficiency. Users have full control over the number of simultaneous downloads, allowing for a personalized downloading experience.
 - **Automatic Download with Predefined Settings** Users can set predefined download settings such as preferred video quality, audio format, download location, and more. Once a YouTube URL is added, the video/playlist will load and then start to download automatically according to these predefined settings.
   - *In playlist auto download mode, if any video fails to load, it will be ignored, and the download will continue with the remaining videos.*
 - **Dynamic Folder Organization:** Automatically organize downloaded files into separate directories based on factors such as video quality, file type (audio or video), and playlist name, ensuring efficient and structured storage.
-  - **Quality-Based Folder Structure:** Create distinct folders for downloads categorized by their quality settings, allowing users to easily locate and manage files based on their desired resolution or bitrate.
-  - **Type-Specific Directories:** Customize folder organization to segregate audio and video files into their respective folders, providing a clear distinction between different media types.
-  - **Playlist-Centric Folders:** Automatically create folders named after the channel and playlist, making it easier to find and manage downloaded content based on specific playlists.
-- **System Tray Icon Mode:** Minimize the application to the system tray for unobtrusive operation.
-- **Theme Customization:** Personalize your experience with the ability to switch between dark and light themes. Additionally, customize the accent color to suit your preferences, creating a visually pleasing interface tailored to your style.
-- **Scaling Preferences:** Users can scale the application interface from 100% to 200% (step 1%), adjusting the size of widgets and elements for better readability and usability.
-- **Auto Reload Failed Videos:** Automatically attempts to reload a video up to 5 times if it fails to load. Users can enable or disable this feature, ensuring a more seamless downloading experience even with intermittent connectivity issues.
-- **Auto Retry Failed Downloads:** Automatically retries a failed download up to 5 times. This feature ensures that temporary issues such as network interruptions do not prevent successful downloading, enhancing reliability and user experience.
 - **Multi-Language Support**: Enjoy the application in your preferred language with support for multiple languages.
   - Currently Support Languages:
     | Language      | Contributors |
@@ -44,7 +36,64 @@ PyTube Downloader is a user-friendly application that allows users to download Y
 - **Shortcut Keys**: Take control of the application with  shortcut keys for common tasks.
 ---
 
-## View - Dark Theme
+## Quick Start Guide
+
+1. Clone the repository to your local machine.
+    - Clone the repository to your local machine using:  
+      
+        ```bash
+        git clone https://github.com/Thisal-D/PyTube-Downloader.git
+        ```
+2. Download FFmpeg
+    - Visit the [FFmpeg website](https://ffmpeg.org/download.html) and download the appropriate version for your operating system.
+    - Extract the downloaded files and locate the ffmpeg.exe file. (`ffmpeg\bin\ffmpeg.exe`)
+    - Copy ffmpeg.exe into the ffmpeg folder located within the application directory. (`Pytube-Downloader\ffmpeg\`)
+3. Install Dependencies:
+    - If the application requires dependencies, run the following script to install them:
+     
+      ```bash
+      python dependencies_installer.**py**
+      ```
+4. Run the Application:
+    - Start the application by running:
+      
+       ```bash
+       python main.py
+       ```
+5. Paste the YouTube URL:
+    - Paste the URL of the YouTube video or playlist you want to download into the designated input field.
+6. Select Download Mode:
+    - Choose whether you want to download a single video or an entire playlist.
+7. Choose Format:
+    - Select the desired format (e.g., MP4, MP3) from the available options.
+8. Initiate Download:
+    - Click the Download button to start the download process.
+9. Monitor Progress:
+    - Watch the download progress within the application interface.
+10. Enjoy Your Video:
+    - Once the download is complete, find your file in the output directory and enjoy your YouTube video or audio!
+
+---
+
+## Technologies Used
+
+- **Programming Language:** 
+  - Python
+- **Python Libraries:** 
+  - tkinter
+  - customtkinter
+  - pytube
+  - pytubefix
+  - pillow
+  - pyautogui
+  - pystray
+  - pyperclip
+- **Dependencies**
+  - FFMPEG
+
+---
+
+## Dark Theme Preview 
 
 ![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b2079262-0d1c-4bd0-9b33-7cc16c9173ce)
 ![18](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/e57acd23-cbdc-446e-86ed-b5d08f5ce9e1)
@@ -66,36 +115,6 @@ PyTube Downloader is a user-friendly application that allows users to download Y
     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Thisal-D/PyTube-Downloader&type=Date&theme=dark"> 
     <img src="https://api.star-history.com/svg?repos=Thisal-D/PyTube-Downloader&type=Date&theme=light" > 
 </picture> 
-
----
-
-## Technologies Used
-
-- **Programming Language:** 
-  - Python
-- **Frameworks/Libraries:** 
-  - tkinter
-  - customtkinter
-  - pytube
-  - pytubefix
-  - pillow
-  - pyautogui
-  - pystray
-  - pyperclip
-
----
-
-## How to Use
-
-1. Clone the repository to your local machine.
-2. Install the necessary dependencies (if any, run **dependencies_installer.py**).
-3. Run the application (``main.py``).
-4. Paste the YouTube video/playlist URL into the designated field.
-5. Choose the download mode: video/playlist.
-6. Choose the desired format.
-7. Click the download button to initiate the download process.
-8. Monitor the download progress within the application.
-9. Enjoy your downloaded YouTube video!
 
 ---
 
