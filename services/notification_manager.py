@@ -149,11 +149,6 @@ class NotificationManager():
             }
         )
         
-        print("#"*10, "\n")
-        print("thumbnail_path :", thumbnail_path)
-        print("#"*10, "\n")
-
-        
         if not NotificationManager.running:
             NotificationManager.running = True
             NotificationManager.manage_notification_queue()

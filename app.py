@@ -1258,6 +1258,7 @@ class App(ctk.CTk):
             # download info
             download_quality=video.download_quality,
             download_type=video.download_type,
+            download_type_info=video.selected_download_type_info,
             video_download_complete_callback=self.downloaded_video,
         ).pack(fill="x", pady=2)
 

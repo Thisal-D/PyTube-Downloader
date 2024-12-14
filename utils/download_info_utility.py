@@ -5,48 +5,39 @@ from .value_convert_utility import ValueConvertUtility
 
 class DownloadInfoUtility:
     @staticmethod
-    def sort_download_qualities(qualities_info: List[Dict[str, int]]) -> List[Dict[str, int]]:
+    def sort_download_qualities(qualities_info: List[Dict]) -> List[Dict]:
         """
         Sort the list of download qualities information based on their keys.
 
         Args:
-            qualities_info (List[Dict[str, int]]): A list of dictionaries containing download qualities information.
+            qualities_info (List[Dict]): A list of dictionaries containing download qualities information.
 
         Returns:
-            List[Dict[str, int]]: The sorted list of download qualities information.
+            List[Dict]: The sorted list of download qualities information.
         """
-        video_keys = []
-        audio_keys = []
-
-        # Separate video and audio keys
-        for data in qualities_info:
-            key = list(data.keys())[0]
-            if "kbps" in key:
-                audio_keys.append(key)
-            else:
-                video_keys.append(key)
-
-        # Sort video keys in descending order
-        for i in range(len(video_keys)):
-            for j in range(len(video_keys) - 1):
-                if int(video_keys[j][:-1]) < int(video_keys[j + 1][:-1]):
-                    video_keys[j], video_keys[j + 1] = video_keys[j + 1], video_keys[j]
-
-        # Combine sorted video and audio keys
-        sorted_keys = video_keys + audio_keys
-
-        # Arrange dictionaries based on sorted keys
-        sorted_qualities_info = []
-        index = 0
-        while index < len(sorted_keys):
-            for quality_info in qualities_info:
-                if list(quality_info.keys())[0] == sorted_keys[index]:
-                    sorted_qualities_info.append(quality_info)
-                    index += 1
-                    if index >= len(sorted_keys):
-                        break
-
-        return sorted_qualities_info
+          # Separate videos and audio into different lists
+        videos = []
+        audio = []
+        
+        for item in qualities_info:
+            if item['type'] == 'video':
+                videos.append(item)
+            elif item['type'] == 'audio':
+                audio.append(item)
+        
+        # Sort videos manually based on resolution
+        for i in range(len(videos)):
+            for j in range(len(videos) - i - 1):
+                # Extract resolutions as integers
+                res1 = int(videos[j]['reso'].replace('p', '')) if 'reso' in videos[j] else 0
+                res2 = int(videos[j + 1]['reso'].replace('p', '')) if 'reso' in videos[j + 1] else 0
+                
+                # Swap if the current video's resolution is less than the next one
+                if res1 < res2:
+                    videos[j], videos[j + 1] = videos[j + 1], videos[j]
+        
+        # Combine videos and audio, videos first
+        return videos + audio
 
     @staticmethod
     def to_dict(data) -> list[dict[str, str]]:
@@ -77,32 +68,50 @@ class DownloadInfoUtility:
             list[dict]: A list of supported download types.
         """
         data = DownloadInfoUtility.to_dict(video_streams.all())
-
         supported_download_types = []
-        for stream_type in data:
+        supported_download_resos = []
+        
+        audio_stream_file_size = video_streams.get_audio_only().filesize
+        
+        for stream_type in data[0::]:
             if stream_type["type"] == "video":
+                # Progressive True means video has inbuilt audio
+                if stream_type["progressive"] == 'True':
+                    try:
+                        file_size = video_streams.get_by_itag(stream_type["itag"]).filesize
+                        download_info = {"itag": stream_type["itag"], "type": "video", "reso": stream_type["res"], "size": file_size, "inbuilt_audio" : True}
+                        if stream_type["res"] not in supported_download_resos:
+                            supported_download_types.append(download_info)
+                            supported_download_resos.append(stream_type["res"])
+                    except Exception as error:
+                        print(f"download_info_utility.py L-87 : {error}")
+                        pass
+                
+        for stream_type in data[0::]:
+            if stream_type["progressive"] == 'False' and stream_type["type"] == "video":
                 try:
-                    file_size = video_streams.get_by_resolution(stream_type["res"]).filesize
-                    download_info = {stream_type["res"]: file_size}
-                    if download_info not in supported_download_types:
+                    file_size = video_streams.get_by_itag(stream_type["itag"]).filesize
+                    download_info = {"itag": stream_type["itag"], "type": "video", "reso": stream_type["res"], "size": file_size + audio_stream_file_size, "inbuilt_audio" : False}
+                    if stream_type["res"] not in supported_download_resos:
                         supported_download_types.append(download_info)
+                        supported_download_resos.append(stream_type["res"])
                 except Exception as error:
-                    print(f"download_info_utility.py : {error}")
+                    print(f"download_info_utility.py L-99 : {error}")
                     pass
-
+    
         try:
             audio_stream = video_streams.get_audio_only()
             file_size = audio_stream.filesize
             audio_bit_rate = f"{str(int(audio_stream.bitrate / 1024))}kbps"
-            supported_download_types.append({audio_bit_rate: file_size})
+            supported_download_types.append({"itag": stream_type["itag"], "bitrate": audio_bit_rate, "size": file_size, "type": "audio",  "inbuilt_audio" : True})
         except Exception as error:
-            print(f"download_info_utility.py : {error}")
+            print(f"download_info_utility.py  L-107 : {error}")
             pass
 
         return supported_download_types
 
     @staticmethod
-    def generate_download_options(download_types: List[Dict[str, int]]) -> List[str]:
+    def generate_download_options(download_types: List[Dict]) -> List[str]:
         """
         Generate download options for CTk combo box based on download types and their sizes.
 
@@ -113,10 +122,11 @@ class DownloadInfoUtility:
             List[str]: A list of combo box values formatted as "type | size".
         """
         download_options = []
-
+        
         for data_dict in download_types:
-            for data_key in data_dict:
-                download_options.append(data_key + " | " + ValueConvertUtility.convert_size(data_dict[data_key], 1))
-
+            if data_dict["type"] == "video":
+                download_options.append(f"{data_dict["reso"]} | {ValueConvertUtility.convert_size(data_dict['size'], 1)}")
+            else:
+                download_options.append(f"{data_dict["bitrate"]} | {ValueConvertUtility.convert_size(data_dict['size'], 1)}")
+                
         return download_options
-
