@@ -72,15 +72,6 @@ app.bind_keyboard_shortcuts()
 # Check app updates       
 app.run_update_check()
 # just run the app
-
-app.url_entry.insert("0", "https://www.youtube.com/watch?v=DpOz8JBVojM")
-app.add_video_playlist()
-
-app.selected_download_mode = "playlist"
-app.url_entry.delete("0", "end")
-app.url_entry.insert("0", "https://www.youtube.com/watch?v=-AthOnfo41A&list=PLlHv2_0xmZFQiN7DJhI0D-IlsgKdKuXi2")
-app.add_video_playlist()
-
 app.run()
 
 # Codes under here will only execute when the app is closed
