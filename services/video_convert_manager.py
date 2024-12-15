@@ -43,7 +43,6 @@ class VideoConvertManager:
             # Wait 1 second (1000 milliseconds) before checking the queue again
             time.sleep(1)
         
-
     @staticmethod
     def register(video):
         """
