@@ -75,6 +75,7 @@ class DownloadingPlayList(PlayList):
                 # download info
                 download_type=added_video.download_type,
                 download_quality=added_video.download_quality,
+                download_type_info=added_video.selected_download_type_info,
                 # video info
                 video_title=added_video.video_title,
                 channel=added_video.channel,
@@ -124,7 +125,9 @@ class DownloadingPlayList(PlayList):
             if video in self.downloading_videos:
                 self.downloading_videos.remove(video)
             if video in self.paused_videos:
-                self.paused_videos.remove(video)            
+                self.paused_videos.remove(video)
+            if video in self.waiting_videos:
+                self.waiting_videos.remove(video)        
             self.show_notification(self.failed_videos[-1])
         elif state == "downloading":
             self.downloading_videos.append(video)
@@ -146,6 +149,8 @@ class DownloadingPlayList(PlayList):
             self.downloaded_videos.append(video)
             self.downloading_videos.remove(video)
             self.show_notification(self.downloaded_videos[-1])
+            if video in self.waiting_videos:
+                self.waiting_videos.remove(video)       
 
         # if len is 0 that means all videos are remove :D
         if len(self.videos) != 0:
@@ -176,7 +181,7 @@ class DownloadingPlayList(PlayList):
         total_completion: float = 0
         for video in self.videos:
             if video.file_size != 0:
-                total_completion += video.bytes_downloaded / video.file_size
+                total_completion += video.total_bytes_downloaded / video.file_size
         avg_completion = total_completion / self.playlist_video_count
         self.set_playlist_download_progress(avg_completion)
 
@@ -189,9 +194,11 @@ class DownloadingPlayList(PlayList):
             self.indicate_waiting()
         else:
             self.indicate_downloading()
+        video: DownloadingVideo = None
         for video in self.videos:
             if video.download_state == "failed":
-                video.re_download_video()
+                #video.re_download_video()
+                video.re_download_btn.cget("command")()
 
     def indicate_waiting(self):
         self.download_state = "waiting"
@@ -249,7 +256,7 @@ class DownloadingPlayList(PlayList):
                 completed_videos_count=len(self.downloaded_videos),
                 download_directory=video.download_directory,
                 download_file_name=video.download_file_name,
-                downloaded_file_size=video.bytes_downloaded,
+                downloaded_file_size=video.total_bytes_downloaded,
                 download_mode=video.mode,
                 download_status=video.download_state,
                 thumbnail_path=video.notification_thumbnail_image_path

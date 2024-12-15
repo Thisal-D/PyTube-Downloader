@@ -41,11 +41,11 @@
 ## 快速入门指南
 
 1. 将仓库克隆到本地计算机。
-     - 使用以下命令克隆仓库：
+    - 使用以下命令克隆仓库：
       
-         ```bash
-         git clone https://github.com/Thisal-D/PyTube-Downloader.git
-         ```
+      ```bash
+      git clone https://github.com/Thisal-D/PyTube-Downloader.git
+      ```
 2. 下载 FFmpeg
    - 访问 [FFmpeg 网站](https://ffmpeg.org/download.html) 并下载适合您操作系统的版本。
    - 解压下载的文件并找到 ffmpeg.exe 文件。 (`ffmpeg\bin\ffmpeg.exe`)
@@ -57,24 +57,23 @@
       python dependencies_installer.py
       ```
 4. 运行应用程序：
-     - 通过运行以下命令启动应用程序：
+    - 通过运行以下命令启动应用程序：
       
-       ```bash
-       python main.py
-       ```
+      ```bash
+      python main.py
+      ```
 5. 粘贴 YouTube URL：
-      - 将您要下载的 YouTube 视频或播放列表的 URL 粘贴到指定的输入框中。
+    - 将您要下载的 YouTube 视频或播放列表的 URL 粘贴到指定的输入框中。
 6. 选择下载模式：
-     - 选择您是要下载单个视频还是整个播放列表。
+    - 选择您是要下载单个视频还是整个播放列表。
 7. 选择格式：
-     - 从可用选项中选择所需的格式（例如，MP4、MP3）。
+    - 从可用选项中选择所需的格式（例如，MP4、MP3）。
 8. 启动下载：
-     - 点击下载按钮开始下载过程。
+    - 点击下载按钮开始下载过程。
 9. 监控进度：
-     - 在应用程序界面中查看下载进度。
+    - 在应用程序界面中查看下载进度。
 10. 享受您的视频：
-     - 下载完成后，在输出目录中找到文件并享受您的 YouTube 视频或音频！
-     - 
+    - 下载完成后，在输出目录中找到文件并享受您的 YouTube 视频或音频！
 
 ---
 

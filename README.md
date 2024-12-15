@@ -52,7 +52,7 @@
     - If the application requires dependencies, run the following script to install them:
      
       ```bash
-      python dependencies_installer.**py**
+      python dependencies_installer.py
       ```
 4. Run the Application:
     - Start the application by running:
