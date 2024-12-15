@@ -1,9 +1,10 @@
 # Project dependencies
 customtkinter==5.2.2 # for the ui
-pillow
-pytube
-pyautogui
-pystray
-pyperclip
-pytubefix
-win11toast
+pillow~=11.0.0
+pytube~=15.0.0
+pyautogui~=0.9.54
+pystray~=0.19.5
+pyperclip~=1.9.0
+pytubefix~=8.8.1
+win11toast~=0.35
+PySide6~=6.8.1
