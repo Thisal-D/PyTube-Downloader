@@ -78,7 +78,7 @@ class DownloadingVideo(Video):
         self.sub_frame: Union[ctk.CTkFrame, None] = None
         self.download_progress_bar: Union[ctk.CTkProgressBar, None] = None
         self.download_progress_label: Union[ctk.CTkLabel, None] = None
-        self.download_percentage_label: Union[ctk.CTkLabel, None] = None
+        self.process_percentage_label: Union[ctk.CTkLabel, None] = None
         self.download_type_label: Union[ctk.CTkLabel, None] = None
         self.net_speed_label: Union[ctk.CTkLabel, None] = None
         self.status_label: Union[ctk.CTkLabel, None] = None
@@ -133,7 +133,7 @@ class DownloadingVideo(Video):
             x=-80 * AppearanceSettings.settings["scale_r"])
         self.net_speed_label.configure(text="0.0 B/s")
         self.download_progress_bar.set(0)
-        self.download_percentage_label.configure(text="0.0 %")
+        self.process_percentage_label.configure(text="0.0 %")
         self.download_state = "downloading"
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)
@@ -146,6 +146,14 @@ class DownloadingVideo(Video):
         self.re_download_btn.place_forget()
         self.set_waiting()
         DownloadManager.register(self)
+        
+    def re_convert_video(self):
+        """
+        Re-convert the video
+        """
+        self.re_download_btn.place_forget()
+        self.set_waiting()
+        VideoConvertManager.register(self)
 
     def display_status(self):
         """
@@ -223,6 +231,11 @@ class DownloadingVideo(Video):
             self.set_download_files_info()
             
     def set_for_converting(self):
+        self.set_waiting()
+         
+        self.net_speed_label.place_forget()
+        self.download_progress_label.place_forget()
+        
         DownloadManager.unregister_from_active(self)
         self.pause_resume_btn.place_forget()
         VideoConvertManager.register(self)
@@ -337,7 +350,8 @@ class DownloadingVideo(Video):
             print(f"downloading_video.py L-336 : {error}")
             self.set_downloading_failed()
     
-    def convert_video(self):
+    
+    def converting(self):
         try:
             self.status_label.configure(text="Converting")
             
@@ -396,12 +410,14 @@ class DownloadingVideo(Video):
             # Check if the process was successful
             if process.returncode == 0:
                 self.set_converting_completed()
-                self.set_downloading_completed()
             else:
-                self.set_downloading_failed()
+                self.set_converting_failed()
         except Exception as error:
             print("downloading_video.py L-400 : ", error)
             self.set_converting_failed()
+    
+    def convert_video(self):
+        threading.Thread(target=self.converting, daemon=True).start()
      
     def set_resume_btn(self):
         """
@@ -443,7 +459,7 @@ class DownloadingVideo(Video):
         self.display_status()
         
     def set_convert_progress(self, progress):
-        self.download_percentage_label.configure(text=f"{round(progress, 2)} %")
+        self.process_percentage_label.configure(text=f"{round(progress, 2)} %")
         self.download_progress_bar.set(progress/100)
 
     def set_downloading_progress(self):
@@ -453,7 +469,7 @@ class DownloadingVideo(Video):
 
         completed_percentage = self.total_bytes_downloaded / self.download_type_info["size"]
         self.download_progress_bar.set(completed_percentage)
-        self.download_percentage_label.configure(text=f"{round(completed_percentage * 100, 2)} %")
+        self.process_percentage_label.configure(text=f"{round(completed_percentage * 100, 2)} %")
         self.download_progress_label.configure(
             text=f"{ValueConvertUtility.convert_size(self.total_bytes_downloaded, 2)} / {self.converted_file_size}"
         )
@@ -491,6 +507,9 @@ class DownloadingVideo(Video):
             self.show_notification()
             
     def set_converting_failed(self):
+        VideoConvertManager.unregister_from_active(self)
+        VideoConvertManager.unregister_from_queued(self)
+        self.re_download_btn.configure(command=self.re_convert_video)
         self.set_downloading_failed()
 
     def set_waiting(self):
@@ -504,7 +523,7 @@ class DownloadingVideo(Video):
         self.display_status()
         self.pause_resume_btn.place_forget()
         self.download_progress_bar.set(0.5)
-        self.download_percentage_label.configure(text="")
+        self.process_percentage_label.configure(text="")
         self.net_speed_label.configure(text="")
         self.download_progress_label.configure(text="")
         self.download_type_label.configure(text="")
@@ -514,7 +533,8 @@ class DownloadingVideo(Video):
         Set the status to 'downloaded' if the download is downloaded.
         """
          
-        DownloadManager.unregister_from_active(self)
+        VideoConvertManager.unregister_from_active(self)
+        VideoConvertManager.unregister_from_queued(self)
         self.pause_resume_btn.place_forget()
         self.download_state = "downloaded"
         self.display_status()
@@ -533,8 +553,12 @@ class DownloadingVideo(Video):
         self.rename_to_original_name()
         self.set_convert_progress(100)
         self.status_label.configure(text="Converted")
+        
         VideoConvertManager.unregister_from_active(self)
-    
+        VideoConvertManager.unregister_from_queued(self)
+        
+        self.set_downloading_completed()
+
     def show_notification(self):
         if GeneralSettings.settings["alerts"]:
             if self.download_state == "downloaded":
@@ -568,7 +592,7 @@ class DownloadingVideo(Video):
         self.sub_frame = ctk.CTkFrame(self)
         self.download_progress_bar = ctk.CTkProgressBar(master=self.sub_frame)
         self.download_progress_label = ctk.CTkLabel(master=self.sub_frame, text="")
-        self.download_percentage_label = ctk.CTkLabel(master=self.sub_frame, text="")
+        self.process_percentage_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.download_type_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.net_speed_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.status_label = ctk.CTkLabel(master=self.sub_frame, text="")
@@ -601,7 +625,7 @@ class DownloadingVideo(Video):
         scale = AppearanceSettings.settings["scale_r"]
 
         self.download_progress_label.configure(font=("arial", 12 * scale, "bold"))
-        self.download_percentage_label.configure(font=("arial", 12 * scale, "bold"))
+        self.process_percentage_label.configure(font=("arial", 12 * scale, "bold"))
         self.download_type_label.configure(font=("arial", 12 * scale, "bold"))
         self.net_speed_label.configure(font=("arial", 12 * scale, "bold"), )
         self.status_label.configure(font=("arial", 12 * scale, "bold"))
@@ -620,7 +644,7 @@ class DownloadingVideo(Video):
         self.sub_frame.configure(height=self.height - 3)
         self.download_progress_bar.configure(height=8 * scale, width=self.sub_frame.winfo_width())
         self.download_progress_label.configure(height=20 * scale)
-        self.download_percentage_label.configure(height=20 * scale)
+        self.process_percentage_label.configure(height=20 * scale)
         self.download_type_label.configure(height=20 * scale)
         self.net_speed_label.configure(height=20 * scale)
         self.status_label.configure(height=20 * scale)
@@ -651,7 +675,7 @@ class DownloadingVideo(Video):
         self.download_progress_label.configure(
             text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"]
         )
-        self.download_percentage_label.configure(
+        self.process_percentage_label.configure(
             text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"]
         )
         self.download_type_label.configure(
@@ -736,7 +760,7 @@ class DownloadingVideo(Video):
         self.download_progress_label.place(relx=0.25, anchor="center", rely=0.2)
         self.download_type_label.place(relx=0.75, anchor="center", rely=0.2)
         self.download_progress_bar.place(relwidth=1, rely=0.5, anchor="w")
-        self.download_percentage_label.place(relx=0.115, anchor="center", rely=0.8)
+        self.process_percentage_label.place(relx=0.115, anchor="center", rely=0.8)
         self.net_speed_label.place(relx=0.445, anchor="center", rely=0.8)
         self.status_label.place(relx=0.775, anchor="center", rely=0.8)
 
@@ -772,7 +796,7 @@ class DownloadingVideo(Video):
         del self.sub_frame
         del self.download_progress_bar
         del self.download_progress_label
-        del self.download_percentage_label
+        del self.process_percentage_label
         del self.download_type_label
         del self.net_speed_label
         del self.status_label
@@ -794,7 +818,7 @@ class DownloadingVideo(Video):
         self.sub_frame.destroy()
         self.download_progress_bar.destroy()
         self.download_progress_label.destroy()
-        self.download_percentage_label.destroy()
+        self.process_percentage_label.destroy()
         self.download_type_label.destroy()
         self.net_speed_label.destroy()
         self.status_label.destroy()
