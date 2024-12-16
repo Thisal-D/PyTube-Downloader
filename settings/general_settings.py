@@ -33,8 +33,7 @@ class GeneralSettings:
         "reload_automatically": False,
         "update_delay": 0.5,
         "alerts": True,
-        "window_geometry": "900x500-7+0",
-        "chunk_size": 9437184
+        "window_geometry": "900x500-7+0"
     }
     
     @staticmethod
