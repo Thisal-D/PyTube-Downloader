@@ -4,7 +4,7 @@ import tkinter as tk
 
 class SettingsValidateUtility:
     @staticmethod
-    def validate_simultaneous_count(count_str: str) -> bool:
+    def validate_simultaneous_count(count_str: str, with_range: bool) -> bool:
         """
         Validate the simultaneous count entered by the user.
 
@@ -16,10 +16,13 @@ class SettingsValidateUtility:
         """
         try:
             count = int(count_str)
-            if 0 < count < 11:
-                return True
+            if with_range:
+                if 0 < count < 11:
+                    return True
+                else:
+                    return False
             else:
-                return False
+                return True
         except ValueError:
             return False
 

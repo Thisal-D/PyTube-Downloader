@@ -1,7 +1,7 @@
 import threading
 import time
 from settings.general_settings import GeneralSettings
-from typing import Callable
+from typing import Callable, List, Dict
 
 
 class DownloadManager:
@@ -10,11 +10,26 @@ class DownloadManager:
     """
 
     # Class variables to keep track of active and queued loads
-    active_download_count = 0
-    queued_download_count = 0
-    queued_downloads = []
-    active_downloads = []
+    active_download_count: int = 0
+    queued_download_count: int = 0
+    queued_downloads: List = []
+    active_downloads: List = []
     status_change_callback: Callable = None
+  
+    resolutions: List = [
+        'Audio Only',
+        '144p',
+        '240p',
+        '360p',
+        '480p',
+        '720p',
+        '1080p',
+        '1440p',
+        '2160p',
+        '4320p',
+        '8640p',
+        '17280p'
+    ]
 
     @staticmethod
     def manage_download_queue():

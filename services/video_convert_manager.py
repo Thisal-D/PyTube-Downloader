@@ -18,7 +18,6 @@ class VideoConvertManager:
     queued_converts = []
     active_converts = []
 
-
     @staticmethod
     def manage_convert_queue():
         """
@@ -39,7 +38,7 @@ class VideoConvertManager:
                     # Log the error for analysis
                     print(f"convert_manager.py L38 : {error}")
                     pass
-                #VideoConvertManager.status_change_callback()
+                VideoConvertManager.status_change_callback()
             # Wait 1 second (1000 milliseconds) before checking the queue again
             time.sleep(1)
         
@@ -53,7 +52,7 @@ class VideoConvertManager:
         VideoConvertManager.queued_converts.append(video)
         VideoConvertManager.queued_convert_count += 1
         
-        #VideoConvertManager.status_change_callback()
+        VideoConvertManager.status_change_callback()
 
     @staticmethod
     def unregister_from_queued(video):
@@ -65,7 +64,7 @@ class VideoConvertManager:
         if video in VideoConvertManager.queued_converts:
             VideoConvertManager.queued_converts.remove(video)
             VideoConvertManager.queued_convert_count -= 1
-        #VideoConvertManager.status_change_callback()
+        VideoConvertManager.status_change_callback()
 
     @staticmethod
     def unregister_from_active(video):
@@ -77,7 +76,7 @@ class VideoConvertManager:
         if video in VideoConvertManager.active_converts:
             VideoConvertManager.active_converts.remove(video)
             VideoConvertManager.active_convert_count -= 1
-        #VideoConvertManager.status_change_callback()
+        VideoConvertManager.status_change_callback()
 
     @staticmethod
     def initialize(status_change_callback: Callable = None) -> None:
@@ -87,7 +86,7 @@ class VideoConvertManager:
         Args:
             status_change_callback (Callable, optional): A callback function to be called on status changes.
         """
-        #VideoConvertManager.status_change_callback = status_change_callback
+        VideoConvertManager.status_change_callback = status_change_callback
         video_converting_manage_thread = threading.Thread(target=VideoConvertManager.manage_convert_queue)
         video_converting_manage_thread.daemon = True
         video_converting_manage_thread.start()

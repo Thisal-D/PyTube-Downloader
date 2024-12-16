@@ -59,7 +59,7 @@ class DownloadingVideo(Video):
             video_download_progress_callback: callable = None):
 
         # download status track and callback
-        self.download_state: Literal["waiting", "downloading", "failed", "downloaded", "removed"] = "waiting"
+        self.download_state: Literal["waiting", "downloading", "failed", "downloaded", "removed", "converting"] = "waiting"
         self.pause_requested: bool = False
         self.pause_resume_btn_command: Literal["pause", "resume"] = "pause"
         # status and progress callbacks
@@ -157,37 +157,18 @@ class DownloadingVideo(Video):
         """
         Display the status of the download.
         """
-
+        
         if self.download_state == "failed":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"],
-                text=LanguageManager.data["failed"]
             )
-        elif self.download_state == "waiting":
+        elif self.download_state == "waiting" or self.download_state == "paused" or self.download_state == "downloading" or \
+            self.download_state == "pausing" or self.download_state == "downloaded" or self.download_state == "converting":
             self.status_label.configure(
                 text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text=LanguageManager.data["waiting"]
             )
-        elif self.download_state == "paused":
-            self.status_label.configure(
-                text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text=LanguageManager.data["paused"]
-            )
-        elif self.download_state == "downloading":
-            self.status_label.configure(
-                text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text=LanguageManager.data["downloading"]
-            )
-        elif self.download_state == "pausing":
-            self.status_label.configure(
-                text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text=LanguageManager.data["pausing"]
-            )
-        elif self.download_state == "downloaded":
-            self.status_label.configure(
-                text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"],
-                text=LanguageManager.data["downloaded"]
-            )
+            
+        self.status_label.configure(text=LanguageManager.data[self.download_state])
             
     def configure_downloading(self):
         # print("Configure Downloading : configure_downloading()")
@@ -200,12 +181,12 @@ class DownloadingVideo(Video):
         
         self.download_directory = f"{GeneralSettings.settings['download_directory']}\\"
         
-        
         if self.mode == "playlist" and GeneralSettings.settings["create_sep_path_for_playlists"]:
             self.download_directory += (
                 f"{FileUtility.sanitize_filename(self.channel)} - "
                 f"{FileUtility.sanitize_filename(self.playlist_title)}\\"
             )
+            
         else:
             if GeneralSettings.settings["create_sep_path_for_videos_audios"]:
                 self.download_directory += f"{self.download_type}s\\"
@@ -232,9 +213,7 @@ class DownloadingVideo(Video):
         DownloadManager.unregister_from_active(self)
         
         self.set_waiting()
-        
         VideoConvertManager.register(self)
-        
         self.net_speed_label.place_forget()
         self.download_progress_label.place_forget()
         
@@ -355,27 +334,25 @@ class DownloadingVideo(Video):
     
     
     def converting(self):
-        try:
-            self.status_label.configure(text="Converting")
-            
-            self.download_file_name = FileUtility.get_available_file_name(
+        self.download_file_name = FileUtility.get_available_file_name(
                 self.download_file_name + ".mp4"
             )
             
-            self.converted_file_name = FileUtility.get_available_file_name(f"{GeneralSettings.settings['download_directory']}\\temp-converting.mp4")
-            
-            command = [
-                VideoConvertManager.FFMPEG_PATH,
-                "-i", self.video_only_file_name,
-                "-i", self.audio_only_file_name,
-                "-map", "0:v:0",  # Map the video stream from the first input (video file)
-                "-map", "1:a:0",  # Map the audio stream from the second input (audio file)
-                "-c:v", "copy",
-                "-c:a", "aac",
-                self.converted_file_name,
-                "-y"  # Overwrite the output file if it exists
-            ]
-
+        self.converted_file_name = FileUtility.get_available_file_name(f"{GeneralSettings.settings['download_directory']}\\temp-converting.mp4")
+        
+        command = [
+            VideoConvertManager.FFMPEG_PATH,
+            "-i", self.video_only_file_name,
+            "-i", self.audio_only_file_name,
+            "-map", "0:v:0",  # Map the video stream from the first input (video file)
+            "-map", "1:a:0",  # Map the audio stream from the second input (audio file)
+            "-c:v", "copy",
+            "-c:a", "aac",
+            self.converted_file_name,
+            "-y"  # Overwrite the output file if it exists
+        ]
+        
+        try:            
             # Start the process
             process = subprocess.Popen(
                 command,
@@ -420,6 +397,11 @@ class DownloadingVideo(Video):
             self.set_converting_failed()
     
     def convert_video(self):
+        self.download_state = "converting"
+        self.set_convert_progress(0)
+        self.display_status()
+        if self.mode == "playlist":
+            self.video_download_status_callback(self, self.download_state)
         threading.Thread(target=self.converting, daemon=True).start()
      
     def set_resume_btn(self):
@@ -535,15 +517,14 @@ class DownloadingVideo(Video):
         """
         Set the status to 'downloaded' if the download is downloaded.
         """
-        
-        print("#"*10)
-        print("Download Completed")
+
         DownloadManager.unregister_from_active(self)
         VideoConvertManager.unregister_from_active(self)
         VideoConvertManager.unregister_from_queued(self)
         self.pause_resume_btn.place_forget()
         self.download_state = "downloaded"
         self.display_status()
+        
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)
         if self.mode == "video":
@@ -554,7 +535,6 @@ class DownloadingVideo(Video):
     def rename_to_original_name(self):
         self.download_file_name = FileUtility.get_available_file_name(self.download_file_name + ".mp4")
         os.rename(self.converted_file_name, self.download_file_name)
-    
     
     def remove_temporary_files(self):
         try:
@@ -603,7 +583,6 @@ class DownloadingVideo(Video):
         """
         Create all required widgets.
         """
-
         super().create_widgets()
 
         self.sub_frame = ctk.CTkFrame(self)
@@ -627,7 +606,9 @@ class DownloadingVideo(Video):
         )
 
     def set_widgets_texts(self):
+        
         super().set_widgets_texts()
+        
         self.download_type_label.configure(text=f"{LanguageManager.data[self.download_type.lower()]} : "
                                                 f"{self.download_quality}")
         self.display_status()
@@ -636,7 +617,7 @@ class DownloadingVideo(Video):
         """
         Set fonts for all widgets.
         """
-
+        
         super().set_widgets_fonts()
 
         scale = AppearanceSettings.settings["scale_r"]

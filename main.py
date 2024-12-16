@@ -32,8 +32,10 @@ app.run_accessibility_check()
 # configure services
 LoadManager.initialize(app.update_active_videos_count_status)
 DownloadManager.initialize(app.update_active_videos_count_status)
+VideoConvertManager.initialize(app.update_active_videos_count_status)
+
 VideoCountTracker.initialize(app.update_total_videos_count_status)
-VideoConvertManager.initialize()
+
 ThemeManager.initialize()
 LoadingIndicateManager.initialize()
 

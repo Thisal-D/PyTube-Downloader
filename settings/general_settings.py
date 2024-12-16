@@ -16,7 +16,7 @@ class GeneralSettings:
 
     SETTINGS = {
         "automatic_download": {
-            "quality": 0,
+            "quality": "1080p",
             "status": "disable"
         },
         "create_sep_path_for_playlists": False,
@@ -33,7 +33,8 @@ class GeneralSettings:
         "reload_automatically": False,
         "update_delay": 0.5,
         "alerts": True,
-        "window_geometry": "900x500-7+0"
+        "window_geometry": "900x500-7+0",
+        "chunk_size": 9437184
     }
     
     @staticmethod
@@ -58,6 +59,8 @@ class GeneralSettings:
         if not GeneralSettings.are_all_keys_present():
             GeneralSettings.add_missing_keys()
             
+        GeneralSettings.restore_invalid_settings()
+            
         if GeneralSettings.settings.get("download_directory") is False:
             GeneralSettings.settings["download_directory"] = GeneralSettings.default_download_dir
 
@@ -71,7 +74,13 @@ class GeneralSettings:
             
         JsonUtility.write_to_file(GeneralSettings.backup_path, GeneralSettings.settings)
         JsonUtility.write_to_file(GeneralSettings.file_path, GeneralSettings.settings)
-        
+    
+    @staticmethod
+    def restore_invalid_settings() -> None:
+        from services.download_manager import DownloadManager
+        if GeneralSettings.settings["automatic_download"]["quality"] not in DownloadManager.resolutions:
+            GeneralSettings.settings["automatic_download"]["quality"] = DownloadManager.resolutions[-1]
+    
     @staticmethod                
     def is_backup_exists() -> bool:
         """

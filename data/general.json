@@ -1,7 +1,7 @@
 {
     "alerts": true,
     "automatic_download": {
-        "quality": 0,
+        "quality": "1080p",
         "status": "disable"
     },
     "create_sep_path_for_playlists": false,
