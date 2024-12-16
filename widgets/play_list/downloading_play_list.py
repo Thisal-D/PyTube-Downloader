@@ -45,7 +45,8 @@ class DownloadingPlayList(PlayList):
         self.paused_videos: List[DownloadingVideo] = []
         self.failed_videos: List[DownloadingVideo] = []
         self.downloaded_videos: List[DownloadingVideo] = []
-        self.download_state: Literal["waiting", "downloading", "downloaded", "failed"] = "waiting"
+        self.converting_videos: List[DownloadingVideo] = []
+        self.download_state: Literal["waiting", "downloading", "downloaded", "failed", "converting"] = "waiting"
 
         super().__init__(
             root=root,
@@ -102,7 +103,7 @@ class DownloadingPlayList(PlayList):
     def videos_status_track(
             self,
             video: DownloadingVideo,
-            state: Literal["waiting", "downloading", "paused", "downloaded", "failed", "removed"]):
+            state: Literal["waiting", "downloading", "paused", "downloaded", "failed", "removed", "converting"]):
         if state == "removed":
             self.videos.remove(video)
             self.configure_videos_tab_view()
@@ -120,6 +121,8 @@ class DownloadingPlayList(PlayList):
                     self.downloaded_videos.remove(video)
                 if video in self.paused_videos:
                     self.paused_videos.remove(video)
+                if video in self.converting_videos:
+                    self.converting_videos.remove(video)
         elif state == "failed":
             self.failed_videos.append(video)
             if video in self.downloading_videos:
@@ -127,7 +130,9 @@ class DownloadingPlayList(PlayList):
             if video in self.paused_videos:
                 self.paused_videos.remove(video)
             if video in self.waiting_videos:
-                self.waiting_videos.remove(video)        
+                self.waiting_videos.remove(video)
+            if video in self.converting_videos:
+                self.converting_videos.remove(video)        
             self.show_notification(self.failed_videos[-1])
         elif state == "downloading":
             self.downloading_videos.append(video)
@@ -137,6 +142,8 @@ class DownloadingPlayList(PlayList):
                 self.failed_videos.remove(video)
             if video in self.paused_videos:
                 self.paused_videos.remove(video)
+            if video in self.converting_videos:
+                self.converting_videos.remove(video)        
         elif state == "paused":
             self.paused_videos.append(video)
             if video in self.downloading_videos:
@@ -145,9 +152,20 @@ class DownloadingPlayList(PlayList):
             self.waiting_videos.append(video)
             if video in self.failed_videos:
                 self.failed_videos.remove(video)
+            if video in self.converting_videos:
+                self.converting_videos.remove(video)
+        elif state == "converting":
+            self.converting_videos.append(video)
+            if video in self.waiting_videos:
+                self.waiting_videos.remove(video)
+            if video in self.downloading_videos:
+                self.downloading_videos.remove(video)    
         elif state == "downloaded":
             self.downloaded_videos.append(video)
-            self.downloading_videos.remove(video)
+            if video in self.downloading_videos:
+                self.downloading_videos.remove(video)
+            if video in self.converting_videos:
+                self.converting_videos.remove(video)        
             self.show_notification(self.downloaded_videos[-1])
             if video in self.waiting_videos:
                 self.waiting_videos.remove(video)       
@@ -158,6 +176,7 @@ class DownloadingPlayList(PlayList):
                 text=f"{LanguageManager.data['failed']} : {len(self.failed_videos)} |   "
                      f"{LanguageManager.data['waiting']} : {len(self.waiting_videos)} |   "
                      f"{LanguageManager.data['downloading']} : {len(self.downloading_videos)} |   "
+                     f"{LanguageManager.data['converting']} : {len(self.converting_videos)} |   "
                      f"{LanguageManager.data['paused']} : {len(self.paused_videos)} |   "
                      f"{LanguageManager.data['downloaded']} : {len(self.downloaded_videos)}",
                 )
@@ -174,7 +193,7 @@ class DownloadingPlayList(PlayList):
                 else:
                     self.indicate_downloading()
             if len(self.downloading_videos) == 0 and len(self.waiting_videos) == 0 and \
-                    len(self.failed_videos) == 0 and len(self.paused_videos) == 0:
+                    len(self.failed_videos) == 0 and len(self.paused_videos) == 0 and len(self.converting_videos) == 0:
                 self.set_downloading_completed()
                 
     def videos_progress_track(self):

@@ -46,7 +46,7 @@ class AddedPlayList(PlayList):
         self.loaded_videos: List[AddedVideo] = []
         self.automatic_downloaded: bool = False
         
-        self.qualities: List[str] = ['highest_quality', 'lowest_quality', 'audio_only']
+        self.available_resolutions: List[str] = ['highest_quality', 'lowest_quality', 'audio_only']
         
         super().__init__(
             root=root,
@@ -154,20 +154,57 @@ class AddedPlayList(PlayList):
                 
             self.handle_automatic_download()
             
+    def get_available_resolutions(self):
+        available_resolutions = []
+        for video in self.loaded_videos:
+            for resolution in [int(reso.split(" | ")[0].replace(" ", "")[0:-1]) for reso in video.resolution_select_menu.cget("values") if "kbps" not in reso]:
+                if resolution not in available_resolutions:
+                    available_resolutions.append(resolution)
+        
+        available_resolutions.sort()
+        available_resolutions = [str(resolution) + "p" for resolution in available_resolutions][::-1]
+        available_resolutions.append("Audio Only")
+
+        return available_resolutions
+    
+    def is_available_resolution(self, resolution: str):
+        for available_resolution in [res.split(" | ")[0].replace(" ", "") for res in self.resolution_select_menu.cget("values")]:
+                if available_resolution == resolution:
+                    return True
+        return False
+    
+    def select_download_resolution(self, selected_quality: str):
+        if "Audio Only" in selected_quality:
+            index = -1
+        elif self.is_available_resolution(selected_quality):
+           index = [res.split(" | ")[0].replace(" ", "") for res in self.resolution_select_menu.cget("values")].index(selected_quality)
+        else:
+            available_resolutions_int = [
+                   int(reso.split(" | ")[0].replace(" ", "")[0:-1]) for reso in self.resolution_select_menu.cget("values") if "Audio Only" not in reso
+                ]
+            
+            selected_quality_int = int(selected_quality.split(" | ")[0][0:-1])
+            for index, available_resolution_int in enumerate(available_resolutions_int):
+                if available_resolution_int <= selected_quality_int:
+                    break
+            
+        self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[index])
+            
     def handle_automatic_download(self):
         if (GeneralSettings.settings["automatic_download"]["status"] == "enable" and
                 len(self.waiting_videos) == 0 and len(self.loading_videos) == 0 and
                 len(self.loaded_videos) != 0) and self.automatic_downloaded is not True:
             self.automatic_downloaded = True
-            auto_download_quality_index = GeneralSettings.settings["automatic_download"]["quality"]
+            
+            self.available_resolutions = self.get_available_resolutions()
+            
             if len(self.failed_videos) == 0:
-                self.resolution_select_menu.set(
-                    LanguageManager.data[self.qualities[auto_download_quality_index]]
-                )
-            self.select_download_option(
-                [LanguageManager.data[quality] for quality in self.qualities][auto_download_quality_index]
-            )
+                self.select_download_resolution(GeneralSettings.settings["automatic_download"]["quality"])
+
+            self.configure_resolution_automatic_download_for_videos()
+            
             self.playlist_download_button_click_callback(self)
+            
 
     def reload_playlist(self):
         if len(self.loading_videos) == 0 and len(self.videos) != 0:
@@ -214,30 +251,30 @@ class AddedPlayList(PlayList):
         self.load_state = "loaded"
         self.status_label.configure(text=LanguageManager.data['loaded'])
         self.download_btn.configure(state="normal")
+        
+        self.available_resolutions = self.get_available_resolutions()
         self.resolution_select_menu.configure(
-            values=[LanguageManager.data[quality] for quality in self.qualities]
+            values=self.available_resolutions
         )
-        if GeneralSettings.settings["automatic_download"]["status"] == "enable":
-            default_index = GeneralSettings.settings["automatic_download"]["quality"]
-        else:
-            default_index = 0
         self.resolution_select_menu.set(
-            LanguageManager.data[self.qualities[default_index]]
+            self.available_resolutions[0]
         )
             
-        self.resolution_select_menu.configure(command=self.select_download_option)
+        self.resolution_select_menu.configure(command=self.configure_download_resolution)
 
     def download_playlist(self):
         self.root.fade_effect()
         self.playlist_download_button_click_callback(self)
         
-    def select_download_option(self, e):
-        selected_index = self.resolution_select_menu.cget("values").index(e)
-        if selected_index != 0:
-            selected_index -= len(self.qualities)
+    def configure_download_resolution(self, selected_resolution):
         for video in self.loaded_videos:
-            video.resolution_select_menu.set(video.resolution_select_menu.cget("values")[selected_index])
-            video.choose_download_type(video.resolution_select_menu.get())
+            video.select_download_resolution(selected_resolution)
+            video.configure_download_resolution(video.resolution_select_menu.get())
+            
+    def configure_resolution_automatic_download_for_videos(self):
+        for video in self.loaded_videos:
+            video.select_download_quality_automatic()
+            video.configure_download_resolution(video.resolution_select_menu.get())
 
     # create widgets
     def create_widgets(self):
@@ -277,16 +314,6 @@ class AddedPlayList(PlayList):
                  f"{LanguageManager.data['loading']} : {len(self.loading_videos)} |   "
                  f"{LanguageManager.data['loaded']} : {len(self.loaded_videos)}"
         )
-        if self.load_state == "loaded":
-            current_selected_quality = self.resolution_select_menu.cget("values").index(
-                self.resolution_select_menu.get()
-            )
-            self.resolution_select_menu.configure(
-                values=[LanguageManager.data[quality] for quality in self.qualities]
-            )
-            self.resolution_select_menu.set(
-                self.resolution_select_menu.cget("values")[current_selected_quality]
-            )
 
     def set_widgets_fonts(self):
         super().set_widgets_fonts()
@@ -447,7 +474,7 @@ class AddedPlayList(PlayList):
         del self.loaded_videos
         
         del self.automatic_downloaded
-        del self.qualities
+        del self.available_resolutions
 
         super().__del__()
         

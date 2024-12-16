@@ -10,7 +10,8 @@ from services import (
     LoadManager,
     ThemeManager,
     LanguageManager,
-    VideoCountTracker
+    VideoCountTracker,
+    DownloadManager
 )
 from settings import (
     AppearanceSettings,
@@ -206,25 +207,27 @@ class AddedVideo(Video):
                     DownloadInfoUtility.get_supported_download_types(self.video_stream_data)
                 )
             )
-            self.set_loading_completed()
             self.set_video_data()
+            self.set_loading_completed()
             self.download_automatically()
+            
         except Exception as error:
             print(f"added_video.py L-201 : {error}")
             self.set_loading_failed()
-            
+           
+        
     def download_video(self):
         self.root.fade_effect()
         self.video_download_button_click_callback(self)
 
-    def choose_download_type(self, e: str):
-        selected_download_index = self.resolution_select_menu.cget("values").index(self.resolution_select_menu.get())
-        self.download_quality = e.replace(" ", "").split("|")[0]
+    def configure_download_resolution(self, selected_quality: str):
+        self.download_quality = selected_quality.replace(" ", "").split("|")[0]
         if "kbps" in self.download_quality:
             self.download_type = "Audio"
         elif "p" in self.download_quality:
             self.download_type = "Video"
-            
+        
+        selected_download_index = self.resolution_select_menu.cget("values").index(selected_quality)
         self.selected_download_type_info = self.support_download_types[selected_download_index]
         # print("selected_download_type_info", self.selected_download_type_info)
 
@@ -237,21 +240,37 @@ class AddedVideo(Video):
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
         self.status_label.configure(text=LanguageManager.data["waiting"])
-
-    def select_download_quality_automatic(self):
-        index = None
-        if GeneralSettings.settings["automatic_download"]["quality"] == 2:
+        
+    def is_available_resolution(self, resolution: str):
+        for available_resolution in [res.split(" | ")[0].replace(" ", "") for res in self.resolution_select_menu.cget("values")]:
+                if available_resolution == resolution:
+                    return True
+        return False
+        
+    def select_download_resolution(self, selected_quality: str):
+        if "Audio Only" in selected_quality:
             index = -1
-        elif GeneralSettings.settings["automatic_download"]["quality"] == 1:
-            index = -2
-        elif GeneralSettings.settings["automatic_download"]["quality"] == 0:
-            index = 0
+        elif self.is_available_resolution(selected_quality):
+           index = [res.split(" | ")[0].replace(" ", "") for res in self.resolution_select_menu.cget("values")].index(selected_quality)
+        else:
+            available_resolutions_int = [
+                   int(reso.split(" | ")[0].replace(" ", "")[0:-1]) for reso in self.resolution_select_menu.cget("values") if "kbps" not in reso
+                ]
+            
+            selected_quality_int = int(selected_quality.split(" | ")[0][0:-1])
+            for index, available_resolution_int in enumerate(available_resolutions_int):
+                if available_resolution_int <= selected_quality_int:
+                    break
+            
         self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[index])
-
+        
+    def select_download_quality_automatic(self):
+        self.select_download_resolution(GeneralSettings.settings["automatic_download"]["quality"])
+        
     def download_automatically(self):
         if GeneralSettings.settings["automatic_download"]["status"] == "enable":
             self.select_download_quality_automatic()
-            self.choose_download_type(self.resolution_select_menu.get())
+            self.configure_download_resolution(self.resolution_select_menu.get())
             if self.mode == "video":
                 self.video_download_button_click_callback(self)
 
@@ -299,8 +318,8 @@ class AddedVideo(Video):
                 values=DownloadInfoUtility.generate_download_options(self.support_download_types)
             )
             self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[0])
-            self.choose_download_type(self.resolution_select_menu.get())
-            self.resolution_select_menu.configure(command=self.choose_download_type)
+            self.configure_download_resolution(self.resolution_select_menu.get())
+            self.resolution_select_menu.configure(command=self.configure_download_resolution)
             self.channel_btn.configure(state="normal")
             self.download_btn.configure(state="normal")
 

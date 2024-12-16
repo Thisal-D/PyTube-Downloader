@@ -22,6 +22,7 @@ from services import (
     ThemeManager,
     DownloadManager, 
     LoadManager, 
+    VideoConvertManager,
     LanguageManager
 )
 from settings import (
@@ -467,6 +468,9 @@ class App(ctk.CTk):
                  f" | "
                  f"{LanguageManager.data['downloading']} : {DownloadManager.queued_download_count + 
                                                             DownloadManager.active_download_count}"
+                 f" | "
+                 f" {LanguageManager.data['converting']} : {VideoConvertManager.active_convert_count + 
+                                                            VideoConvertManager.queued_convert_count}"
         )
         
     def update_widgets_text(self):
@@ -1159,6 +1163,9 @@ class App(ctk.CTk):
                  f" | "
                  f"{LanguageManager.data['downloading']} : {DownloadManager.queued_download_count + 
                                                             DownloadManager.active_download_count}"
+                 f" | "
+                 f" {LanguageManager.data['converting']} : {VideoConvertManager.active_convert_count + 
+                                                            VideoConvertManager.queued_convert_count}"
         )
     
     def update_total_videos_count_status(self, added_video_count, downloading_video_count, downloaded_video_count) -> None:
