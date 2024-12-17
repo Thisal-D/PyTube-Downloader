@@ -258,7 +258,7 @@ class NetworkPanel(ctk.CTkFrame):
         
         self.automatic_download_quality_combo_box.configure(state="normal")
         self.automatic_download_quality_combo_box.set(
-            GeneralSettings.settings["automatic_download"]["quality"]
+            "1080p"
         )
         self.automatic_download_quality_combo_box.configure(state="disabled")
         
@@ -268,7 +268,6 @@ class NetworkPanel(ctk.CTkFrame):
         
         self.apply_network_settings()
         
-
     def apply_network_settings(self):
         GeneralSettings.settings["max_simultaneous_loads"] = int(self.simultaneous_load_entry.get())
         GeneralSettings.settings["max_simultaneous_downloads"] = int(self.simultaneous_download_entry.get())

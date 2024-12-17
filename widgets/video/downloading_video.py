@@ -224,7 +224,6 @@ class DownloadingVideo(Video):
         Download the video.
         """
 
-        # print("Set Download Files Info : set_download_files_info()")
         try:
             if self.download_type_info["type"] == "video" and not self.video_download_completed:
                     if not self.download_type_info["inbuilt_audio"]:
@@ -255,15 +254,19 @@ class DownloadingVideo(Video):
             self.set_downloading_failed()
             return
     
-        if  self.download_type_info["type"] == "video" and self.video_download_completed and self.audio_for_video_download_completed and not self.download_type_info["inbuilt_audio"]:
+        if self.download_type_info["type"] == "video" and self.video_download_completed and self.audio_for_video_download_completed and not self.download_type_info["inbuilt_audio"]:
             self.set_for_converting()
             
-        if  self.download_type_info["type"] == "video" and self.video_download_completed and self.download_type_info["inbuilt_audio"]:
+        if self.download_type_info["type"] == "video" and self.video_download_completed and self.download_type_info["inbuilt_audio"]:
             self.set_downloading_completed()
             
         elif self.download_type_info["type"] == "audio" and self.audio_download_completed:
             self.set_downloading_completed()
-        else:
+        
+        elif (self.download_type_info["type"] == "audio" and not self.audio_download_completed) or\
+            (self.download_type_info["type"] == "video" and not self.video_download_completed and self.download_type_info["inbuilt_audio"]) or\
+            (self.download_type_info["type"] == "video" and not self.video_download_completed or\
+                self.download_type_info["type"] == "video" and not self.download_type_info["inbuilt_audio"] and not self.audio_for_video_download_completed):
             self.download_file(
                 download_stream=current_stream, 
                 download_file_name=current_download_file_name, 
@@ -272,7 +275,6 @@ class DownloadingVideo(Video):
             )
 
     def download_file(self, download_stream, download_file_name: str, download_file_size: int, download_type: Literal["audio", "video", "video_only", "audio_for_video"] = None):        
-        # print("Called Download File : download_file()")
         self.bytes_downloaded = 0
         try:
             with open(download_file_name, "wb") as self.downloading_file:
