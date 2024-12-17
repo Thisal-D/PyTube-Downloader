@@ -10,8 +10,7 @@ from settings import (
     AppearanceSettings
 )
 from utils import (
-    SettingsValidateUtility,
-    ValueConvertUtility
+    SettingsValidateUtility
 )
 
 
@@ -520,9 +519,9 @@ class NetworkPanel(ctk.CTkFrame):
         self.dash8_label.grid(row=8, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.re_download_automatically_switch.grid(row=8, column=2, pady=(pady, 0), sticky="w")
         
-        self.apply_changes_button.grid(row=10, column=3, pady=(pady, 0), sticky="w")
+        self.apply_changes_button.grid(row=9, column=3, pady=(pady, 0), sticky="w")
         
-        self.settings_reset_button.grid(row=10, column=4, pady=(pady, 0), padx=(20*scale, 0), sticky="w")
+        self.settings_reset_button.grid(row=9, column=4, pady=(pady, 0), padx=(20*scale, 0), sticky="w")
         
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
