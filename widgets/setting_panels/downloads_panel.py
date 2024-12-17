@@ -215,6 +215,7 @@ class DownloadsPanel(ctk.CTkFrame):
     
     def cancel_chunk_size_settings_resetting(self):
         self.chunk_size_change_slider.set(GeneralSettings.settings["chunk_size"])
+        self.chunk_size_value_label.configure(text=f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"], decimal_points=2)}/s")
         self.chunk_size_changed = False
 
     def set_downloads_settings(self):
