@@ -2,7 +2,8 @@ import threading
 import time
 from settings.general_settings import GeneralSettings
 from typing import Callable, List, Dict
-
+from pytube import request as pytube_request
+from pytubefix import request as pytubefix_request
 
 class DownloadManager:
     """
@@ -30,6 +31,8 @@ class DownloadManager:
         '8640p',
         '17280p'
     ]
+    
+    default_chunk_size: int = 2097152
 
     @staticmethod
     def manage_download_queue():
@@ -99,6 +102,13 @@ class DownloadManager:
             status_change_callback (Callable, optional): A callback function to be called on status changes.
         """
         DownloadManager.status_change_callback = status_change_callback
+        DownloadManager.configure_chunkj_size()
         downloading_manage_thread = threading.Thread(target=DownloadManager.manage_download_queue)
         downloading_manage_thread.daemon = True
         downloading_manage_thread.start()
+        
+    @staticmethod
+    def configure_chunkj_size():
+        pytube_request.default_range_size = GeneralSettings.settings["chunk_size"]
+        pytubefix_request.default_range_size = GeneralSettings.settings["chunk_size"]
+        

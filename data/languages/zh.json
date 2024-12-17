@@ -92,5 +92,6 @@
     "alerts": "警报",
     "download_completed_notifi": "下载完成...",
     "download_failed_notifi": "下载失败...",
-    "downloading_notifi": "下载中..."
+    "downloading_notifi": "下载中...",
+    "chunk_size": "块大小"
 }

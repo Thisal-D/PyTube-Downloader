@@ -46,7 +46,8 @@ class SettingPanel(ctk.CTkFrame):
 
         self.downloads_panel = DownloadsPanel(
             master=self,
-            general_settings_change_callback=general_settings_change_callback
+            general_settings_change_callback=general_settings_change_callback,
+            restart_callback=restart_callback 
         )
 
         self.about_panel = AboutPanel(
