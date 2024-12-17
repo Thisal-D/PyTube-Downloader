@@ -9,7 +9,10 @@ from settings import (
     GeneralSettings,
     AppearanceSettings
 )
-from utils import SettingsValidateUtility
+from utils import (
+    SettingsValidateUtility,
+    ValueConvertUtility
+)
 
 
 class NetworkPanel(ctk.CTkFrame):
@@ -393,6 +396,11 @@ class NetworkPanel(ctk.CTkFrame):
             "end",
             GeneralSettings.settings["max_simultaneous_converts"]
         )
+        
+        self.automatic_download_quality_combo_box.set(
+            GeneralSettings.settings["automatic_download"]["quality"]
+        )
+
         if GeneralSettings.settings["automatic_download"]["status"] == "enable":
             self.automatic_download_switch.select()
             self.automatic_download_switch_state.set("enable")
@@ -417,19 +425,11 @@ class NetworkPanel(ctk.CTkFrame):
             self.re_download_automatically_switch_state.set(True)
         else:
             self.re_download_automatically_switch_state.set(False)
-
-        self.automatic_download_quality_combo_box.set(
-            GeneralSettings.settings["automatic_download"]["quality"]
-        )
-
+        
     def update_widgets_accent_color(self):
         self.set_widgets_accent_color()
 
     def set_widgets_accent_color(self):
-        self.apply_changes_button.configure(
-            fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
-            hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
-        )
         self.simultaneous_load_entry.configure(
             border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
@@ -469,6 +469,10 @@ class NetworkPanel(ctk.CTkFrame):
             progress_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
         )
         self.settings_reset_button.configure(
+            fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+            hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
+        )
+        self.apply_changes_button.configure(
             fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
             hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
         )
@@ -515,12 +519,11 @@ class NetworkPanel(ctk.CTkFrame):
         self.re_download_automatically_label.grid(row=8, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash8_label.grid(row=8, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.re_download_automatically_switch.grid(row=8, column=2, pady=(pady, 0), sticky="w")
-
-        self.apply_changes_button.grid(row=9, column=3, pady=(pady, 0), sticky="w")
         
-        self.settings_reset_button.grid(row=9, column=4, pady=(pady, 0), padx=(20*scale, 0), sticky="w")
+        self.apply_changes_button.grid(row=10, column=3, pady=(pady, 0), sticky="w")
         
-
+        self.settings_reset_button.grid(row=10, column=4, pady=(pady, 0), padx=(20*scale, 0), sticky="w")
+        
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
         self.simultaneous_load_entry.configure(width=140 * scale, height=28 * scale)
@@ -593,6 +596,7 @@ class NetworkPanel(ctk.CTkFrame):
         self.re_download_automatically_label.configure(font=title_font)
         self.dash8_label.configure(font=title_font)
         
+        
         self.simultaneous_download_range_label.configure(font=title_font)
         self.simultaneous_load_range_label.configure(font=title_font)
 
@@ -602,7 +606,7 @@ class NetworkPanel(ctk.CTkFrame):
         self.simultaneous_convert_entry.configure(font=value_font)
         self.automatic_download_info_label.configure(font=value_font)
         self.automatic_download_quality_combo_box.configure(font=value_font, dropdown_font=value_font)
-
+        
         button_font = ("Segoe UI", 13 * scale, "bold")
         self.apply_changes_button.configure(font=button_font)
         

@@ -92,5 +92,6 @@
     "alerts" : "Alerts",
     "download_completed_notifi" : "Download Completed...",
     "download_failed_notifi" : "Download Failed...",
-    "downloading_notifi" : "Downloading..."
+    "downloading_notifi" : "Downloading...",
+    "chunk_size": "Chunk Size"
 }

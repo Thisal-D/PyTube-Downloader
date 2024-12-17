@@ -92,6 +92,7 @@
     "alerts": "දැනුම්දීම්",
     "download_completed_notifi": "භාගත කිරීම සම්පූර්ණයි...",
     "download_failed_notifi": "භාගත කිරීම අසාර්ථක විය...",
-    "downloading_notifi": "භාගත කරමින්..."
+    "downloading_notifi": "භාගත කරමින්...",
+    "chunk_size": "Chunk Size"
 }
  
