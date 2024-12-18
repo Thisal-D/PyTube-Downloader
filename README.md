@@ -6,7 +6,7 @@
 
 &nbsp; &nbsp;[![Download PyTube Downloader](https://img.shields.io/sourceforge/dm/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dw/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dt/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download)
 
-&nbsp; &nbsp;`v3.0.1` [Visit to Download .exe for Windows](https://sourceforge.net/p/pytube-downloader)
+&nbsp; &nbsp;`v3.1.0` [Visit to Download .exe for Windows](https://sourceforge.net/p/pytube-downloader)
 
 ---
 
