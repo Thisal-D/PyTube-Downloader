@@ -255,13 +255,16 @@ class App(ctk.CTk):
         pyautogui.hotkey("ctrl", "v")
         self.context_menu.place_forget()
 
-    def place_forget_nav_frames(self) -> None:
+    def place_forget_nav_frames(self, except_frame: Literal["added", "downloading", "downloaded"] = None) -> None:
         """
         Hides the navigation frames for added, downloading, and downloaded content.
         """
-        self.added_content_scroll_frame.place_forget()
-        self.downloading_content_scroll_frame.place_forget()
-        self.downloaded_content_scroll_frame.place_forget()
+        if except_frame != "added":
+            self.added_content_scroll_frame.place_forget()
+        if except_frame != "downloading":
+            self.downloading_content_scroll_frame.place_forget()
+        if except_frame != "downloaded":
+            self.downloaded_content_scroll_frame.place_forget()
 
     def place_forget_nav_labels(self) -> None:
         """
@@ -308,7 +311,7 @@ class App(ctk.CTk):
             frame (ctk.CTkScrollableFrame): The scrollable frame to be placed.
             frame_name (str): The name of the frame ('added', 'downloading', or 'downloaded').
         """
-        self.place_forget_nav_frames()
+        self.place_forget_nav_frames(except_frame=frame_name)
         frame.place(y=90 * AppearanceSettings.settings["scale_r"], x=10)
         self.place_nav_label(frame_name)
 
@@ -1198,6 +1201,12 @@ class App(ctk.CTk):
             
         fade_out(AppearanceSettings.settings["opacity_r"])
         
+    def scroll_frame_to_bottom(self, frame: ctk.CTkScrollableFrame):
+        """
+        Scroll the frame to the bottom.
+        """
+        frame.after(10, frame._parent_canvas.yview_moveto, 1.0)
+        
     def add_video_playlist(self) -> None:
         """
         Add a video or playlist to the content.
@@ -1237,6 +1246,11 @@ class App(ctk.CTk):
                 video_download_button_click_callback=self.download_video,
                 playlist_url=yt_url
             ).pack(fill="x", pady=2)
+        
+        # Automatically navigate to added frame when new video added
+        self.place_frame(self.added_content_scroll_frame, "added")
+        # auot scroll to bottom
+        self.scroll_frame_to_bottom(self.added_content_scroll_frame)
 
     def download_video(self, video: AddedVideo) -> None:
         """
@@ -1268,6 +1282,8 @@ class App(ctk.CTk):
             download_type_info=video.selected_download_type_info,
             video_download_complete_callback=self.downloaded_video,
         ).pack(fill="x", pady=2)
+        
+        self.scroll_frame_to_bottom(self.downloading_content_scroll_frame)
 
     def download_playlist(self, playlist: AddedPlayList) -> None:
         """
@@ -1296,6 +1312,8 @@ class App(ctk.CTk):
             playlist_download_complete_callback=self.downloaded_playlist,
         ).pack(fill="x", pady=2)
 
+        self.scroll_frame_to_bottom(self.downloading_content_scroll_frame)
+        
     def downloaded_video(self, video: DownloadingVideo) -> None:
         """
         Handle downloaded video.
@@ -1323,6 +1341,8 @@ class App(ctk.CTk):
             download_quality=video.download_quality,
             download_type=video.download_type
         ).pack(fill="x", pady=2)
+        
+        self.scroll_frame_to_bottom(self.downloaded_content_scroll_frame)
 
     def downloaded_playlist(self, playlist: DownloadingPlayList) -> None:
         """
@@ -1346,6 +1366,8 @@ class App(ctk.CTk):
             playlist_url=playlist.playlist_url,
             videos=playlist.downloaded_videos
         ).pack(fill="x", pady=2)
+        
+        self.scroll_frame_to_bottom(self.downloaded_content_scroll_frame)
 
     def open_context_menu(self, _event: tk.Event) -> None:
         """
@@ -1536,6 +1558,7 @@ class App(ctk.CTk):
         # Check the app is updated or not
         latest_version = DataRetriveUtility.get_latest_version()
         current_version = DataRetriveUtility.get_current_version()
+        
         scale = AppearanceSettings.settings["scale_r"]
         if latest_version is not None:
             if latest_version != current_version:
