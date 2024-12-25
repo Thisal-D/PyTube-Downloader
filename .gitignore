@@ -1,6 +1,4 @@
 /.idea/
-/assets/profile images
+/assets/profile images/*.png
 *.pyc
-data/
-ffmpeg/
-.github/
+ffmpeg/ffmpeg.exe
