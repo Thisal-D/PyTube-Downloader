@@ -1337,7 +1337,7 @@ class App(ctk.CTk):
             file_size=video.file_size,
             length=video.length,
 
-            download_path=video.download_file_name,
+            downloaded_file_name=video.download_file_name,
             download_quality=video.download_quality,
             download_type=video.download_type
         ).pack(fill="x", pady=2)
@@ -1566,12 +1566,13 @@ class App(ctk.CTk):
                     master=self,
                     original_configure_callback=self.run_geometry_changes_tracker,
                     alert_msg="update_alert",
+                    more_details=f"v{current_version} ➝ v{latest_version}",
                     ok_button_display=True,
                     ok_button_callback=self.open_update_download_page,
                     cancel_button_display=True,
                     wait_for_previous=True,
                     width=int(450 * scale),
-                    height=int(130 * scale)
+                    height=int(150 * scale)
                 )
                 
     def run_update_check(self):

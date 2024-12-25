@@ -1,5 +1,8 @@
 {
     "alert_window": {
+        "details": {
+            "normal": "#00ee00"
+        },
         "msg_color": {
             "normal": "#ee0000"
         }
@@ -74,10 +77,10 @@
                 "#ffffff"
             ]
         },
-        "theme_mode": 0
+        "theme_mode": 2
     },
-    "scale": 100.0,
-    "scale_r": 1.0,
+    "scale": 200.0,
+    "scale_r": 2.0,
     "settings_panel": {
         "accent_colors": {
             "0": {

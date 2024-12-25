@@ -26,7 +26,7 @@ class DownloadedVideo(Video):
             length: int = 0,
             thumbnails: List[PhotoImage] = (None, None),
             # download info
-            download_path: str = "",
+            downloaded_file_name: str = "",
             download_quality: Literal["128kbps", "360p", "720p"] = "720p",
             download_type: Literal["Audio", "Video"] = "Video",
             # download mode
@@ -37,13 +37,14 @@ class DownloadedVideo(Video):
         # video info
         self.file_size: int = file_size
         # download info
-        self.download_path: str = download_path
+        self.downloaded_file_name: str = downloaded_file_name
         self.download_quality: Literal["128kbps", "360p", "720p"] = download_quality
         self.download_type: Literal["Audio", "Video"] = download_type
         # widgets
         self.download_type_label: Union[ctk.CTkLabel, None] = None
         self.file_size_label: Union[ctk.CTkLabel, None] = None
         self.download_path_btn: Union[ctk.CTkButton, None] = None
+        self.play_video_btn: Union[ctk.CTkButton, None] = None
         # status callbacks
         self.video_status_callback = video_status_callback
         self.mode = mode
@@ -72,14 +73,22 @@ class DownloadedVideo(Video):
         )
         self.file_size_label = ctk.CTkLabel(
             master=self,
-            text=ValueConvertUtility.convert_size(self.file_size, 2),
+            text=ValueConvertUtility.convert_size(self.file_size, 2)
         )
         self.download_path_btn = ctk.CTkButton(
             master=self,
             text="📂",
             cursor="hand2",
-            command=lambda: os.startfile("\\".join(self.download_path.split("\\")[0:-1])),
-            hover=False,
+            command=lambda: os.startfile("\\".join(self.downloaded_file_name.split("\\")[0:-1])),
+            hover=False
+        )
+        
+        self.play_video_btn = ctk.CTkButton(
+            master=self,
+            text="▶",
+            cursor="hand2",
+            command=lambda: os.startfile(self.downloaded_file_name),
+            hover=False
         )
 
     def set_widgets_texts(self):
@@ -97,6 +106,7 @@ class DownloadedVideo(Video):
         self.download_type_label.configure(font=("arial", 12 * scale, "bold"))
         self.file_size_label.configure(font=("arial", 12 * scale, "normal"))
         self.download_path_btn.configure(font=("arial", 30 * scale, "bold"))
+        self.play_video_btn.configure(font=("arial", 35 * scale, "bold"))
 
     def set_widgets_sizes(self):
         super().set_widgets_sizes()
@@ -106,11 +116,13 @@ class DownloadedVideo(Video):
         self.download_type_label.configure(height=15 * scale)
         self.file_size_label.configure(height=15 * scale)
         self.download_path_btn.configure(height=15 * scale, width=30 * scale)
+        self.play_video_btn.configure(height=15 * scale, width=15 * scale)
 
     def set_widgets_accent_color(self):
         super().set_widgets_accent_color()
 
         self.download_path_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
+        self.play_video_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
 
     def set_widgets_colors(self):
         super().set_widgets_colors()
@@ -120,6 +132,7 @@ class DownloadedVideo(Video):
         )
         self.file_size_label.configure(text_color=AppearanceSettings.settings["video_object"]["text_color"]["normal"])
         self.download_path_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
+        self.play_video_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
 
     def on_mouse_enter_self(self, event):
         # super().on_mouse_enter_self(event)
@@ -145,6 +158,16 @@ class DownloadedVideo(Video):
 
         self.download_path_btn.bind("<Enter>", on_mouse_enter_download_path_btn)
         self.download_path_btn.bind("<Leave>", on_mouse_leave_download_path_btn)
+        
+        def on_mouse_enter_play_video_btn(_event):
+            self.play_video_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
+            # self.on_mouse_enter_self(event)
+
+        def on_mouse_leave_play_video_btn(_event):
+            self.play_video_btn.configure(text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
+
+        self.play_video_btn.bind("<Enter>", on_mouse_enter_play_video_btn)
+        self.play_video_btn.bind("<Leave>", on_mouse_leave_play_video_btn)
 
     def place_widgets(self):
         super().place_widgets()
@@ -152,9 +175,11 @@ class DownloadedVideo(Video):
         scale = AppearanceSettings.settings["scale_r"]
 
         self.download_type_label.place(relx=1, x=-300 * scale, rely=0.3, anchor="w")
-        self.download_path_btn.place(relx=1, x=-150 * scale, rely=0.5, anchor="w")
-        self.file_size_label.place(relx=1, x=-300 * scale, rely=0.7, anchor="w")
+        self.file_size_label.place(relx=1, x=-300 * scale, rely=0.7, anchor="w")    
 
+        self.download_path_btn.place(relx=1, x=-170 * scale, rely=0.5, anchor="w")
+        self.play_video_btn.place(relx=1, x=-90 * scale, rely=0.5, anchor="w")
+        
     def configure_widget_sizes(self, _event):
         scale = AppearanceSettings.settings["scale_r"]
         self.info_frame.configure(
@@ -169,13 +194,14 @@ class DownloadedVideo(Video):
         # video info
         del self.file_size
         # download info
-        del self.download_path
+        del self.downloaded_file_name
         del self.download_quality
         del self.download_type
         # widgets
         del self.download_type_label
         del self.file_size_label
         del self.download_path_btn
+        del self.play_video_btn
         # status callbacks
         del self.video_status_callback
         del self.mode
@@ -187,6 +213,7 @@ class DownloadedVideo(Video):
         self.download_type_label.destroy()
         self.file_size_label.destroy()
         self.download_path_btn.destroy()
+        self.play_video_btn.destroy()
 
         super().destroy_widgets()
 
