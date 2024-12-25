@@ -22,6 +22,7 @@ class AlertWindow(ctk.CTkToplevel):
             cancel_button_callback: Callable = None,
             callback: Callable = None,
             wait_for_previous: bool = False,
+            more_details: str = None,
             width: int = 400,
             height: int = 200):
 
@@ -75,6 +76,15 @@ class AlertWindow(ctk.CTkToplevel):
             font=("Arial", 13 * scale, "bold")
         )
         self.error_msg_label.pack(pady=(20 * scale, 15 * scale), padx=(0, 30 * scale))
+        
+        if more_details is not None:
+            self.more_details_label = ctk.CTkLabel(
+                master=self,
+                text=LanguageManager.data[alert_msg],
+                text_color=AppearanceSettings.settings["alert_window"]["msg_color"]["normal"],
+                font=("Arial", 13 * scale, "bold")
+            )
+            self.more_details_label.pack(pady=(20 * scale, 15 * scale), padx=(0, 30 * scale))
 
         if cancel_button_display is True:
             self.cancel_button = ctk.CTkButton(
