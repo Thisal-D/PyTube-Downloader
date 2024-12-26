@@ -2,6 +2,9 @@
     "alert_window": {
         "msg_color": {
             "normal": "#ee0000"
+        },
+        "details": {
+            "normal": "#00ee00"
         }
     },
     "context_menu": {

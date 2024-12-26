@@ -1,3 +1,5 @@
 /.idea/
-/assets/profile images
+/assets/profile images/*.png
 *.pyc
+ffmpeg/ffmpeg.exe
+temp/thumbnails/*.png

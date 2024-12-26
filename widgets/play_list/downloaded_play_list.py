@@ -57,7 +57,7 @@ class DownloadedPlayList(PlayList):
                 file_size=downloading_video.file_size,
                 length=downloading_video.length,
                 # download info
-                download_path=downloading_video.download_file_name,
+                downloaded_file_name=downloading_video.download_file_name,
                 download_quality=downloading_video.download_quality,
                 download_type=downloading_video.download_type,
                 # state callbacks
