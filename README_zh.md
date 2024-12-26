@@ -7,7 +7,7 @@
 
 &nbsp; &nbsp;[![Download PyTube Downloader](https://img.shields.io/sourceforge/dm/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dw/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dt/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download)
 
-&nbsp; &nbsp;`v3.1.1` [下载适用于 Windows 的 .exe](https://sourceforge.net/p/pytube-downloader)
+&nbsp; &nbsp;`v3.2.0` [下载适用于 Windows 的 .exe](https://sourceforge.net/p/pytube-downloader)
 
 ---
 
