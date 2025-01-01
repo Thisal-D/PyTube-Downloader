@@ -64,6 +64,7 @@ class AddedPlayList(PlayList):
         try:
             self.playlist = pytube.Playlist(self.playlist_url)
             self.playlist_video_count = int(self.playlist.length)
+            self.playlist_original_video_count = self.playlist_video_count
             self.channel = str(self.playlist.owner)
             self.playlist_title = str(self.playlist.title)
             self.channel_url = str(self.playlist.owner_url)

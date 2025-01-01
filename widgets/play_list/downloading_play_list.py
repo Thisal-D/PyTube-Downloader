@@ -26,6 +26,7 @@ class DownloadingPlayList(PlayList):
             playlist_video_count: int = 0,
             # videos of playlist
             videos: List[AddedVideo] = None,
+            playlist_original_video_count: int = 0,
             # playlist download completed callback utils
             playlist_download_complete_callback: Callable = None):
 
@@ -58,6 +59,7 @@ class DownloadingPlayList(PlayList):
             playlist_title=playlist_title,
             channel=channel,
             playlist_video_count=playlist_video_count,
+            playlist_original_video_count=playlist_original_video_count
         )
 
         self.channel_btn.configure(state="normal")
@@ -73,6 +75,10 @@ class DownloadingPlayList(PlayList):
                 width=self.playlist_videos_frame.winfo_width() - 20,
                 channel_url=added_video.channel_url,
                 video_url=added_video.video_url,
+                original_thumbnail_image_path=added_video.original_thumbnail_image_path,
+                # History thumbnail image paths
+                history_normal_thumbnail_image_path=added_video.history_normal_thumbnail_image_path,
+                history_hover_thumbnail_image_path=added_video.history_hover_thumbnail_image_path,
                 # download info
                 download_type=added_video.download_type,
                 download_quality=added_video.download_quality,

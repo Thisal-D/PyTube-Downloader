@@ -16,7 +16,10 @@ from .setting_panels import NavigationPanel
 from .setting_panels import GeneralPanel
 from .setting_panels import DownloadsPanel
 
-from .core_widgets import SettingPanel
 from .core_widgets import AlertWindow
 from .core_widgets import TrayMenu
 from .core_widgets import ContextMenu
+from .core_widgets import SettingPanel
+
+from .history_widgets import HistoryPanel
+from .history_widgets import HistoryVideo

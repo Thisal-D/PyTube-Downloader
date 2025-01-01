@@ -93,6 +93,11 @@
     "download_completed_notifi": "භාගත කිරීම සම්පූර්ණයි...",
     "download_failed_notifi": "භාගත කිරීම අසාර්ථක විය...",
     "downloading_notifi": "භාගත කරමින්...",
-    "chunk_size": "Chunk Size"
+    "chunk_size": "Chunk Size",
+    "history": "ඉතිහාසය",
+    "videos": "වීඩියෝ",
+    "playlists": "ලැයිස්තු",
+    "downloaded_playlists_history_will_be_display_here": "භාගත කරන ලද ප්ලේලිස්ට් ඉතිහාසය මෙහි පෙන්වනු ඇත.",
+    "downloaded_videos_history_will_be_display_here": "භාගත කරන ලද වීඩියෝ ඉතිහාසය මෙහි පෙන්වනු ඇත."
 }
  

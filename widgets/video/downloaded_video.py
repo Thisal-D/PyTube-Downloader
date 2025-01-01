@@ -6,7 +6,11 @@ import os
 from utils import (
     ValueConvertUtility
 )
-from services import LanguageManager, VideoCountTracker
+from services import (
+    LanguageManager, 
+    VideoCountTracker,
+    HistoryManager
+)
 from settings import AppearanceSettings
 
 
@@ -25,6 +29,10 @@ class DownloadedVideo(Video):
             file_size: int = 0,
             length: int = 0,
             thumbnails: List[PhotoImage] = (None, None),
+            original_thumbnail_image_path: str = "",
+            # Hsitory thumbnail images
+            history_normal_thumbnail_image_path: str = "",
+            history_hover_thumbnail_image_path: str = "",
             # download info
             downloaded_file_name: str = "",
             download_quality: Literal["128kbps", "360p", "720p"] = "720p",
@@ -59,9 +67,15 @@ class DownloadedVideo(Video):
             channel=channel,
             channel_url=channel_url,
             length=length,
-            video_url=video_url
+            video_url=video_url,
+            original_thumbnail_image_path=original_thumbnail_image_path,
+            history_normal_thumbnail_image_path=history_normal_thumbnail_image_path,
+            history_hover_thumbnail_image_path=history_hover_thumbnail_image_path
         )
 
+        if self.mode == "video":
+            HistoryManager.save_video_to_history(self)
+            
         VideoCountTracker.add_downloaded_video()
         self.set_video_data()
 

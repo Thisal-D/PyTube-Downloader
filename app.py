@@ -15,7 +15,8 @@ from widgets import (
     DownloadedPlayList,
     SettingPanel, 
     TrayMenu, 
-    AlertWindow
+    AlertWindow,
+    HistoryPanel
 )
 from widgets.core_widgets.context_menu import ContextMenu
 from services import (
@@ -23,7 +24,8 @@ from services import (
     DownloadManager, 
     LoadManager, 
     VideoConvertManager,
-    LanguageManager
+    LanguageManager,
+    HistoryManager
 )
 from settings import (
     AppearanceSettings,
@@ -98,10 +100,12 @@ class App(ctk.CTk):
         self.navigate_added_btn = None
         self.navigate_downloading_btn = None
         self.navigate_downloaded_btn = None
+        self.navigate_history_btn = None
 
         self.added_content_scroll_frame = None
         self.downloading_content_scroll_frame = None
         self.downloaded_content_scroll_frame = None
+        self.history_content_frame = None
 
         self.added_frame_info_label = None
         self.downloading_frame_info_label = None
@@ -126,7 +130,7 @@ class App(ctk.CTk):
         self.is_in_full_screen_mode = False
         self.root_geometry = ""
         self.is_maximized = False
-        
+                
     def create_widgets(self) -> None:
         """
         Creates and initializes all the GUI widgets for the application.
@@ -160,23 +164,34 @@ class App(ctk.CTk):
         self.added_content_scroll_frame = ctk.CTkScrollableFrame(master=self)
         self.downloading_content_scroll_frame = ctk.CTkScrollableFrame(master=self)
         self.downloaded_content_scroll_frame = ctk.CTkScrollableFrame(master=self)
+        self.history_content_frame = HistoryPanel(
+            master=self, 
+            video_add_to_download_callback=self.add_video, 
+            playlist_add_to_download_callback=self.add_playlist
+        )
 
         self.navigate_added_btn = ctk.CTkButton(
             master=self,
             text="Added",
-            command=lambda: self.place_frame(self.added_content_scroll_frame, "added")
+            command=lambda: self.place_nav_frame(self.added_content_scroll_frame, "added")
         )
 
         self.navigate_downloading_btn = ctk.CTkButton(
             master=self,
             text="Downloading",
-            command=lambda: self.place_frame(self.downloading_content_scroll_frame, "downloading")
+            command=lambda: self.place_nav_frame(self.downloading_content_scroll_frame, "downloading")
         )
 
         self.navigate_downloaded_btn = ctk.CTkButton(
             master=self,
             text="Downloaded",
-            command=lambda: self.place_frame(self.downloaded_content_scroll_frame, "downloaded")
+            command=lambda: self.place_nav_frame(self.downloaded_content_scroll_frame, "downloaded")
+        )
+        
+        self.navigate_history_btn = ctk.CTkButton(
+            master=self,
+            text="History",
+            command=lambda: self.place_nav_frame(self.history_content_frame, "history")
         )
 
         self.added_frame_info_label = ctk.CTkLabel(
@@ -255,9 +270,9 @@ class App(ctk.CTk):
         pyautogui.hotkey("ctrl", "v")
         self.context_menu.place_forget()
 
-    def place_forget_nav_frames(self, except_frame: Literal["added", "downloading", "downloaded"] = None) -> None:
+    def place_forget_nav_frames(self, except_frame: Literal["added", "downloading", "downloaded", "history"] = None) -> None:
         """
-        Hides the navigation frames for added, downloading, and downloaded content.
+        Hides the navigation frames for added, downloading, downloaded, history content.
         """
         if except_frame != "added":
             self.added_content_scroll_frame.place_forget()
@@ -265,7 +280,9 @@ class App(ctk.CTk):
             self.downloading_content_scroll_frame.place_forget()
         if except_frame != "downloaded":
             self.downloaded_content_scroll_frame.place_forget()
-
+        if except_frame != "history":
+            self.history_content_frame.place_forget()
+            
     def place_forget_nav_labels(self) -> None:
         """
         Hides the navigation labels for added, downloading, and downloaded content.
@@ -303,7 +320,7 @@ class App(ctk.CTk):
                 anchor="center"
             )
 
-    def place_frame(self, frame: ctk.CTkScrollableFrame, frame_name: str) -> None:
+    def place_nav_frame(self, frame: ctk.CTkScrollableFrame, frame_name: str) -> None:
         """
         Places the specified scrollable frame in the main window and updates the navigation label.
 
@@ -331,7 +348,8 @@ class App(ctk.CTk):
         self.navigate_added_btn.place(y=50 * scale, x=10)
         self.navigate_downloading_btn.place(y=50 * scale)
         self.navigate_downloaded_btn.place(y=50 * scale)
-        self.place_frame(self.added_content_scroll_frame, "added")
+        self.navigate_history_btn.place(y=50 * scale)
+        self.place_nav_frame(self.added_content_scroll_frame, "added")
         self.videos_status_count_label.place(x=10, rely=1, y=-20 * scale)
         self.logo_label.place(relx=0.5, rely=0.5, anchor="center")
 
@@ -371,6 +389,7 @@ class App(ctk.CTk):
         self.navigate_added_btn.configure(font=font_style_2)
         self.navigate_downloading_btn.configure(font=font_style_2)
         self.navigate_downloaded_btn.configure(font=font_style_2)
+        self.navigate_history_btn.configure(font=font_style_2)
         self.settings_btn.configure(font=("arial", 25 * scale, "normal"))
         self.context_menu.configure(font=("Segoe UI", 13 * scale, "bold"))
         self.videos_status_count_label.configure(font=("Segoe UI", 11 * scale, "normal"))
@@ -401,6 +420,7 @@ class App(ctk.CTk):
         self.navigate_added_btn.configure(height=int(40 * scale))
         self.navigate_downloading_btn.configure(height=int(40 * scale))
         self.navigate_downloaded_btn.configure(height=int(40 * scale))
+        self.navigate_history_btn.configure(height=int(40 * scale))
         self.settings_btn.configure(width=int(30 * scale), height=int(40 * scale))
         self.context_menu.configure(
             width=int(120 * AppearanceSettings.settings["scale_r"]),
@@ -420,15 +440,19 @@ class App(ctk.CTk):
         root_width = self.winfo_width()
         root_height = self.winfo_height()
         self.url_entry.configure(width=root_width - 250 * scale)
-
+        
+        history_button_width = int(100*scale)
         button_margin = int(3 * scale)
-        nav_button_width = int((root_width - 20 - button_margin * 3) / 3)
+        
+        nav_button_width = int((root_width - 20 - button_margin * 4 - history_button_width) / 3)
         self.navigate_added_btn.configure(width=nav_button_width)
         self.navigate_downloading_btn.configure(width=nav_button_width)
         self.navigate_downloaded_btn.configure(width=nav_button_width)
+        self.navigate_history_btn.configure(width=history_button_width)
 
         self.navigate_downloading_btn.place(x=nav_button_width + 10 + button_margin)
         self.navigate_downloaded_btn.place(x=nav_button_width * 2 + 10 + button_margin * 2)
+        self.navigate_history_btn.place(x=nav_button_width * 3 + 10 + button_margin * 3)
 
         self.video_radio_btn.place(x=root_width - 190 * scale)
         self.playlist_radio_btn.place(x=root_width - 190 * scale)
@@ -446,6 +470,7 @@ class App(ctk.CTk):
         self.added_content_scroll_frame.configure(height=frame_height, width=frame_width)
         self.downloading_content_scroll_frame.configure(height=frame_height, width=frame_width)
         self.downloaded_content_scroll_frame.configure(height=frame_height, width=frame_width)
+        self.history_content_frame.configure_widgets_size(height=frame_height, width=frame_width + 22)
 
     def set_widgets_texts(self):
         self.url_entry.configure(
@@ -453,10 +478,14 @@ class App(ctk.CTk):
         )
         self.video_radio_btn.configure(text=LanguageManager.data["video"])
         self.playlist_radio_btn.configure(text=LanguageManager.data["playlist"])
+        
         self.add_url_btn.configure(text=LanguageManager.data["add +"])
+        
         self.navigate_added_btn.configure(text=LanguageManager.data["added"] + " (0)")
         self.navigate_downloading_btn.configure(text=LanguageManager.data["downloading"] + " (0)")
         self.navigate_downloaded_btn.configure(text=LanguageManager.data["downloaded"] + " (0)")
+        self.navigate_history_btn.configure(text=LanguageManager.data["history"])
+        
         self.added_frame_info_label.configure(
             text=LanguageManager.data["added_videos_&_playlists_will_be_display_here"]
         )
@@ -506,6 +535,9 @@ class App(ctk.CTk):
             text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
         self.navigate_downloaded_btn.configure(
+            text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
+        )
+        self.navigate_history_btn.configure(
             text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
         self.added_frame_info_label.configure(
@@ -573,6 +605,11 @@ class App(ctk.CTk):
             fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"],
             hover=False
         )
+        self.navigate_history_btn.configure(
+            bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
+            fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"],
+            hover=False
+        )
 
         self.added_content_scroll_frame.configure(
             bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
@@ -586,8 +623,10 @@ class App(ctk.CTk):
             bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             fg_color=AppearanceSettings.settings["navigation_frame"]["fg_color"]["normal"]
         )
+        
         self.added_frame_info_label.configure(
-            bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
+            bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
+            text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
         self.downloading_frame_info_label.configure(
             bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
@@ -876,7 +915,44 @@ class App(ctk.CTk):
 
         self.navigate_downloaded_btn.bind("<Enter>", on_mouse_enter_navigate_downloaded_frame_btn)
         self.navigate_downloaded_btn.bind("<Leave>", on_mouse_leave_navigate_downloaded_frame_btn)
+        
+        ######################################################################################
 
+        def on_mouse_enter_navigate_history_frame_btn(_event: tk.Event) -> None:
+            """
+            Event handler for mouse entering the navigate history frame button.
+
+            This function adjusts the text color and foreground color of the navigate history frame button to reflect
+            the hover state when the mouse enters the button.The colors are obtained from the application's appearance
+            settings for the hover state.
+
+            Parameters:
+                _event (tk.Event): The event object.
+            """
+            self.navigate_history_btn.configure(
+                text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
+                fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["hover"]
+            )
+
+        def on_mouse_leave_navigate_history_frame_btn(_event: tk.Event) -> None:
+            """
+            Event handler for mouse leaving the navigate history frame button.
+
+            This function resets the text color and foreground color of the navigate history frame button to their
+            normal states when the mouse leaves the button. The colors are obtained from the application's appearance
+            settings for the normal state.
+
+            Parameters:
+                _event (tk.Event): The event object.
+            """
+            self.navigate_history_btn.configure(
+                text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+                fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"]
+            )
+
+        self.navigate_history_btn.bind("<Enter>", on_mouse_enter_navigate_history_frame_btn)
+        self.navigate_history_btn.bind("<Leave>", on_mouse_leave_navigate_history_frame_btn)
+        
         #######################################################################################
 
         def on_mouse_enter_added_frame_info_label(_event: tk.Event) -> None:
@@ -1135,6 +1211,7 @@ class App(ctk.CTk):
             self.configure_widgets_size()
             self.update_idletasks()
             self.update_widgets()
+            self.history_content_frame.configure_panel()
             self.hide_app_logo()
         self.is_geometry_changes_tracker_running = False
 
@@ -1206,49 +1283,70 @@ class App(ctk.CTk):
         Scroll the frame to the bottom.
         """
         frame.after(10, frame._parent_canvas.yview_moveto, 1.0)
+    
+    
+    def add_video(self, url: str = None)-> None:
+        if url is None:
+            yt_url = self.url_entry.get()
+        else:
+            yt_url = url
+            self.fade_effect()
+
+        self.added_frame_info_label.place_forget()
+        self.is_content_added = True
         
+        AddedVideo(
+            root=self,
+            master=self.added_content_scroll_frame,
+            height=int(70 * AppearanceSettings.settings["scale_r"]),
+            width=self.added_content_scroll_frame.winfo_width(),
+            # video url
+            video_url=yt_url,
+            # download btn callback
+            video_download_button_click_callback=self.download_video,
+        ).pack(fill="x", pady=2)
+        
+    def add_playlist(self, url: str = None) -> None:
+        if url is None:
+            yt_url = self.url_entry.get()
+        else:
+            yt_url = url
+            self.fade_effect()
+        
+        self.added_frame_info_label.place_forget()
+        self.is_content_added = True
+        
+        AddedPlayList(
+            root=self,
+            master=self.added_content_scroll_frame,
+            height=int(86 * AppearanceSettings.settings["scale_r"]),
+            width=self.added_content_scroll_frame.winfo_width(),
+
+            playlist_download_button_click_callback=self.download_playlist,
+            video_download_button_click_callback=self.download_video,
+            playlist_url=yt_url
+        ).pack(fill="x", pady=2)
+
     def add_video_playlist(self) -> None:
         """
         Add a video or playlist to the content.
         """
-        self.added_frame_info_label.place_forget()
         yt_url = self.url_entry.get()
         
         # if url entry is nothing just do nothing
         if yt_url.replace(" ", "") == "":
-            return
-        
-        self.is_content_added = True
-        
+            return    
+                
         # Show fade effect
         self.fade_effect()
         
         if self.selected_download_mode == "video":
-            AddedVideo(
-                root=self,
-                master=self.added_content_scroll_frame,
-                height=int(70 * AppearanceSettings.settings["scale_r"]),
-                width=self.added_content_scroll_frame.winfo_width(),
-                # video url
-                video_url=yt_url,
-                # download btn callback
-                video_download_button_click_callback=self.download_video,
-            ).pack(fill="x", pady=2)
-
+            self.add_video()
         else:
-            AddedPlayList(
-                root=self,
-                master=self.added_content_scroll_frame,
-                height=int(86 * AppearanceSettings.settings["scale_r"]),
-                width=self.added_content_scroll_frame.winfo_width(),
-
-                playlist_download_button_click_callback=self.download_playlist,
-                video_download_button_click_callback=self.download_video,
-                playlist_url=yt_url
-            ).pack(fill="x", pady=2)
+            self.add_playlist()
         
         # Automatically navigate to added frame when new video added
-        self.place_frame(self.added_content_scroll_frame, "added")
+        self.place_nav_frame(self.added_content_scroll_frame, "added")
         # auot scroll to bottom
         self.scroll_frame_to_bottom(self.added_content_scroll_frame)
 
@@ -1276,6 +1374,10 @@ class App(ctk.CTk):
             length=video.length,
             thumbnails=video.thumbnails,
             notification_thumbnail_image_path=video.notification_thumbnail_image_path,
+            original_thumbnail_image_path=video.original_thumbnail_image_path,
+            # History thumbnail image paths
+            history_normal_thumbnail_image_path=video.history_normal_thumbnail_image_path,
+            history_hover_thumbnail_image_path=video.history_hover_thumbnail_image_path,
             # download info
             download_quality=video.download_quality,
             download_type=video.download_type,
@@ -1305,6 +1407,7 @@ class App(ctk.CTk):
             playlist_title=playlist.playlist_title,
             playlist_video_count=len(playlist.loaded_videos),
             playlist_url=playlist.playlist_url,
+            playlist_original_video_count=playlist.playlist_original_video_count,
             # play list videos
             videos=playlist.loaded_videos,
             # download directory
@@ -1336,7 +1439,10 @@ class App(ctk.CTk):
             video_url=video.video_url,
             file_size=video.file_size,
             length=video.length,
-
+            original_thumbnail_image_path=video.original_thumbnail_image_path,
+            # History thumbnail image paths
+            history_normal_thumbnail_image_path=video.history_normal_thumbnail_image_path,
+            history_hover_thumbnail_image_path=video.history_hover_thumbnail_image_path,
             downloaded_file_name=video.download_file_name,
             download_quality=video.download_quality,
             download_type=video.download_type
@@ -1362,6 +1468,7 @@ class App(ctk.CTk):
             channel_url=playlist.channel_url,
             channel=playlist.channel,
             playlist_title=playlist.playlist_title,
+            playlist_original_video_count=playlist.playlist_original_video_count,
             playlist_video_count=len(playlist.downloaded_videos),
             playlist_url=playlist.playlist_url,
             videos=playlist.downloaded_videos
@@ -1464,6 +1571,7 @@ class App(ctk.CTk):
             GeneralSettings.settings['window_geometry'] = self.geometry()
             GeneralSettings.save_settings()
             self.clear_temporally_saved_files()
+            App.maintain_history()
         self.destroy()
         self.is_app_running = False
         if not restart:
@@ -1544,6 +1652,10 @@ class App(ctk.CTk):
         Clears temporarily saved files, such as thumbnails.
         """
         FileUtility.delete_files("temp\\thumbnails", ["this directory is necessary"])
+        
+    @staticmethod
+    def maintain_history() -> None:
+        HistoryManager.clear_invalid_history()
     
     def open_update_download_page(self) -> None:
         """
@@ -1607,4 +1719,16 @@ class App(ctk.CTk):
         """
         self.update_check_thread = threading.Thread(target=self.check_accessibility, daemon=True)
         self.update_check_thread.start()
+    
+    def manage_history_videos(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date):
+        """
+        Manage the history videos.
+        """
+        self.history_content_frame.add_hisory_video(no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date)
+        
+    def manage_history_playlists(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date):
+        """
+        Manage the history playlists.
+        """
+        self.history_content_frame.add_hisory_playlist(no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date)
         

@@ -35,7 +35,8 @@ class PlayList(ctk.CTkFrame):
             playlist_url: str = "-------",
             playlist_title: str = "-------",
             channel: str = "-------",
-            playlist_video_count: int = 0):
+            playlist_video_count: int = 0,
+            playlist_original_video_count: int = 0):
 
         super().__init__(
             master=master,
@@ -53,7 +54,8 @@ class PlayList(ctk.CTkFrame):
         self.channel: str = channel
         self.playlist_url: str = playlist_url
         self.playlist_title: str = playlist_title
-        self.playlist_video_count = playlist_video_count
+        self.playlist_video_count: int = playlist_video_count
+        self.playlist_original_video_count: int = playlist_original_video_count
 
         # widgets
         self.view_btn: Union[ctk.CTkButton, None] = None
