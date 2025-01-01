@@ -20,7 +20,7 @@ class HistoryManager:
     data_base = f"{data_base_dir}\\{data_base_name}"
     connection = None
     cursor = None
-    max_history = 20
+    max_history = 40
     video_history_change_callback = None
     playlist_history_change_callback = None
     
