@@ -5,6 +5,7 @@ import customtkinter as ctk
 from typing import Literal, List
 from utils import GuiUtils
 from settings import AppearanceSettings
+from services import HistoryManager
 
 
 class DownloadedPlayList(PlayList):
@@ -20,6 +21,7 @@ class DownloadedPlayList(PlayList):
             playlist_title: str = "---------",
             channel: str = "---------",
             playlist_video_count: int = 0,
+            playlist_original_video_count:int =0,
             # videos of playlist
             videos: List[DownloadingVideo] = None):
 
@@ -37,9 +39,12 @@ class DownloadedPlayList(PlayList):
             playlist_title=playlist_title,
             channel=channel,
             playlist_video_count=playlist_video_count,
+            playlist_original_video_count=playlist_original_video_count
         )
 
         self.display_downloaded_widgets()
+        
+        HistoryManager.save_playlist_to_history(self)
 
     def display_downloaded_widgets(self):
         for downloading_video in self.downloading_videos:
@@ -56,6 +61,10 @@ class DownloadedPlayList(PlayList):
                 video_url=downloading_video.video_url,
                 file_size=downloading_video.file_size,
                 length=downloading_video.length,
+                original_thumbnail_image_path=downloading_video.original_thumbnail_image_path,
+                # History thumbnail image paths
+                history_normal_thumbnail_image_path=downloading_video.history_normal_thumbnail_image_path,
+                history_hover_thumbnail_image_path=downloading_video.history_hover_thumbnail_image_path,
                 # download info
                 downloaded_file_name=downloading_video.download_file_name,
                 download_quality=downloading_video.download_quality,

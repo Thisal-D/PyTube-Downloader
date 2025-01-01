@@ -6,3 +6,4 @@ from .language_manager import LanguageManager
 from .video_count_tracker import VideoCountTracker
 from .notification_manager import NotificationManager
 from .video_convert_manager import VideoConvertManager
+from .history_manager import HistoryManager

@@ -97,20 +97,23 @@ class AddedVideo(Video):
         load_thread.start()
 
     def get_video_thumbnails(self) -> Tuple[tk.PhotoImage, tk.PhotoImage]:
-        thumbnail_size = (
+        thumbnail_size_for_video_object = (
             int(117 * AppearanceSettings.settings["scale_r"]),
             int(66 * AppearanceSettings.settings["scale_r"])
         )
-        thumbnail_save_directory = "temp/thumbnails/"
+
+        thumbnail_for_video_object_save_directory = "temp/thumbnails/"
+        thumbnail_for_video_history_object_save_directory = "history/thumbnails/"
+        
         thumbnail_url = self.video.thumbnail_url
         # Generate download path to thumbnail based on url
         file_name = FileUtility.sanitize_filename(thumbnail_url)
-        thumbnail_download_path = FileUtility.get_available_file_name(
-            thumbnail_save_directory + file_name + "-og.png"
+        self.original_thumbnail_image_path = FileUtility.get_available_file_name(
+            thumbnail_for_video_object_save_directory + file_name + "-og.png"
         )
-        ImageUtility.download_image(image_url=thumbnail_url, output_image_path=thumbnail_download_path)
+        ImageUtility.download_image(image_url=thumbnail_url, output_image_path=self.original_thumbnail_image_path)
         # Open downloaded thumbnail as Image
-        thumbnail = Image.open(thumbnail_download_path)
+        thumbnail = Image.open(self.original_thumbnail_image_path)
         
         # getting downloaded thumbnail width and height
         image_height = thumbnail.height
@@ -120,7 +123,7 @@ class AddedVideo(Video):
         ignore_pos = int(image_height * 0.4 / 2)
         start_pos = (0, ignore_pos)
         end_pos = (image_width, image_height - ignore_pos)
-        self.notification_thumbnail_image_path = FileUtility.get_available_file_name(thumbnail_save_directory + file_name + "-normal-notify-changed.png")
+        self.notification_thumbnail_image_path = FileUtility.get_available_file_name(thumbnail_for_video_object_save_directory + file_name + "-normal-notify-changed.png")
         ImageUtility.crop_image(thumbnail, start_position=start_pos, end_position=end_pos).save(self.notification_thumbnail_image_path)
 
         if round(image_width / 4 * 3) <= image_height:
@@ -139,15 +142,28 @@ class AddedVideo(Video):
         corner_radius = int(image_width / 18)
         thumbnail = ImageUtility.create_image_with_rounded_corners(thumbnail, radius=corner_radius)
         thumbnail_hover = ImageUtility.create_image_with_rounded_corners(thumbnail_hover, radius=corner_radius)
+        
+        ######################################################################################################################
+        self.history_normal_thumbnail_image_path = FileUtility.get_available_file_name(
+            thumbnail_for_video_history_object_save_directory + file_name + "-normal-changed.png"
+        )
+        self.history_hover_thumbnail_image_path = FileUtility.get_available_file_name(
+            thumbnail_for_video_history_object_save_directory + file_name + "-hover-changed.png"
+        )
+        
+        thumbnail.save(self.history_normal_thumbnail_image_path)
+        thumbnail_hover.save(self.history_hover_thumbnail_image_path)
+        
+        ######################################################################################################################
 
-        thumbnail = ImageUtility.resize_image(image=thumbnail, new_size=thumbnail_size)
-        thumbnail_hover = ImageUtility.resize_image(image=thumbnail_hover, new_size=thumbnail_size)
+        thumbnail = ImageUtility.resize_image(image=thumbnail, new_size=thumbnail_size_for_video_object)
+        thumbnail_hover = ImageUtility.resize_image(image=thumbnail_hover, new_size=thumbnail_size_for_video_object)
 
         thumbnail_normal_save_path = FileUtility.get_available_file_name(
-            thumbnail_save_directory + file_name + "-normal-changed.png"
+            thumbnail_for_video_object_save_directory + file_name + "-normal-changed.png"
         )
         thumbnail_hover_save_path = FileUtility.get_available_file_name(
-            thumbnail_save_directory + file_name + "-hover-changed.png"
+            thumbnail_for_video_object_save_directory + file_name + "-hover-changed.png"
         )
         thumbnail.save(thumbnail_normal_save_path)
         thumbnail_hover.save(thumbnail_hover_save_path)
@@ -160,25 +176,25 @@ class AddedVideo(Video):
     @classmethod
     def get_default_thumbnails(self):
         if AddedVideo.default_thumbnails == (None, None):
-            thumbnail_size = (
+            thumbnail_size_for_video_object = (
                 int(117 * AppearanceSettings.settings["scale_r"]),
                 int(66 * AppearanceSettings.settings["scale_r"])
             )
-            thumbnail_save_directory = "temp/thumbnails/"
+            thumbnail_for_video_object_save_directory = "temp/thumbnails/"
             file_name = "default-thumbnail"
             thumbnail = Image.open("assets/ui images/default thumbnail.png")
             corner_radius = int(thumbnail.width / 18)
             thumbnail_hover = ImageUtility.create_image_with_hover_effect(thumbnail, intensity_increase=50)
             thumbnail = ImageUtility.create_image_with_rounded_corners(thumbnail, radius=corner_radius)
             thumbnail_hover = ImageUtility.create_image_with_rounded_corners(thumbnail_hover, radius=corner_radius)
-            thumbnail = ImageUtility.resize_image(image=thumbnail, new_size=thumbnail_size)
-            thumbnail_hover = ImageUtility.resize_image(image=thumbnail_hover, new_size=thumbnail_size)
+            thumbnail = ImageUtility.resize_image(image=thumbnail, new_size=thumbnail_size_for_video_object)
+            thumbnail_hover = ImageUtility.resize_image(image=thumbnail_hover, new_size=thumbnail_size_for_video_object)
 
             thumbnail_normal_save_path = FileUtility.get_available_file_name(
-                thumbnail_save_directory + file_name + "-normal-changed.png"
+                thumbnail_for_video_object_save_directory + file_name + "-normal-changed.png"
             )
             thumbnail_hover_save_path = FileUtility.get_available_file_name(
-                thumbnail_save_directory + file_name + "-hover-changed.png"
+                thumbnail_for_video_object_save_directory + file_name + "-hover-changed.png"
             )
             thumbnail.save(thumbnail_normal_save_path)
             thumbnail_hover.save(thumbnail_hover_save_path)

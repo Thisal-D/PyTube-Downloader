@@ -11,7 +11,8 @@ from services import (
     LoadingIndicateManager,
     LanguageManager,
     VideoCountTracker,
-    VideoConvertManager
+    VideoConvertManager,
+    HistoryManager
 )
 
 
@@ -22,6 +23,10 @@ app = App()
 GeneralSettings.initialize()
 AppearanceSettings.initialize()
 LanguageManager.initialize()
+HistoryManager.initialize(
+    video_history_change_callback=app.manage_history_videos, 
+    playlist_history_change_callback=app.manage_history_playlists
+)
 
 scale = AppearanceSettings.settings["scale_r"]
 

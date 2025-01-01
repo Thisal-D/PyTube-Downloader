@@ -35,6 +35,10 @@ class Video(ctk.CTkFrame):
             channel: str = "-------",
             thumbnails: List[PhotoImage] = (None, None),
             notification_thumbnail_image_path: str = "",
+            original_thumbnail_image_path: str = "",
+            # Hsitory thumbnail images
+            history_normal_thumbnail_image_path: str = "",
+            history_hover_thumbnail_image_path: str = "",
             channel_url: str = "-------",
             length: int = 0):
 
@@ -57,6 +61,7 @@ class Video(ctk.CTkFrame):
         self.channel_url: str = channel_url
         self.length: int = length
         self.thumbnails: List[PhotoImage] = thumbnails
+        self.original_thumbnail_image_path: str = original_thumbnail_image_path
         # widgets
         self.info_frame: Union[ctk.CTkFrame, None] = None
         self.url_label: Union[ctk.CTkLabel, None] = None
@@ -67,6 +72,8 @@ class Video(ctk.CTkFrame):
         self.remove_btn: Union[ctk.CTkButton, None] = None
         
         self.notification_thumbnail_image_path: str = notification_thumbnail_image_path # for notification
+        self.history_normal_thumbnail_image_path: str = history_normal_thumbnail_image_path # for history
+        self.history_hover_thumbnail_image_path: str = history_hover_thumbnail_image_path # for history
 
         from widgets import ContextMenu
         self.context_menu: Union['ContextMenu', None] = None

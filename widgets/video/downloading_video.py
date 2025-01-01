@@ -47,7 +47,11 @@ class DownloadingVideo(Video):
             channel_url: str = "-------",
             length: int = 0,
             thumbnails: List[PhotoImage] = (None, None),
+            original_thumbnail_image_path: str = "",
             notification_thumbnail_image_path: str = "",
+            # Hsitory thumbnail images
+            history_normal_thumbnail_image_path: str = "",
+            history_hover_thumbnail_image_path: str = "",
             # video stream data
             video_stream_data: property = None,
             # video download callback utils @ only use if mode is video
@@ -112,7 +116,10 @@ class DownloadingVideo(Video):
             video_title=video_title,
             channel=channel,
             length=length,
-            notification_thumbnail_image_path = notification_thumbnail_image_path
+            original_thumbnail_image_path=original_thumbnail_image_path,
+            notification_thumbnail_image_path = notification_thumbnail_image_path,
+            history_normal_thumbnail_image_path=history_normal_thumbnail_image_path,
+            history_hover_thumbnail_image_path=history_hover_thumbnail_image_path
         )
         
         self.set_video_data()

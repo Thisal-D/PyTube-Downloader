@@ -93,5 +93,10 @@
     "download_completed_notifi" : "Download Completed...",
     "download_failed_notifi" : "Download Failed...",
     "downloading_notifi" : "Downloading...",
-    "chunk_size": "Chunk Size"
+    "chunk_size": "Chunk Size",
+    "history": "History",
+    "videos": "Videos",
+    "playlists": "Playlists",
+    "downloaded_playlists_history_will_be_display_here": "Downloaded playlists history will be display here.",
+    "downloaded_videos_history_will_be_display_here": "Downloaded videos history will be display here."
 }

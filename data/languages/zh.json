@@ -93,5 +93,10 @@
     "download_completed_notifi": "下载完成...",
     "download_failed_notifi": "下载失败...",
     "downloading_notifi": "下载中...",
-    "chunk_size": "块大小"
+    "chunk_size": "块大小",
+    "history": "历史",
+    "videos": "视频",
+    "playlists": "播放列表",
+    "downloaded_playlists_history_will_be_display_here": "下载的播放列表历史将显示在这里。",
+    "downloaded_videos_history_will_be_display_here": "下载的视频历史将显示在这里。"
 }
