@@ -14,7 +14,7 @@ class HistoryPlaylist(HistoryObject):
     default_thumbnail_light_normal: PhotoImage = None
     default_thumbnail_light_hover: PhotoImage = None
     
-    default_thumbnail_path_light = "assets\\ui images\\\playlist-light.png"
+    default_thumbnail_path_light = "assets\\ui images\\playlist-light.png"
     default_thumbnail_path_dark = "assets\\ui images\\playlist-dark.png"
     
     def __init__(self, videos_count: int = 0, **kwargs):
