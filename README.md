@@ -93,6 +93,12 @@
 
 ---
 
+## Project Structure
+
+Check out the [**Project Structure**](PROJECT_STRUCTURE.md) guide to understand the folder organization and code layout.
+
+---
+
 ## Dark Theme Preview 
 
 ![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b2079262-0d1c-4bd0-9b33-7cc16c9173ce)

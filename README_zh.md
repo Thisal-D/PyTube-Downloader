@@ -95,6 +95,12 @@
 
 ---
 
+## 项目结构
+
+查看 [**项目结构**](PROJECT_STRUCTURE.md) 指南，了解文件夹组织和代码布局。
+
+---
+
 ## 暗黑主题预览
 
 ![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b2079262-0d1c-4bd0-9b33-7cc16c9173ce)
