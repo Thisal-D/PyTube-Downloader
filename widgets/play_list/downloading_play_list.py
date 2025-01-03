@@ -156,6 +156,10 @@ class DownloadingPlayList(PlayList):
                 self.downloading_videos.remove(video)
         elif state == "waiting":
             self.waiting_videos.append(video)
+            if video in self.downloading_videos:
+                self.downloading_videos.remove(video)
+            if video in self.downloaded_videos:
+                self.downloaded_videos.remove(video)
             if video in self.failed_videos:
                 self.failed_videos.remove(video)
             if video in self.converting_videos:
