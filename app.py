@@ -1720,15 +1720,15 @@ class App(ctk.CTk):
         self.update_check_thread = threading.Thread(target=self.check_accessibility, daemon=True)
         self.update_check_thread.start()
     
-    def manage_history_videos(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date):
+    def manage_history_videos(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date, is_playlist_duplicated):
         """
         Manage the history videos.
         """
-        self.history_content_frame.add_hisory_video(no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date)
+        self.history_content_frame.add_hisory_video(no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date, is_playlist_duplicated)
         
-    def manage_history_playlists(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date):
+    def manage_history_playlists(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date, is_playlist_duplicated):
         """
         Manage the history playlists.
         """
-        self.history_content_frame.add_hisory_playlist(no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date)
+        self.history_content_frame.add_hisory_playlist(no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date, is_playlist_duplicated)
         

@@ -5,7 +5,7 @@ from utils import (
     FileUtility
 )
 import os
-from typing import Callable
+from typing import Callable, Literal
 # from widgets.video import DownloadedVideo
 # from widgets.play_list import DownloadedPlayList
 
@@ -23,6 +23,8 @@ class HistoryManager:
     max_history = 40
     video_history_change_callback = None
     playlist_history_change_callback = None
+    video_no = 0
+    playlist_no = 0
     
     @staticmethod
     def initialize(
@@ -49,6 +51,7 @@ class HistoryManager:
         HistoryManager.cursor = HistoryManager.connection.cursor()
         
         HistoryManager.initialize_history()
+        HistoryManager.configure_video_and_playlist_no()
         
     @staticmethod
     def initialize_history():
@@ -68,7 +71,43 @@ class HistoryManager:
         
         HistoryManager.videos_history_data = HistoryManager.videos_history_data[::-1]
         HistoryManager.playlists_history_data = HistoryManager.playlists_history_data[::-1]
-            
+    
+    @staticmethod
+    def configure_video_and_playlist_no():
+        sql_videos = "SELECT no FROM videos ORDER BY rowid DESC LIMIT 1"    
+        sql_playlists = "SELECT no FROM playlists ORDER BY rowid DESC LIMIT 1"
+        
+        HistoryManager.cursor.execute(sql_videos)
+        data = HistoryManager.cursor.fetchone()
+        if data is not None:
+            HistoryManager.video_no = data[0]
+        else:
+            HistoryManager.video_no = 0
+        
+        HistoryManager.cursor.execute(sql_playlists)
+        data = HistoryManager.cursor.fetchone()
+        if data is not None:
+            HistoryManager.playlist_no = data[0]
+        else:
+            HistoryManager.playlist_no = 0
+    
+     
+    @staticmethod
+    def remove_from_history(url: str, table: Literal["videos", "playlists"]) -> None:
+        sql = f"DELETE FROM {table} WHERE url = ?"
+        HistoryManager.cursor.execute(sql, (url,))
+        HistoryManager.connection.commit()
+        
+    @staticmethod
+    def is_already_exists(video_url: str, table: Literal["videos", "playlists"]) -> bool:
+        sql = f"SELECT COUNT(*) FROM {table} WHERE url = ?"
+        HistoryManager.cursor.execute(sql, (video_url,))
+        data = HistoryManager.cursor.fetchone()
+        if data is not None and data[0] > 0:
+            return True
+        else:
+            return False
+        
     @staticmethod
     def save_video_to_history(video):#: DownloadedVideo):        
         channel = video.channel
@@ -79,18 +118,24 @@ class HistoryManager:
         video_length = video.length
         download_date = DateTimeUtility.get_current_date_time()
         
+        if HistoryManager.is_already_exists(url, "videos"):
+            HistoryManager.remove_from_history(url, "videos")
+            is_duplicated = True
+        else:
+            is_duplicated = False
+        
         """
         HistoryManager.videos_history_data.insert(0, (None, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date))
         if len(HistoryManager.videos_history_data) > HistoryManager.max_history:
              HistoryManager.videos_history_data =  HistoryManager.videos_history_data[0:HistoryManager.max_history]
         """
-        
-        sql = "Insert into videos (channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date) values (?, ?, ?, ?, ?, ?, ?)"
-        HistoryManager.cursor.execute(sql, (channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date))
+        HistoryManager.video_no += 1
+        sql = "Insert into videos (no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date) values (?, ?, ?, ?, ?, ?, ?, ?)"
+        HistoryManager.cursor.execute(sql, (HistoryManager.video_no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date))
         HistoryManager.connection.commit()
         
-        HistoryManager.video_history_change_callback(0, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date)
-        
+        HistoryManager.video_history_change_callback(HistoryManager.video_no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date, is_duplicated)
+   
     @staticmethod
     def save_playlist_to_history(playlist):#: DownloadedPlayList):        
         channel = playlist.channel
@@ -101,17 +146,23 @@ class HistoryManager:
         video_count = playlist.playlist_original_video_count
         download_date = DateTimeUtility.get_current_date_time()
         
+        if HistoryManager.is_already_exists(url, "playlists"):
+            HistoryManager.remove_from_history(url, "playlists")
+            is_duplicated = True
+        else:
+            is_duplicated = False
+        
         """
         HistoryManager.playlists_history_data.insert(0, (None, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date))
         if len(HistoryManager.playlists_history_data) > HistoryManager.max_history:
              HistoryManager.playlists_history_data =  HistoryManager.playlists_history_data[0:HistoryManager.max_history]
         """
-        
-        sql = "Insert into playlists (channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date) values (?, ?, ?, ?, ?, ?, ?)"
-        HistoryManager.cursor.execute(sql, (channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date))
+        HistoryManager.playlist_no += 1
+        sql = "Insert into playlists (no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date) values (?, ?, ?, ?, ?, ?, ?, ?)"
+        HistoryManager.cursor.execute(sql, (HistoryManager.playlist_no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date))
         HistoryManager.connection.commit()
         
-        HistoryManager.playlist_history_change_callback(0, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date)
+        HistoryManager.playlist_history_change_callback(HistoryManager.playlist_no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date, is_duplicated)
         
     @staticmethod
     def maintain_history(table: str) -> None:

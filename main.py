@@ -82,4 +82,3 @@ app.run_update_check()
 app.run()
 
 # Codes under here will only execute when the app is closed
- 
