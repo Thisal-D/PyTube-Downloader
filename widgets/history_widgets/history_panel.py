@@ -5,6 +5,7 @@ from services import (
     LanguageManager,
     HistoryManager
 )
+import threading
 from typing import Literal
 import tkinter as tk
 from .history_video import HistoryVideo
@@ -74,39 +75,50 @@ class HistoryPanel(ctk.CTkFrame):
         self.set_widgets_accent_color()
         self.set_widgets_texts()
         self.bind_widgets_events()
-        
-        self.configure_video_count_per_row()
-        self.configure_playlist_count_per_row()
-        
-        self.configure_old_history_videos()
-        self.configure_old_history_playlists()
+                
+        threading.Thread(target=self.configure_old_history_videos, daemon=True).start()
+        threading.Thread(target=self.configure_old_history_playlists, daemon=True).start()
         
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
         
         self.place_nav_frame(self.videos_scrollable_frame, "videos")
+    
+    def bring_video_to_top(self, url):
+        for index, history_video in enumerate(self.histoy_videos_widgets):
+            if history_video.url == url:
+                if index != 0:
+                    history_video_temp = history_video
+                    self.histoy_videos_widgets.remove(history_video)
+                    self.histoy_videos_widgets.insert(0, history_video_temp)
+                    self.place_history_videos()
+                break
         
-    def add_hisory_video(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date) -> None:
-        if len(self.histoy_videos_widgets) == HistoryManager.max_history:
-            self.histoy_videos_widgets.pop().destroy()
-        self.histoy_videos_widgets.insert(
-            0,
-            (
-                HistoryVideo(
-                    master=self.videos_scrollable_frame,
-                    no=no,
-                    width=self.history_video_width,
-                    channel=channel,
-                    title=title,
-                    url=url,    
-                    thumbnail_path_normal=thumbnail_normal_path,
-                    thumbnail_path_hover=thumbnail_hover_path,
-                    download_date=download_date,
-                    length=video_length,
-                    add_to_download_callback=self.video_add_to_download_callback
+    def add_hisory_video(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date, is_duplicated) -> None:
+        if is_duplicated:
+            self.bring_video_to_top(url)
+        else:
+            if len(self.histoy_videos_widgets) == HistoryManager.max_history:
+                self.histoy_videos_widgets.pop().destroy()
+            self.histoy_videos_widgets.insert(
+                0,
+                (
+                    HistoryVideo(
+                        master=self.videos_scrollable_frame,
+                        no=no,
+                        width=self.history_video_width,
+                        channel=channel,
+                        title=title,
+                        url=url,    
+                        thumbnail_path_normal=thumbnail_normal_path,
+                        thumbnail_path_hover=thumbnail_hover_path,
+                        download_date=download_date,
+                        length=video_length,
+                        add_to_download_callback=self.video_add_to_download_callback
+                    )
                 )
             )
-        )
+        
         self.place_history_videos()
     
     def place_history_videos(self) -> None:
@@ -146,11 +158,14 @@ class HistoryPanel(ctk.CTkFrame):
                 add_to_download_callback=self.video_add_to_download_callback
             )
         )
+        self.configure_video_count_per_row()
         self.place_history_videos()
         
     def configure_history_videos(self) -> None:
+        previous_video_count_per_row = self.videos_per_row
         self.configure_video_count_per_row()
-        self.place_history_videos()
+        if previous_video_count_per_row != self.videos_per_row:
+            self.place_history_videos()
     
     def configure_video_count_per_row(self) -> None:
         total_required_width_for_video = self.history_video_width + self.history_video_grid_pad_x
@@ -158,29 +173,41 @@ class HistoryPanel(ctk.CTkFrame):
         
     # ------------------------------------------------------------------------------------------------------------------------------------------------------      
     # ------------------------------------------------------------------------------------------------------------------------------------------------------
+    def bring_playlist_to_top(self, url):
+        for index, history_playlist in enumerate(self.histoy_playlists_widgets):
+            if history_playlist.url == url:
+                if index != 0:
+                    history_playlist_temp = history_playlist
+                    self.histoy_playlists_widgets.remove(history_playlist)
+                    self.histoy_playlists_widgets.insert(0, history_playlist_temp)
+                    self.place_history_playlists()
+                break
             
-    def add_hisory_playlist(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date) -> None:
-        if len(self.histoy_playlists_widgets) == HistoryManager.max_history:
-            self.histoy_playlists_widgets.pop().destroy()
-        self.histoy_playlists_widgets.insert(
-            0,
-            (
-                HistoryPlaylist(
-                    master=self.playlists_scrollable_frame,
-                    no=no,
-                    width=self.history_video_width,
-                    channel=channel,
-                    title=title,
-                    url=url,    
-                    thumbnail_path_normal=thumbnail_normal_path,
-                    thumbnail_path_hover=thumbnail_hover_path,
-                    download_date=download_date,
-                    add_to_download_callback=self.playlist_add_to_download_callback,
-                    videos_count=video_count
+    def add_hisory_playlist(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date, is_duplicated) -> None:
+        if is_duplicated:
+            self.bring_playlist_to_top(url)
+        else:
+            if len(self.histoy_playlists_widgets) == HistoryManager.max_history:
+                self.histoy_playlists_widgets.pop().destroy()
+            self.histoy_playlists_widgets.insert(
+                0,
+                (
+                    HistoryPlaylist(
+                        master=self.playlists_scrollable_frame,
+                        no=no,
+                        width=self.history_video_width,
+                        channel=channel,
+                        title=title,
+                        url=url,    
+                        thumbnail_path_normal=thumbnail_normal_path,
+                        thumbnail_path_hover=thumbnail_hover_path,
+                        download_date=download_date,
+                        add_to_download_callback=self.playlist_add_to_download_callback,
+                        videos_count=video_count
+                    )
                 )
             )
-        )
-        self.place_history_playlists()
+            self.place_history_playlists()
             
     
     def place_history_playlists(self) -> None:
@@ -220,11 +247,14 @@ class HistoryPanel(ctk.CTkFrame):
                 add_to_download_callback=self.playlist_add_to_download_callback
             )
         )
+        self.configure_playlist_count_per_row()
         self.place_history_playlists()
         
     def configure_history_playlists(self) -> None:
+        previous_playlist_count_per_row = self.playlists_per_row
         self.configure_playlist_count_per_row()
-        self.place_history_playlists()
+        if previous_playlist_count_per_row != self.playlists_per_row:
+            self.place_history_playlists()
     
     def configure_playlist_count_per_row(self) -> None:
         total_required_width_for_playlist = self.history_playlist_width + self.history_playlist_grid_pad_x
