@@ -67,6 +67,33 @@ class FileUtility:
         except Exception as error:
             print(f"file_utility.py L-68 : {error}")
             return False
+        
+    def is_readalble(path: str) -> bool:
+        """
+        Check if the file is readable
+
+        Args:
+            path (str): The file to be checked.
+
+        Returns:
+            bool: True if the path is readable, False otherwise.
+        """
+        try:
+            try:
+                with open(path, "r"):
+                    pass
+                return True
+            except Exception as error:
+                print(f"file_utility.py L-86 : {error}")
+                try:
+                    with open(path, "rb"):
+                        pass
+                    return True
+                except Exception as error:
+                    return False
+        except Exception as error:
+            print(f"file_utility.py L-95 : {error}")
+            return False
 
     @staticmethod
     def sanitize_filename(url: str) -> str:

@@ -3,6 +3,7 @@ import customtkinter as ctk
 import tkinter as tk
 import threading
 import time
+import sys
 import webbrowser
 from typing import Literal
 import pyautogui
@@ -16,6 +17,7 @@ from widgets import (
     SettingPanel, 
     TrayMenu, 
     AlertWindow,
+    LowLevelAlertWindow,
     HistoryPanel
 )
 from widgets.core_widgets.context_menu import ContextMenu
@@ -1192,28 +1194,31 @@ class App(ctk.CTk):
         """
         Track changes in the geometry of the window and adjust accordingly.
         """
-        self.is_geometry_changes_tracker_running = True
-        update_delay = 0.5
-        # Check if the old window width or height is different from the current width or height
-        if self.root_width != self.winfo_width() or self.root_height != self.winfo_height():
-            # If the window size changed, show the logo on full screen
-            self.show_app_logo()
-            self.root_width = self.winfo_width()
-            self.root_height = self.winfo_height()
-            time.sleep(update_delay)
-            # Wait until the user stops changing the window size
-            while self.root_width != self.winfo_width() or self.root_height != self.winfo_height():
-                # Keep updating the old window size to track if the user changed the window size or not
+        try:
+            self.is_geometry_changes_tracker_running = True
+            update_delay = 0.5
+            # Check if the old window width or height is different from the current width or height
+            if self.root_width != self.winfo_width() or self.root_height != self.winfo_height():
+                # If the window size changed, show the logo on full screen
+                self.show_app_logo()
                 self.root_width = self.winfo_width()
                 self.root_height = self.winfo_height()
-                # Set delay to 1 sec
                 time.sleep(update_delay)
-            self.configure_widgets_size()
-            self.update_idletasks()
-            self.update_widgets()
-            self.history_content_frame.configure_panel()
-            self.hide_app_logo()
-        self.is_geometry_changes_tracker_running = False
+                # Wait until the user stops changing the window size
+                while self.root_width != self.winfo_width() or self.root_height != self.winfo_height():
+                    # Keep updating the old window size to track if the user changed the window size or not
+                    self.root_width = self.winfo_width()
+                    self.root_height = self.winfo_height()
+                    # Set delay to 1 sec
+                    time.sleep(update_delay)
+                self.configure_widgets_size()
+                self.update_idletasks()
+                self.update_widgets()
+                self.history_content_frame.configure_panel()
+                self.hide_app_logo()
+            self.is_geometry_changes_tracker_running = False
+        except Exception as error:
+            print(f"geometry_changes_tracker L-1219 : {error}")
 
     def run_geometry_changes_tracker(self, _event: tk.Event | str) -> None:
         """
@@ -1221,7 +1226,9 @@ class App(ctk.CTk):
         """
         if not self.is_geometry_changes_tracker_running:
             threading.Thread(target=self.geometry_changes_tracker).start()
-
+            # self.after(100, self.geometry_changes_tracker)
+            ...
+            
     def select_download_mode(self, download_mode: Literal["video", "playlist"]) -> None:
         """
         Select the download mode (either "video" or "playlist").
@@ -1568,10 +1575,13 @@ class App(ctk.CTk):
             restart (bool, optional): Whether to restart the application. Defaults to False.
         """
         if self.is_accessible_to_required_dirs :
-            GeneralSettings.settings['window_geometry'] = self.geometry()
-            GeneralSettings.save_settings()
-            self.clear_temporally_saved_files()
-            App.maintain_history()
+            try:
+                GeneralSettings.settings['window_geometry'] = self.geometry()
+                GeneralSettings.save_settings()
+                self.clear_temporally_saved_files()
+                App.maintain_history()
+            except Exception as error:
+                print("app.py L-1577 : ", error)
         self.destroy()
         self.is_app_running = False
         if not restart:
@@ -1637,6 +1647,7 @@ class App(ctk.CTk):
             quit_command=self.confirm_quit,
         )
         self.withdraw()
+        # self.after(1, self.tray_menu.run)
         threading.Thread(target=self.tray_menu.run, daemon=True).start()
 
     def run(self) -> None:
@@ -1691,34 +1702,38 @@ class App(ctk.CTk):
         """
         Run the update check in a separate thread.
         """
-        self.update_check_thread = threading.Thread(target=self.check_for_updates, daemon=True)
-        self.update_check_thread.start()
+        self.after(1, self.check_for_updates)
+        # self.update_check_thread = threading.Thread(target=self.check_for_updates, daemon=True)
+        # self.update_check_thread.start()
 
-    def check_accessibility(self):
+    def check_accessibility():
         scale = AppearanceSettings.settings["scale_r"]
-        DIRECTORIES = [GeneralSettings.backup_dir, GeneralSettings.settings["download_directory"], "data", "assets", "temp"]
+        DIRECTORIES = [
+            GeneralSettings.settings["download_directory"],
+        ]
+        
+        def force_close():
+            sys.exit(0)
+        
         for directory in DIRECTORIES:
             # print("Checking Accesibility :", directory)
-            if not FileUtility.is_accessible(directory):
-                self.is_accessible_to_required_dirs  = False
-                AlertWindow(
-                    master=self,
-                    original_configure_callback=self.run_geometry_changes_tracker,
+            if not FileUtility.is_accessible(os.path.abspath(directory)):
+                alert_window= LowLevelAlertWindow(
                     alert_msg="run_as_admin_mode",
                     ok_button_display=True,
-                    ok_button_callback=self.on_app_closing,
-                    wait_for_previous=True,
-                    callback=self.on_app_closing,
+                    ok_button_callback=force_close,
+                    callback=force_close,
                     width=int(450 * scale),
                     height=int(130 * scale)
-                )
-                
-    def run_accessibility_check(self):
+                ).mainloop()
+                    
+    def run_accessibility_check():
         """
         Run the accessibilit check in a separate thread.
         """
-        self.update_check_thread = threading.Thread(target=self.check_accessibility, daemon=True)
-        self.update_check_thread.start()
+        #self.after(10, self.check_accessibility)
+        accesibility_check_thread = threading.Thread(target=App.check_accessibility, daemon=True)
+        accesibility_check_thread.start()
     
     def manage_history_videos(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date, is_playlist_duplicated):
         """
