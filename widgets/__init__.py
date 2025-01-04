@@ -17,6 +17,7 @@ from .setting_panels import GeneralPanel
 from .setting_panels import DownloadsPanel
 
 from .core_widgets import AlertWindow
+from .core_widgets import LowLevelAlertWindow
 from .core_widgets import TrayMenu
 from .core_widgets import ContextMenu
 from .core_widgets import SettingPanel

@@ -74,3 +74,65 @@ class SettingsValidateUtility:
         except Exception as error:
             print(f"validate_accent_color : {error}")
             return False
+        
+    @staticmethod
+    def validate_scale_value(value: str) -> bool:
+        if value[-1] != "%":
+            return False
+        
+        value = value[0:-1]
+        
+        try:
+            value = float(value)
+        except Exception as error:
+            print(f"validate_scale_value : {error}")
+            return False
+        
+        value = int(value)
+        if value >= 100 and value <= 200:
+            return True
+        return False
+    
+    @staticmethod
+    def validate_opacity_value(value: str) -> bool:
+        if value[-1] != "%":
+            return False
+        
+        value = value[0: -1]
+        
+        try:
+            value = float(value)
+        except Exception as error:
+            print(f"validate_opacity_value : {error}")
+            return False
+
+        if value >= 60 and value <= 100:
+            return True
+        return False
+    
+    @staticmethod
+    def validate_chunk_size_value(value: str) -> bool:
+        # Check if the input ends with KB or MB
+        if not (value.endswith("KB") or value.endswith("MB")):
+            return False
+        
+        try:
+            # Extract the numeric part and convert it to float
+            numeric_value = float(value[:-2])
+        except ValueError as error:
+            print(f"validate_chunk_size_value : {error}")
+            return False
+        
+        # Convert the value to bytes for consistent comparison
+        if value.endswith("KB"):
+            size_in_bytes = numeric_value * 1024  # 1 KB = 1024 bytes
+        elif value.endswith("MB"):
+            size_in_bytes = numeric_value * 1024 * 1024  # 1 MB = 1024 * 1024 bytes
+        else:
+            return False  # Just a fallback, though the earlier check ensures this won't occur
+
+        # Validate the range in bytes
+        min_size = 50 * 1024  # 50KB in bytes
+        max_size = 100 * 1024 * 1024  # 100MB in bytes
+
+        return min_size <= size_in_bytes <= max_size

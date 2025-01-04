@@ -189,7 +189,5 @@ class HistoryManager:
             required_thumbnails.append(thumbnail[0].split("/")[-1])
             required_thumbnails.append(thumbnail[1].split("/")[-1])
         
-        for required_thumbnail in required_thumbnails:
-            print(required_thumbnail)
         FileUtility.delete_files(directory="history\\thumbnails", files_to_keep=required_thumbnails)
         

@@ -150,10 +150,10 @@ class DownloadsPanel(ctk.CTkFrame):
             to=104857600,
         )
         
-        self.chunk_size_value_label = ctk.CTkLabel(
+        self.chunk_size_value_entry = ctk.CTkEntry(
             master=self,
-            text="",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
         
         # -------------------------------------------------------------
@@ -181,6 +181,8 @@ class DownloadsPanel(ctk.CTkFrame):
 
         # track values validity
         self.download_path_valid: bool = True
+        
+        self.chunk_size_entry_previous_value: str = ""
         
         self.general_settings_change_callback = general_settings_change_callback
         self.configure_values()
@@ -212,10 +214,14 @@ class DownloadsPanel(ctk.CTkFrame):
             self.ask_to_restart()
         else:
             self.set_downloads_settings()
+            
+    def set_value_to_entry(self, entry: ctk.CTkEntry, value: str) -> None:
+        entry.delete(0, "end");
+        entry.insert(0, value);
     
     def cancel_chunk_size_settings_resetting(self):
         self.chunk_size_change_slider.set(GeneralSettings.settings["chunk_size"])
-        self.chunk_size_value_label.configure(text=f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"], decimal_points=2)}/s")
+        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"], decimal_points=2)}")
         self.chunk_size_changed = False
 
     def set_downloads_settings(self):
@@ -259,12 +265,24 @@ class DownloadsPanel(ctk.CTkFrame):
             self.apply_changes_button.configure(state="disabled")
 
     def change_chunk_size(self, chunk_size: int | float) -> None:
-        self.chunk_size_value_label.configure(text=f"{ValueConvertUtility.convert_size(chunk_size, decimal_points=2)}/s")
+        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(chunk_size, decimal_points=2)}")
         if chunk_size != GeneralSettings.settings["chunk_size"]:
             self.chunk_size_changed = True
         else:
             self.chunk_size_changed = False
         self.set_apply_button_state()
+        
+    def validate_chunk_size_value(self, _event):
+        if self.chunk_size_entry_previous_value == self.chunk_size_value_entry.get():
+            return
+        
+        self.chunk_size_entry_previous_value = self.chunk_size_value_entry.get()
+        text = self.chunk_size_value_entry.get()
+        value = text.strip().replace(" ", "")
+        if SettingsValidateUtility.validate_chunk_size_value(value):
+            value = ValueConvertUtility.MB_KB_to_Bytes(value)
+            self.chunk_size_change_slider.set(value)
+            self.change_chunk_size(value)
     
     def download_path_validate(self, _event):
         path = FileUtility.format_path(self.download_path_entry.get())
@@ -333,7 +351,7 @@ class DownloadsPanel(ctk.CTkFrame):
             self.create_sep_path_for_playlists_switch_state.set(False)
             
         self.chunk_size_change_slider.set(GeneralSettings.settings["chunk_size"])
-        self.chunk_size_value_label.configure(text=f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"],decimal_points=2)}/s")
+        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"],decimal_points=2)}")
 
     def bind_widgets_events(self):
         self.download_path_entry.bind("<KeyRelease>", self.download_path_validate)
@@ -387,6 +405,9 @@ class DownloadsPanel(ctk.CTkFrame):
             progress_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
             button_hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
         )
+        self.chunk_size_value_entry.configure(
+            border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
+        )
         self.settings_reset_button.configure(
             fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
             hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
@@ -435,7 +456,7 @@ class DownloadsPanel(ctk.CTkFrame):
         self.chunk_size_label.grid(row=7, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash5_label.grid(row=7, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.chunk_size_change_slider.grid(row=7, column=2, pady=(pady, 0), sticky="w")
-        self.chunk_size_value_label.grid(row=7, column=2, padx=(200 * scale, 0), pady=(pady, 0), sticky="w")
+        self.chunk_size_value_entry.grid(row=7, column=2, padx=(200 * scale, 0), pady=(pady, 0), sticky="w")
 
         
         self.apply_changes_button.grid(
@@ -461,6 +482,7 @@ class DownloadsPanel(ctk.CTkFrame):
         self.create_sep_path_for_qualities_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.create_sep_path_for_playlists_switch.configure(switch_width=36 * scale, switch_height=18 * scale)
         self.chunk_size_change_slider.configure(width=180 * scale, height=18 * scale)
+        self.chunk_size_value_entry.configure(width=80 * scale, height=24 * scale)
         
         self.apply_changes_button.configure(width=50 * scale, height=24 * scale)
         self.settings_reset_button.configure(width=80*scale, height=24 * scale)
@@ -520,7 +542,7 @@ class DownloadsPanel(ctk.CTkFrame):
         self.create_sep_path_for_videos_audios_info_label.configure(font=value_font)
         self.create_sep_path_for_qualities_info_label.configure(font=value_font)
         self.create_sep_path_for_playlists_info_label.configure(font=value_font)
-        self.chunk_size_value_label.configure(font=value_font)
+        self.chunk_size_value_entry.configure(font=value_font)
 
         button_font = ("Segoe UI", 13 * scale, "bold")
         self.apply_changes_button.configure(font=button_font)
@@ -529,3 +551,10 @@ class DownloadsPanel(ctk.CTkFrame):
         self.download_path_choose_button.configure(font=button_font2)
         
         self.settings_reset_button.configure(font=("Segoe UI", 11 * scale, "bold"))
+
+    def bind_widgets_events(self):
+        """
+        Bind events to widgets.
+        """
+        self.chunk_size_value_entry.bind("<KeyRelease>", self.validate_chunk_size_value)
+        

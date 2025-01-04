@@ -148,10 +148,10 @@ class AppearancePanel(ctk.CTkFrame):
             command=self.ask_to_restart
         )
 
-        self.scale_value_label = ctk.CTkLabel(
+        self.scale_value_entry = ctk.CTkEntry(
             master=self,
-            text="",
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
 
         self.opacity_label = ctk.CTkLabel(
@@ -174,6 +174,13 @@ class AppearancePanel(ctk.CTkFrame):
             to=100,
         )
         
+        self.opacity_value_entry = ctk.CTkEntry(
+            master=self,
+            text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
+        )
+
+        
         self.settings_reset_button = ctk.CTkButton(
             master=self, 
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"], 
@@ -183,6 +190,9 @@ class AppearancePanel(ctk.CTkFrame):
         # callbacks for settings changes
         self.restart_callback = restart_callback
         self.theme_settings_change_callback = theme_settings_change_callback
+        
+        self.scale_entry_previous_value: str = ""
+        self.opacity_entry_previous_value: str = ""
 
         self.set_widgets_fonts()
         self.set_widgets_texts()
@@ -195,10 +205,14 @@ class AppearancePanel(ctk.CTkFrame):
         # Register widget with ThemeManager
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
+        
+    def set_value_to_entry(self, entry: ctk.CTkEntry, value: str) -> None:
+        entry.delete(0, "end");
+        entry.insert(0, value);
 
     def cancel_scale_settings_resetting(self):
         self.scale_change_slider.set(AppearanceSettings.settings["scale"])
-        self.scale_value_label.configure(text=f"{AppearanceSettings.settings["scale"]} %")
+        self.set_value_to_entry(self.scale_value_entry, f"{AppearanceSettings.settings["scale"]} %")
         
     def reset_settings(self):
         self.apply_theme_mode(self.theme_combo_box.cget("values")[0])
@@ -212,7 +226,8 @@ class AppearancePanel(ctk.CTkFrame):
         self.apply_opacity(100)
 
         self.opacity_change_slider.set(100)
-        self.scale_value_label.configure(text=f"{100.0} %")
+        self.set_value_to_entry(self.scale_value_entry, f"{100.0} %")
+        
         if AppearanceSettings.settings["scale"] != 100:
             from widgets import AlertWindow
             scale = AppearanceSettings.settings["scale_r"]
@@ -296,6 +311,7 @@ class AppearancePanel(ctk.CTkFrame):
         """
         Apply selected opacity value.
         """
+        self.set_value_to_entry(self.opacity_value_entry, f"{opacity_value} %")
         AppearanceSettings.settings["opacity"] = opacity_value
         AppearanceSettings.settings["opacity_r"] = opacity_value / 100
         self.theme_settings_change_callback("opacity")
@@ -304,7 +320,7 @@ class AppearancePanel(ctk.CTkFrame):
         """
         Change the scale value.
         """
-        self.scale_value_label.configure(text=f"{scale_value} %")
+        self.set_value_to_entry(self.scale_value_entry, f"{scale_value} %")
         if scale_value != AppearanceSettings.settings["scale"]:
             self.scale_apply_btn.configure(state="normal")
         else:
@@ -353,6 +369,38 @@ class AppearancePanel(ctk.CTkFrame):
                 hover_color=AppearanceSettings.settings["root"]["fg_color"]["normal"],
             )
             self.custom_accent_color_apply_btn.configure(state="disabled")
+            
+    def validate_scale_value(self, _event):
+        """
+        Validate scale value
+        """
+        if self.scale_entry_previous_value == self.scale_value_entry.get():
+            return
+        
+        self.scale_entry_previous_value = self.scale_value_entry.get()
+        text = self.scale_value_entry.get()
+        value = text.strip().replace(" ", "")
+        if SettingsValidateUtility.validate_scale_value(value):
+            value = value[0: -1]
+            value = float(int(float(value)))
+            self.scale_change_slider.set(value)
+            self.change_scale(value)
+            
+    def validate_opacity_value(self, _event):
+        """
+        Validate opacity value
+        """
+        if self.opacity_entry_previous_value == self.opacity_value_entry.get():
+            return
+        
+        self.opacity_entry_previous_value = self.opacity_value_entry.get()
+        text = self.opacity_value_entry.get()
+        value = text.strip().replace(" ", "")
+        if SettingsValidateUtility.validate_opacity_value(value):
+            value = value[0: -1]
+            value = float(value)
+            self.opacity_change_slider.set(value)
+            self.apply_opacity(value)
 
     def set_widgets_accent_color(self):
         """
@@ -388,9 +436,15 @@ class AppearancePanel(ctk.CTkFrame):
             progress_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
             button_hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
         )
+        self.scale_value_entry.configure(
+            border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
+        )
         self.scale_apply_btn.configure(
             fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
             hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
+        )
+        self.opacity_value_entry.configure(
+            border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
         )
         self.settings_reset_button.configure(
             fg_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
@@ -443,16 +497,16 @@ class AppearancePanel(ctk.CTkFrame):
         self.scale_label.grid(row=4, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash4_label.grid(row=4, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.scale_change_slider.grid(row=4, column=2, pady=(pady, 0), sticky="w")
-        self.scale_value_label.grid(row=4, column=3, padx=(20, 0), pady=(pady, 0), sticky="w")
+        self.scale_value_entry.grid(row=4, column=3, padx=(20, 0), pady=(pady, 0), sticky="w")
         self.scale_apply_btn.grid(row=4, column=3, padx=(100 * scale, 0), pady=(pady, 0), sticky="w")
 
         self.opacity_label.grid(row=5, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash5_label.grid(row=5, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.opacity_change_slider.grid(row=5, column=2, pady=(pady, 0), sticky="sw")
+        self.opacity_value_entry.grid(row=5, column=3, padx=(20, 0), pady=(pady, 0), sticky="w")
         
-        self.settings_reset_button.grid(row=5, column=3, pady=(pady, 0), padx=(100, 0), sticky="w")
+        self.settings_reset_button.grid(row=5, column=3, pady=(pady, 0), padx=(100 * scale, 0), sticky="w")
         
-
     def set_widgets_sizes(self):
         scale = AppearanceSettings.settings["scale_r"]
         self.theme_combo_box.configure(width=140 * scale, height=28 * scale)
@@ -464,10 +518,12 @@ class AppearancePanel(ctk.CTkFrame):
         self.custom_accent_color_entry.configure(width=140 * scale, height=28 * scale)
         self.custom_accent_color_apply_btn.configure(width=50 * scale, height=24 * scale)
         self.custom_accent_color_alert_text.configure(width=590 * scale, height=85 * scale)
-
+        
         self.scale_change_slider.configure(width=180 * scale, height=18 * scale)
+        self.scale_value_entry.configure(width=60 * scale, height=24 * scale)
         self.scale_apply_btn.configure(width=50 * scale, height=24 * scale)
         self.opacity_change_slider.configure(width=180 * scale, height=18 * scale)
+        self.opacity_value_entry.configure(width=60 * scale, height=24 * scale)
         
         self.settings_reset_button.configure(width=80*scale, height=24 * scale)
 
@@ -527,7 +583,8 @@ class AppearancePanel(ctk.CTkFrame):
         self.system_theme_check_box.configure(font=value_font)
         self.custom_accent_color_entry.configure(font=value_font)
         self.custom_accent_color_alert_text.configure(font=value_font)
-        self.scale_value_label.configure(font=value_font)
+        self.scale_value_entry.configure(font=value_font)
+        self.opacity_value_entry.configure(font=value_font)
 
         button_font = ("Segoe UI", 13 * scale, "bold")
         self.custom_accent_color_apply_btn.configure(font=button_font)
@@ -569,11 +626,15 @@ class AppearancePanel(ctk.CTkFrame):
         self.opacity_change_slider.set(AppearanceSettings.settings["opacity"])
 
         self.scale_change_slider.set(AppearanceSettings.settings["scale"])
-        self.scale_value_label.configure(text=f"{AppearanceSettings.settings["scale"]} %")
+        self.scale_entry_previous_value = f"{AppearanceSettings.settings["scale"]} %"
+        self.set_value_to_entry(self.scale_value_entry, f"{AppearanceSettings.settings["scale"]} %")
+        self.set_value_to_entry(self.opacity_value_entry, f"{AppearanceSettings.settings["opacity"]} %")
 
     def bind_widgets_events(self):
         """
         Bind events to widgets.
         """
         self.custom_accent_color_entry.bind("<KeyRelease>", self.validate_custom_accent_color)
+        self.scale_value_entry.bind("<KeyRelease>", self.validate_scale_value)
+        self.opacity_value_entry.bind("<KeyRelease>", self.validate_opacity_value)
         self.validate_custom_accent_color("event")

@@ -125,7 +125,8 @@ class AboutPanel(ctk.CTkFrame):
         self.name_label.configure(text=self.app_info["name"])
         self.version_label.configure(text=self.app_info["version"])
         self.site_button.configure(text=self.app_info["site"], command=lambda: webbrowser.open(self.app_info["site"]))
-        threading.Thread(target=self.configure_contributors_info, daemon=True).start()
+        self.after(100, self.configure_contributors_info)
+        # threading.Thread(target=self.configure_contributors_info, daemon=True).start()
 
     def update_contributors_info(self, contributors_data):
         # retrieve links of contributors as list[dict] -> GitHub.com
