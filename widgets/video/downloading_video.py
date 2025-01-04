@@ -213,9 +213,12 @@ class DownloadingVideo(Video):
             f"{FileUtility.sanitize_filename(f"{self.channel} - {self.video_title}")}"
         )
         
-        while (self.download_state == "downloading"):
-            self.set_download_files_info()
-            
+        try:
+            while (self.download_state == "downloading"):
+                self.set_download_files_info()
+        except Exception as error:
+            print("downloading_video.py L-220 : ", error)
+                
     def set_for_converting(self):
         DownloadManager.unregister_from_active(self)
         
@@ -526,12 +529,11 @@ class DownloadingVideo(Video):
         """
         Set the status to 'downloaded' if the download is downloaded.
         """
-
+        self.download_state = "downloaded"
         DownloadManager.unregister_from_active(self)
         VideoConvertManager.unregister_from_active(self)
         VideoConvertManager.unregister_from_queued(self)
         self.pause_resume_btn.place_forget()
-        self.download_state = "downloaded"
         self.display_status()
         
         if self.mode == "playlist":

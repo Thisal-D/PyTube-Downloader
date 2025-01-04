@@ -2,7 +2,9 @@ from .history_object import HistoryObject
 from PIL import Image
 from tkinter import PhotoImage
 from services import ThemeManager
-from utils import ImageUtility, FileUtility
+from utils import ImageUtility, FileUtility, ValueConvertUtility
+from settings import AppearanceSettings
+import customtkinter as ctk
 
 
 class HistoryVideo(HistoryObject):
@@ -86,3 +88,50 @@ class HistoryVideo(HistoryObject):
             self.thumbnail_hover = HistoryVideo.default_thumbnail_light_hover
         
         self.thumbnail_button.configure(image=self.thumbnail_normal)
+        
+    def set_data(self):
+        super().set_data()
+        
+        self.length_label.configure(text=ValueConvertUtility.convert_time(self.length))
+    
+    def bind_widgets_events(self):
+        super().bind_widgets_events()
+        
+        def on_mouse_enter_self(event):
+            self.configure(border_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
+            self.thumbnail_button.configure(image=self.thumbnail_hover)
+         
+        def on_mouse_leave_self(event):
+            self.configure(border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
+            self.thumbnail_button.configure(image=self.thumbnail_normal)
+
+        self.length_label.bind("<Enter>", on_mouse_enter_self)
+        self.length_label.bind("<Leave>", on_mouse_leave_self)
+        
+    def create_widgets(self):
+        super().create_widgets()
+        
+        self.length_label = ctk.CTkLabel(master=self, text="", justify="left", anchor="e")
+    
+    def place_widgets(self):
+        super().place_widgets()
+        
+        scale = AppearanceSettings.settings["scale_r"]
+        y = (self.width) / 16 * 9 + 6
+    
+        self.length_label.place(x=(self.width - 2), y=y, anchor="se")
+        
+    def set_widgets_sizes(self):
+        super().set_widgets_sizes()
+        
+        scale = AppearanceSettings.settings["scale_r"]
+        
+        self.length_label.configure(width=1, height=15 * scale)
+    
+    def set_widgets_fonts(self):
+        super().set_widgets_fonts()
+        
+        scale = AppearanceSettings.settings["scale_r"]
+        
+        self.length_label.configure(font=('arial', int(11 * scale), 'bold'))
+        

@@ -4,6 +4,7 @@ from settings import (
     AppearanceSettings,
     GeneralSettings
 )
+import os
 from services import (
     DownloadManager,
     LoadManager,
@@ -16,23 +17,22 @@ from services import (
 )
 
 
-# Initialize app.
-app = App()
-
 # configure settings
 GeneralSettings.initialize()
 AppearanceSettings.initialize()
 LanguageManager.initialize()
+
+App.check_accessibility()
+
+# Initialize app.
+app = App()
+
 HistoryManager.initialize(
     video_history_change_callback=app.manage_history_videos, 
     playlist_history_change_callback=app.manage_history_playlists
 )
 
 scale = AppearanceSettings.settings["scale_r"]
-
-# Check directory accessibility during startup.
-# If accessible, nothing happens if not, show an error message.
-app.run_accessibility_check()
 
 # configure services
 LoadManager.initialize(app.update_active_videos_count_status)

@@ -48,3 +48,12 @@ class ValueConvertUtility:
             converted_size = f"{int(size)} {data_units[index]}"
 
         return converted_size
+    
+    @staticmethod
+    def MB_KB_to_Bytes(value: str) -> str:
+        if value.endswith("MB"):
+            return float(value[:-2]) * 1024 * 1024
+        elif value.endswith("KB"):
+            return float(value[:-2]) * 1024
+        else:
+            return 0

@@ -76,8 +76,8 @@ class HistoryPanel(ctk.CTkFrame):
         self.set_widgets_texts()
         self.bind_widgets_events()
                 
-        threading.Thread(target=self.configure_old_history_videos, daemon=True).start()
-        threading.Thread(target=self.configure_old_history_playlists, daemon=True).start()
+        self.after(1, self.configure_old_history_videos)
+        self.after(1, self.configure_old_history_playlists)
         
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
