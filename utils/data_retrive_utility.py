@@ -18,7 +18,7 @@ class DataRetriveUtility:
         """
         contributors = []
         try:
-            data = requests.get(DataRetriveUtility.CONTRIBUTORS_TEXT_URL).text
+            data = requests.get(DataRetriveUtility.CONTRIBUTORS_TEXT_URL, timeout=5).text
             for contributor_data in data.split("\n"):
                 try:
                     profile_url, username = contributor_data.split("@%@")
@@ -43,7 +43,7 @@ class DataRetriveUtility:
             string: The latest version number.
         """
         try:
-            data = requests.get(DataRetriveUtility.VERSION_FILE_URL).text.strip()
+            data = requests.get(DataRetriveUtility.VERSION_FILE_URL, timeout=5).text.strip()
             # Extract the version number from the string "VERSION = '2.0.2'"
             # Split at "=" and remove extra characters like spaces and quotes
             version = data.split('=')[1].strip().strip("'")

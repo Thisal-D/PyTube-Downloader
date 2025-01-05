@@ -5,7 +5,6 @@ from services import (
     LanguageManager,
     HistoryManager
 )
-import threading
 from typing import Literal
 import tkinter as tk
 from .history_video import HistoryVideo
@@ -84,19 +83,33 @@ class HistoryPanel(ctk.CTkFrame):
         
         self.place_nav_frame(self.videos_scrollable_frame, "videos")
     
-    def bring_video_to_top(self, url):
+    def bring_video_to_top(self, no: int, url: str):
         for index, history_video in enumerate(self.histoy_videos_widgets):
             if history_video.url == url:
+                history_video.no = no
                 if index != 0:
                     history_video_temp = history_video
                     self.histoy_videos_widgets.remove(history_video)
                     self.histoy_videos_widgets.insert(0, history_video_temp)
                     self.place_history_videos()
                 break
+            
+    def remove_history_video(self, history_video: HistoryVideo):
+        if history_video == self.histoy_videos_widgets[-1]:
+            is_last_video = True
+        else:
+            is_last_video = False
+        history_video.grid_forget()
+        self.histoy_videos_widgets.remove(history_video)
+        if not is_last_video:
+            self.place_history_videos()
+        
+        HistoryManager.remove_from_video_history(history_video.no)
+        history_video.destroy()
         
     def add_hisory_video(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date, is_duplicated) -> None:
         if is_duplicated:
-            self.bring_video_to_top(url)
+            self.bring_video_to_top(no=no, url=url)
         else:
             if len(self.histoy_videos_widgets) == HistoryManager.max_history:
                 self.histoy_videos_widgets.pop().destroy()
@@ -114,7 +127,8 @@ class HistoryPanel(ctk.CTkFrame):
                         thumbnail_path_hover=thumbnail_hover_path,
                         download_date=download_date,
                         length=video_length,
-                        add_to_download_callback=self.video_add_to_download_callback
+                        add_to_download_callback=self.video_add_to_download_callback,
+                        remove_callback=self.remove_history_video
                     )
                 )
             )
@@ -155,7 +169,8 @@ class HistoryPanel(ctk.CTkFrame):
                 thumbnail_path_hover=video_date[5],
                 length=video_date[6],
                 download_date=video_date[7],
-                add_to_download_callback=self.video_add_to_download_callback
+                add_to_download_callback=self.video_add_to_download_callback,
+                remove_callback=self.remove_history_video
             )
         )
         self.configure_video_count_per_row()
@@ -173,9 +188,10 @@ class HistoryPanel(ctk.CTkFrame):
         
     # ------------------------------------------------------------------------------------------------------------------------------------------------------      
     # ------------------------------------------------------------------------------------------------------------------------------------------------------
-    def bring_playlist_to_top(self, url):
+    def bring_playlist_to_top(self, no: int, url: str):
         for index, history_playlist in enumerate(self.histoy_playlists_widgets):
             if history_playlist.url == url:
+                history_playlist.no = no
                 if index != 0:
                     history_playlist_temp = history_playlist
                     self.histoy_playlists_widgets.remove(history_playlist)
@@ -183,9 +199,22 @@ class HistoryPanel(ctk.CTkFrame):
                     self.place_history_playlists()
                 break
             
+    def remove_history_playlist(self, history_playlist: HistoryPlaylist):
+        if history_playlist == self.histoy_playlists_widgets[-1]:
+            is_last_video = True
+        else:
+            is_last_video = False
+        history_playlist.grid_forget()
+        self.histoy_playlists_widgets.remove(history_playlist)
+        if not is_last_video:
+            self.place_history_playlists()
+        
+        HistoryManager.remove_from_playlist_history(history_playlist.no)
+        history_playlist.destroy()
+            
     def add_hisory_playlist(self, no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date, is_duplicated) -> None:
         if is_duplicated:
-            self.bring_playlist_to_top(url)
+            self.bring_playlist_to_top(no=no, url=url)
         else:
             if len(self.histoy_playlists_widgets) == HistoryManager.max_history:
                 self.histoy_playlists_widgets.pop().destroy()
@@ -203,7 +232,8 @@ class HistoryPanel(ctk.CTkFrame):
                         thumbnail_path_hover=thumbnail_hover_path,
                         download_date=download_date,
                         add_to_download_callback=self.playlist_add_to_download_callback,
-                        videos_count=video_count
+                        videos_count=video_count,
+                        remove_callback=self.remove_history_playlist
                     )
                 )
             )
@@ -244,7 +274,8 @@ class HistoryPanel(ctk.CTkFrame):
                 thumbnail_path_hover=playlist_date[5],
                 videos_count=playlist_date[6],
                 download_date=playlist_date[7],
-                add_to_download_callback=self.playlist_add_to_download_callback
+                add_to_download_callback=self.playlist_add_to_download_callback,
+                remove_callback=self.remove_history_playlist
             )
         )
         self.configure_playlist_count_per_row()

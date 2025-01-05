@@ -74,15 +74,18 @@ class ContributorProfileWidget:
         ThemeManager.register_widget(self)
 
     def bind_widgets_events(self):
-        self.profile_pic_button.bind(
-            "<Enter>",
-            lambda event_: self.profile_pic_button.configure(image=self.profile_images[1])
-        )
-
-        self.profile_pic_button.bind(
-            "<Leave>",
-            lambda event_: self.profile_pic_button.configure(image=self.profile_images[0])
-        )
+        def on_mouse_enter(event_):
+            self.profile_pic_button.configure(image=self.profile_images[1])
+        def on_mouse_leave(event_):
+            self.profile_pic_button.configure(image=self.profile_images[0])
+                                              
+        self.profile_pic_button.bind("<Enter>", on_mouse_enter)
+        self.user_name_button.bind("<Enter>", on_mouse_enter)
+        self.profile_url_button.bind("<Enter>", on_mouse_enter)
+        
+        self.profile_pic_button.bind("<Leave>", on_mouse_leave)
+        self.user_name_button.bind("<Leave>", on_mouse_leave)
+        self.profile_url_button.bind("<Leave>", on_mouse_leave)
 
     def set_widgets_accent_color(self):
         self.hr.configure(

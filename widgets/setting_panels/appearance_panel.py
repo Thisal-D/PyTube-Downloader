@@ -520,10 +520,10 @@ class AppearancePanel(ctk.CTkFrame):
         self.custom_accent_color_alert_text.configure(width=590 * scale, height=85 * scale)
         
         self.scale_change_slider.configure(width=180 * scale, height=18 * scale)
-        self.scale_value_entry.configure(width=60 * scale, height=24 * scale)
+        self.scale_value_entry.configure(width=70 * scale, height=24 * scale)
         self.scale_apply_btn.configure(width=50 * scale, height=24 * scale)
         self.opacity_change_slider.configure(width=180 * scale, height=18 * scale)
-        self.opacity_value_entry.configure(width=60 * scale, height=24 * scale)
+        self.opacity_value_entry.configure(width=70 * scale, height=24 * scale)
         
         self.settings_reset_button.configure(width=80*scale, height=24 * scale)
 
