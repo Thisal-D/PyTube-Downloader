@@ -93,7 +93,7 @@ class AboutPanel(ctk.CTkFrame):
         self.contributors_status_label = ctk.CTkLabel(
             master=self,
             text_color=AppearanceSettings.settings["settings_panel"]["text_color"],
-            text="Loading..."
+            text="Retrieving contributors data...!",
         )
         self.contributors_frame = ctk.CTkScrollableFrame(
             master=self,
@@ -125,8 +125,8 @@ class AboutPanel(ctk.CTkFrame):
         self.name_label.configure(text=self.app_info["name"])
         self.version_label.configure(text=self.app_info["version"])
         self.site_button.configure(text=self.app_info["site"], command=lambda: webbrowser.open(self.app_info["site"]))
-        self.after(100, self.configure_contributors_info)
-        # threading.Thread(target=self.configure_contributors_info, daemon=True).start()
+        # self.after(100, self.configure_contributors_info)
+        threading.Thread(target=self.configure_contributors_info, daemon=True).start()
 
     def update_contributors_info(self, contributors_data):
         # retrieve links of contributors as list[dict] -> GitHub.com
@@ -159,13 +159,14 @@ class AboutPanel(ctk.CTkFrame):
             if len(self.app_info["contributors"]) == 0:
                 self.contribute_data_retrieve_status = "Failed"
                 self.contributors_status_label.configure(
-                    text=LanguageManager.data["contribute_data_retrieve_fail"],
+                    text=LanguageManager.data["contribute_data_retrieve_failed"],
                     text_color=AppearanceSettings.settings["settings_panel"]["warning_color"]["normal"]
                 )
 
         if len(self.app_info["contributors"]) != 0:
             # place forget the loading label
             self.contributors_status_label.grid_forget()
+            self.contribute_data_retrieve_status = "Success"
             # place frame for show  contributors info
             self.contributors_frame.grid(
                 row=3,
@@ -174,7 +175,6 @@ class AboutPanel(ctk.CTkFrame):
                 sticky="w",
                 columnspan=10,
             )
-        self.contribute_data_retrieve_status = "Success"
         # iterate through contributors
         profile_images_directory = "assets//profile images//"
         row = 0
@@ -295,10 +295,11 @@ class AboutPanel(ctk.CTkFrame):
         self.version_title_label.configure(text=LanguageManager.data["version"])
         self.site_title_label.configure(text=LanguageManager.data["site"])
         self.contributors_title_label.configure(text=LanguageManager.data["contributors"])
-        if self.contribute_data_retrieve_status == "failed":
-            self.contributors_status_label.configure(text=LanguageManager.data["contribute_data_retrieve_fail"])
+        print("self.contribute_data_retrieve_status :",self.contribute_data_retrieve_status)
+        if self.contribute_data_retrieve_status == "Failed":
+            self.contributors_status_label.configure(text=LanguageManager.data["contribute_data_retrieve_failed"])
         elif self.contribute_data_retrieve_status is None:
-            self.contributors_status_label.configure(text=LanguageManager.data["loading"])
+            self.contributors_status_label.configure(text=LanguageManager.data["contribute_data_retrieving"])
         self.disclaimer_label.configure(text="  " + LanguageManager.data["disclaimer"])
         
 

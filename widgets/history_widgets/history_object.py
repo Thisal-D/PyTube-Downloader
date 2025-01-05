@@ -4,6 +4,7 @@ import tkinter as tk
 from settings import AppearanceSettings
 from services import ThemeManager
 from utils import ImageUtility, FileUtility
+from typing import Callable
 from PIL import Image
 import webbrowser
 import os
@@ -20,7 +21,8 @@ class HistoryObject(ctk.CTkFrame):
         url: str = None,
         thumbnail_path_normal: str = None,
         thumbnail_path_hover: str = None,
-        add_to_download_callback: callable = None,
+        add_to_download_callback: Callable = None,
+        remove_callback: Callable = None,
         download_date: str = None):
         
         super().__init__(master=master, width=width, border_width=1)
@@ -30,6 +32,7 @@ class HistoryObject(ctk.CTkFrame):
         self.title_label: ctk.CTkLabel = None
         self.channel_label: ctk.CTkLabel = None
         self.download_date_label: ctk.CTkLabel = None
+        self.remove_callback: Callable = remove_callback
         
         self.width = width
         self.height = width / 16 * 9 + 15 * 3 + 20
@@ -99,13 +102,18 @@ class HistoryObject(ctk.CTkFrame):
         
     def bind_widgets_events(self):
         def on_mouse_enter_self(event):
-            self.configure(border_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
-            self.thumbnail_button.configure(image=self.thumbnail_hover)
-         
+            try:
+                self.configure(border_color=AppearanceSettings.settings["root"]["accent_color"]["hover"])
+                self.thumbnail_button.configure(image=self.thumbnail_hover)
+            except:
+                pass
         def on_mouse_leave_self(event):
-            self.configure(border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
-            self.thumbnail_button.configure(image=self.thumbnail_normal)
-
+            try:
+                self.configure(border_color=AppearanceSettings.settings["root"]["accent_color"]["normal"])
+                self.thumbnail_button.configure(image=self.thumbnail_normal)
+            except:
+                pass
+            
         self.bind("<Enter>", on_mouse_enter_self)
         self.bind("<Leave>", on_mouse_leave_self)
         
@@ -121,8 +129,30 @@ class HistoryObject(ctk.CTkFrame):
         self.download_date_label.bind("<Enter>", on_mouse_enter_self)
         self.download_date_label.bind("<Leave>", on_mouse_leave_self)
         
+        def on_mouse_enter_remove_btn(_event):
+            try:
+                self.remove_btn.configure(
+                    fg_color=AppearanceSettings.settings["video_object"]["error_color"]["hover"],
+                    text_color=AppearanceSettings.settings["video_object"]["remove_btn_text_color"]["hover"]
+                )
+            except Exception as error:
+                pass
+
+        def on_mouse_leave_remove_btn(_event):
+            try:
+                self.remove_btn.configure(
+                    fg_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"],
+                    text_color=AppearanceSettings.settings["video_object"]["remove_btn_text_color"]["normal"]
+                )
+            except Exception as error:
+                pass
+
+        self.remove_btn.bind("<Enter>", on_mouse_enter_remove_btn)
+        self.remove_btn.bind("<Leave>", on_mouse_leave_remove_btn)
+        
     def create_widgets(self):
         self.thumbnail_button = tk.Button(master=self, text="", relief="sunken", bd=0, cursor="hand2", command=lambda: webbrowser.open(self.url))
+        self.remove_btn = ctk.CTkButton(master=self, text="X", command=self.kill, hover=False, corner_radius=4)
         self.label_frame = ctk.CTkFrame(master=self)
         self.title_label = ctk.CTkLabel(master=self.label_frame, text="", justify="left", anchor="w")
         self.channel_label = ctk.CTkLabel(master=self.label_frame, text="", justify="left", anchor="w")
@@ -131,6 +161,7 @@ class HistoryObject(ctk.CTkFrame):
         
     def place_widgets(self):
         scale = AppearanceSettings.settings["scale_r"]
+        self.remove_btn.place(x=self.width-2, y=5 , anchor="ne")
         self.thumbnail_button.place(x=1, y=3)
             
         y = (self.width) / 16 * 9 + 10
@@ -146,6 +177,10 @@ class HistoryObject(ctk.CTkFrame):
         """Set colors for widgets."""
         self.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
         self.label_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
+        self.remove_btn.configure(
+            fg_color=AppearanceSettings.settings["video_object"]["error_color"]["normal"],
+            text_color=AppearanceSettings.settings["video_object"]["remove_btn_text_color"]["normal"]
+        )
     
     def tk_widgets_colors(self):
         self.thumbnail_button.configure(
@@ -185,6 +220,8 @@ class HistoryObject(ctk.CTkFrame):
         
         width = self.width
         height = 15 * scale
+        
+        self.remove_btn.configure(width=20 * scale, height=20 * scale, border_spacing=0)
         self.title_label.configure(height=height, width=width - 8)
         self.channel_label.configure(height=height, width=width - 8)
         self.download_date_label.configure(height=height, width=width - 8)
@@ -205,11 +242,54 @@ class HistoryObject(ctk.CTkFrame):
     def set_widgets_fonts(self):
         """Set fonts for widgets."""
         scale = AppearanceSettings.settings["scale_r"]
-
+        self.remove_btn.configure(font=("arial", 10 * scale, "bold"))
         self.title_label.configure(font=('arial', int(11 * scale), 'bold'))
         self.channel_label.configure(font=('arial', int(10 * scale), 'bold'))
         self.download_date_label.configure(font=('arial', int(10 * scale), 'normal'))
         
         self.download_btn.configure(font=('arial', int(11 * scale), 'bold'))
         
+    def kill(self):
+        if self.remove_callback is not None:
+            self.remove_callback(self)
+        
+    def __del__(self):
+          
+        # Unregister widget from ThemeManager
+        ThemeManager.unregister_widget(self)
+
+        # Clean up all attributes by setting them to None or deleting them
+        del self.thumbnail_button
+        del self.label_frame
+        del self.title_label
+        del self.channel_label
+        del self.download_date_label
+        del self.remove_btn
+        del self.thumbnail_normal
+        del self.thumbnail_hover
+        del self.default_thumbnail_used
+        del self.add_to_download_callback
+        del self.remove_callback
+        del self.no
+        del self.channel
+        del self.title
+        del self.url
+        del self.thumbnail_path_normal
+        del self.thumbnail_path_hover
+        del self.download_date
+        
+        del self.width
+        del self.height
+
+    def destroy(self):
+        try:
+            self.thumbnail_button.destroy()
+            self.label_frame.destroy()
+            self.title_label.destroy()
+            self.channel_label.destroy()
+            self.download_date_label.destroy()
+            self.__del__()
+            return super().destroy()
+        except Exception as error:
+            print("history_object.py L-284", error)
         

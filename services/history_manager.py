@@ -99,6 +99,18 @@ class HistoryManager:
         HistoryManager.connection.commit()
         
     @staticmethod
+    def remove_from_video_history(no: int) -> None:
+        sql = f"DELETE FROM videos WHERE no = ?"
+        HistoryManager.cursor.execute(sql, (no,))
+        HistoryManager.connection.commit()
+    
+    @staticmethod
+    def remove_from_playlist_history(no: int) -> None:
+        sql = f"DELETE FROM playlists WHERE no = ?"
+        HistoryManager.cursor.execute(sql, (no,))
+        HistoryManager.connection.commit()
+        
+    @staticmethod
     def is_already_exists(video_url: str, table: Literal["videos", "playlists"]) -> bool:
         sql = f"SELECT COUNT(*) FROM {table} WHERE url = ?"
         HistoryManager.cursor.execute(sql, (video_url,))

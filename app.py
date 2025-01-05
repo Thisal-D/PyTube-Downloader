@@ -27,7 +27,9 @@ from services import (
     LoadManager, 
     VideoConvertManager,
     LanguageManager,
-    HistoryManager
+    HistoryManager,
+    LoadingIndicateManager,
+    VideoCountTracker
 )
 from settings import (
     AppearanceSettings,
@@ -132,7 +134,154 @@ class App(ctk.CTk):
         self.is_in_full_screen_mode = False
         self.root_geometry = ""
         self.is_maximized = False
-                
+        
+    def set_initializing_status(self, status: str):
+        def set_text(text: str):
+            self.initializing_state_label.configure(text = text)
+        self.after(1, set_text, LanguageManager.data[status])
+        
+    def destroy_initializing_status_window(self):
+        self.initializing_frame.place_forget()
+        
+    def create_initializing_status_window(self):
+         # Disable window resizalbe 
+        self.resizable(False, False)
+        
+        # Configure Some coliors for window
+        self.configure(fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"])
+        scale = AppearanceSettings.settings["scale_r"]
+        accent_color = AppearanceSettings.settings["root"]["accent_color"]["normal"]
+        
+        # Create loading screen widgets
+        self.initializing_frame = ctk.CTkFrame(
+            master=self,
+            fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"])
+        self.initializing_logo_label = ctk.CTkLabel(
+            master=self.initializing_frame, 
+            text="⚡",
+            font=("arial", 40 * scale, "normal"),
+            text_color=accent_color
+        )
+        self.initializing_state_label = ctk.CTkLabel(
+            master=self.initializing_frame,
+            text="State : Initializing",
+            font=("arial", 15 * scale, "bold"),
+            text_color=accent_color
+        )
+        self.initializing_frame.place(relwidth=1, relheight=1)
+        
+        self.set_initializing_status("initializing")
+
+         # Center widgets vertically and horizontally
+        self.initializing_frame.grid_rowconfigure(0, weight=1)  # Top empty row
+        self.initializing_frame.grid_rowconfigure(1, weight=1)  # Center row
+        self.initializing_frame.grid_rowconfigure(2, weight=1)  # Bottom empty row
+        self.initializing_frame.grid_columnconfigure(0, weight=1)  # Left empty column
+        self.initializing_frame.grid_columnconfigure(1, weight=1)  # Center column
+        self.initializing_frame.grid_columnconfigure(2, weight=1)  # Right empty column
+
+        self.initializing_logo_label.grid(row=1, column=1, sticky="")  # Center the label
+        self.initializing_state_label.grid(row=2, column=1, sticky="")  # Center the button below the label
+        
+        loading_screen_width = int(400 * scale)
+        loading_screen_height = int(150 * scale)
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        # Calculate x and y coordinates for the window
+        x = (screen_width // 2) - (loading_screen_width // 2)
+        y = (screen_height // 2) - (loading_screen_height // 2)
+        
+        # Set the geometry for loading screen
+        self.geometry(f"{loading_screen_width}x{loading_screen_height}+{x}+{y}")
+
+    def initialize(self) -> None:
+        # Set the main window attr
+        self.create_initializing_status_window()
+        # set the app title
+        self.title("PyTube Downloader")
+        # configure alpha
+        self.attributes("-alpha", AppearanceSettings.settings["opacity_r"])
+        # set the title icon
+        self.iconbitmap("assets\\main icon\\512x512.ico")
+        
+        ctk.deactivate_automatic_dpi_awareness()
+        
+        self.set_initializing_status("configuring_theme")
+        # set the theme mode, dark or light or system, by getting from data
+        ctk.set_appearance_mode(AppearanceSettings.themes[AppearanceSettings.settings["root"]["theme_mode"]])
+        
+        self.set_initializing_status("initializing_history")
+        HistoryManager.initialize(
+            video_history_change_callback=self.manage_history_videos, 
+            playlist_history_change_callback=self.manage_history_playlists
+        )
+
+        # deactivate the automatic scale
+        scale = AppearanceSettings.settings["scale_r"]
+
+        self.set_initializing_status("initializing_services")
+        # configure services
+        self.set_initializing_status("initializing_load_manager")
+        LoadManager.initialize(self.update_active_videos_count_status)
+        self.set_initializing_status("initializing_download_manager")
+        DownloadManager.initialize(self.update_active_videos_count_status)
+        self.set_initializing_status("initializing_video_convert_manager")
+        VideoConvertManager.initialize(self.update_active_videos_count_status)
+        self.set_initializing_status("initializing_video_count_tracker")
+
+        VideoCountTracker.initialize(self.update_total_videos_count_status)
+
+        self.set_initializing_status("initializing_theme_manager")
+        ThemeManager.initialize()
+        self.set_initializing_status("initializing_loading_indicate_manager")
+        LoadingIndicateManager.initialize()
+
+        self.set_initializing_status("initializing_widgets")
+        # Create the main widgets of the application
+        self.create_widgets()
+        
+        self.set_initializing_status("configuring_widget_sizes")
+        # set widgets sizes
+        self.set_widgets_sizes()
+        
+        self.set_initializing_status("configuring_widget_texts")
+        # set texts depend on language
+        self.set_widgets_texts()
+        
+        self.set_initializing_status("configuring_widget_colors")
+        # configure colors for main widgets
+        self.set_widgets_colors()
+        # configure theme color
+        self.set_widgets_accent_color()
+        
+        self.set_initializing_status("configuring_widget_fonts")
+        # configure fonts for main widgets
+        self.set_widgets_fonts()
+        
+        self.set_initializing_status("configuring_widget_events")
+        # app event bind
+        self.bind_widgets_events()
+        
+        self.set_initializing_status("configuring_keyboard_shortcuts")
+        # bind shortcut keys
+        self.bind_keyboard_shortcuts()
+        # Reconfigure resizable state
+        self.after(1, self.resizable, True, True)
+        self.set_initializing_status("checking_updates")
+        # place main widgets
+        self.place_widgets()
+        # place the app at the last placed geometry
+        self.minsize(int(900 * scale), int(500 * scale))
+        self.geometry(GeneralSettings.settings["window_geometry"])
+        # set minimum window size to 900x500
+        # Window close button configure
+        self.protocol("WM_DELETE_WINDOW", self.minimize_to_tray)
+        self.geometry_changes_tracker()
+        self.destroy_initializing_status_window()
+        # Check app updates       
+        self.run_update_check()
+    
     def create_widgets(self) -> None:
         """
         Creates and initializes all the GUI widgets for the application.
@@ -1654,7 +1803,6 @@ class App(ctk.CTk):
         """
         Run the application.
         """
-        self.protocol("WM_DELETE_WINDOW", self.minimize_to_tray)
         self.mainloop()
 
     @classmethod
@@ -1673,15 +1821,9 @@ class App(ctk.CTk):
         Open website for download latest version
         """
         webbrowser.open("https://sourceforge.net/projects/pytube-downloader/files/latest/download")
-        
-    def check_for_updates(self) -> None:
-        """
-        Update the version of the application.
-        """
-        # Check the app is updated or not
-        latest_version = DataRetriveUtility.get_latest_version()
-        current_version = DataRetriveUtility.get_current_version()
-        
+    
+    
+    def show_update_alert(self, latest_version, current_version) -> None:
         scale = AppearanceSettings.settings["scale_r"]
         if latest_version is not None:
             if latest_version != current_version:
@@ -1697,14 +1839,23 @@ class App(ctk.CTk):
                     width=int(450 * scale),
                     height=int(150 * scale)
                 )
+    
+    def check_for_updates(self) -> None:
+        """
+        Update the version of the application.
+        """
+        # Check the app is updated or not
+        latest_version = DataRetriveUtility.get_latest_version()
+        current_version = DataRetriveUtility.get_current_version()
+        
+        threading.Thread(target=self.show_update_alert, args=(latest_version, current_version), daemon=True).start()
                 
     def run_update_check(self):
         """
         Run the update check in a separate thread.
         """
-        self.after(1, self.check_for_updates)
-        # self.update_check_thread = threading.Thread(target=self.check_for_updates, daemon=True)
-        # self.update_check_thread.start()
+        # self.after(1, self.check_for_updates)
+        self.check_for_updates()
 
     def check_accessibility():
         scale = AppearanceSettings.settings["scale_r"]
