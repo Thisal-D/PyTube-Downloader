@@ -133,6 +133,6 @@ class SettingsValidateUtility:
 
         # Validate the range in bytes
         min_size = 50 * 1024  # 50KB in bytes
-        max_size = 100 * 1024 * 1024  # 100MB in bytes
+        max_size = 11 * 1024 * 1024  # 11MB in bytes
 
         return min_size <= size_in_bytes <= max_size

@@ -147,7 +147,7 @@ class DownloadsPanel(ctk.CTkFrame):
             master=self,
             command=self.change_chunk_size,
             from_=51200, # 50KB
-            to=104857600,
+            to=11534336,
         )
         
         self.chunk_size_value_entry = ctk.CTkEntry(
@@ -181,6 +181,7 @@ class DownloadsPanel(ctk.CTkFrame):
 
         # track values validity
         self.download_path_valid: bool = True
+        self.chunk_size_valid: bool = True
         
         self.chunk_size_entry_previous_value: str = ""
         
@@ -221,7 +222,7 @@ class DownloadsPanel(ctk.CTkFrame):
     
     def cancel_chunk_size_settings_resetting(self):
         self.chunk_size_change_slider.set(GeneralSettings.settings["chunk_size"])
-        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"], decimal_points=2)}")
+        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"], decimal_points=3)}")
         self.chunk_size_changed = False
 
     def set_downloads_settings(self):
@@ -259,13 +260,14 @@ class DownloadsPanel(ctk.CTkFrame):
                  self.create_sep_path_for_playlists_state_changed, self.create_sep_path_for_qualities_state_changed,
                  self.chunk_size_changed))
                 and
-                all((self.download_path_valid,))):
+                all((self.download_path_valid, self.chunk_size_valid))):
             self.apply_changes_button.configure(state="normal")
         else:
             self.apply_changes_button.configure(state="disabled")
 
     def change_chunk_size(self, chunk_size: int | float) -> None:
-        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(chunk_size, decimal_points=2)}")
+        self.chunk_size_valid = True
+        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(chunk_size, decimal_points=3)}")
         if chunk_size != GeneralSettings.settings["chunk_size"]:
             self.chunk_size_changed = True
         else:
@@ -280,9 +282,13 @@ class DownloadsPanel(ctk.CTkFrame):
         text = self.chunk_size_value_entry.get()
         value = text.strip().replace(" ", "")
         if SettingsValidateUtility.validate_chunk_size_value(value):
+            self.chunk_size_valid = True
             value = ValueConvertUtility.MB_KB_to_Bytes(value)
             self.chunk_size_change_slider.set(value)
             self.change_chunk_size(value)
+        else:
+            self.chunk_size_valid = False
+            self.set_apply_button_state()
     
     def download_path_validate(self, _event):
         path = FileUtility.format_path(self.download_path_entry.get())
@@ -351,7 +357,7 @@ class DownloadsPanel(ctk.CTkFrame):
             self.create_sep_path_for_playlists_switch_state.set(False)
             
         self.chunk_size_change_slider.set(GeneralSettings.settings["chunk_size"])
-        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"],decimal_points=2)}")
+        self.set_value_to_entry(self.chunk_size_value_entry, f"{ValueConvertUtility.convert_size(GeneralSettings.settings["chunk_size"],decimal_points=3)}")
 
     def bind_widgets_events(self):
         self.download_path_entry.bind("<KeyRelease>", self.download_path_validate)
