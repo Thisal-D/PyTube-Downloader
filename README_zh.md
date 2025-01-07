@@ -103,17 +103,17 @@
 
 ## 暗黑主题预览
 
-![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b2079262-0d1c-4bd0-9b33-7cc16c9173ce)
-![7](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7aea8c67-669f-4ee6-af45-7ea6e3b92019)
-![8](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b209e21d-afe0-4dd6-a776-95a1fc0a1062)
-![9](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/5402f15b-ec81-4abc-b4ed-9d8c389ac03f)
-![21](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/8b8a03fe-2770-48d9-9d88-42748d24e63f)
-![11](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6aa20ae2-fe27-4d32-9997-590fe6453c38)
-![12](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/4e30da72-b615-4d3a-baac-a986965ab8f9)
-![13](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/2741bc3d-8b9a-4763-b4ee-987b0476015e)
-![14](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/a85491e9-189c-4e60-ad51-3c4241931e0a)
-![15](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/4c87c165-1b32-4053-99b6-f3087cf145e8)
-![16](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6d192edb-999b-4fdd-838b-0e2ecddf2df1)
+![0](./readme%20assets/zh-0.png)
+![1](./readme%20assets/zh-1.png)
+![2](./readme%20assets/zh-2.png)
+![3](./readme%20assets/zh-3.png)
+![4](./readme%20assets/zh-4.png)
+![5](./readme%20assets/zh-5.png)
+![6](./readme%20assets/zh-6.png)
+![7](./readme%20assets/zh-7.png)
+![8](./readme%20assets/zh-8.png)
+![9](./readme%20assets/zh-9.png)
+
 
 ---
 
