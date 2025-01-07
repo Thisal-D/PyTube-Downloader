@@ -101,17 +101,16 @@ Check out the [**Project Structure**](PROJECT_STRUCTURE.md) guide to understand 
 
 ## Dark Theme Preview 
 
-![0](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/b2079262-0d1c-4bd0-9b33-7cc16c9173ce)
-![18](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/e57acd23-cbdc-446e-86ed-b5d08f5ce9e1)
-![19](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/fbf086cb-e90c-499e-b63e-9f8a9515c014)
-![20](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/6622a7d4-7b23-41b6-abba-4d55ff2d58cd)
-![10](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/45a9ff9f-dc56-49a5-b4e0-576e8299a609)
-![22](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/ea13e3c1-3397-4af7-ba8e-09cdc0f0eda5)
-![23](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/7a8a00f2-6165-4379-8316-51d90b3e0747)
-![24](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/53ce24af-6224-4d7b-b1a4-3a52b436ec0d)
-![25](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/501763ad-e30f-4916-9a66-f9b8a80f2052)
-![26](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/a7d2ca37-289b-41f4-b01f-21cc915f7e0a)
-![27](https://github.com/Thisal-D/PyTube-Downloader/assets/93121062/1f8b6280-4bd3-469e-aace-12ddc1d645b8)
+![0](./readme%20assets/en-0.png)
+![1](./readme%20assets/en-1.png)
+![2](./readme%20assets/en-2.png)
+![3](./readme%20assets/en-3.png)
+![4](./readme%20assets/en-4.png)
+![5](./readme%20assets/en-5.png)
+![6](./readme%20assets/en-6.png)
+![7](./readme%20assets/en-7.png)
+![8](./readme%20assets/en-8.png)
+![9](./readme%20assets/en-9.png)
 
 ---
 
