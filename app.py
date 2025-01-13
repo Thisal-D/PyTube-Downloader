@@ -632,9 +632,9 @@ class App(ctk.CTk):
         
         self.add_url_btn.configure(text=LanguageManager.data["add +"])
         
-        self.navigate_added_btn.configure(text=LanguageManager.data["added"] + " (0)")
-        self.navigate_downloading_btn.configure(text=LanguageManager.data["downloading"] + " (0)")
-        self.navigate_downloaded_btn.configure(text=LanguageManager.data["downloaded"] + " (0)")
+        self.navigate_added_btn.configure(text=f"{LanguageManager.data["added"]} ({VideoCountTracker.total_added_video_count})")
+        self.navigate_downloading_btn.configure(text=f"{LanguageManager.data["downloading"]} ({VideoCountTracker.total_downloading_video_count})")
+        self.navigate_downloaded_btn.configure(text=f"{LanguageManager.data["downloaded"]} ({VideoCountTracker.total_downloaded_video_count})")
         self.navigate_history_btn.configure(text=LanguageManager.data["history"])
         
         self.added_frame_info_label.configure(
