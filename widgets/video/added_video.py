@@ -227,8 +227,12 @@ class AddedVideo(Video):
             self.set_loading_completed()
             self.download_automatically()
             
+        except pytube.exceptions.BotDetection as error:
+            print(f"added_video.py L-231 : {error}")
+            self.load_video()
+        
         except Exception as error:
-            print(f"added_video.py L-201 : {error}")
+            print(f"added_video.py L-235 : {error}")
             self.set_loading_failed()
            
         

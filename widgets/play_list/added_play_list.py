@@ -124,7 +124,10 @@ class AddedPlayList(PlayList):
                 self.waiting_videos.remove(video)
             if video in self.failed_videos:
                 self.failed_videos.remove(video)
-            self.loading_videos.append(video)
+            # Add this because if the video is already in the loading_videos list, it won't be added again
+            # New error This request was detected as a bot. Use `use_po_token=True` or switch to WEB client to view. See more details at https://github.com/JuanBindez/pytubefix/pull/209
+            if video not in self.loading_videos:
+                self.loading_videos.append(video)
         elif state == "waiting":
             self.waiting_videos.append(video)
             if video in self.failed_videos:

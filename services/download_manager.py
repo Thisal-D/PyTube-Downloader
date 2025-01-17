@@ -102,13 +102,13 @@ class DownloadManager:
             status_change_callback (Callable, optional): A callback function to be called on status changes.
         """
         DownloadManager.status_change_callback = status_change_callback
-        DownloadManager.configure_chunkj_size()
+        DownloadManager.configure_chunk_size()
         downloading_manage_thread = threading.Thread(target=DownloadManager.manage_download_queue)
         downloading_manage_thread.daemon = True
         downloading_manage_thread.start()
         
     @staticmethod
-    def configure_chunkj_size():
+    def configure_chunk_size():
         pytube_request.default_range_size = GeneralSettings.settings["chunk_size"]
         pytubefix_request.default_range_size = GeneralSettings.settings["chunk_size"]
         

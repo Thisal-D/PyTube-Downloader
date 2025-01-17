@@ -7,3 +7,4 @@ pystray
 pyperclip
 pytubefix
 win11toast
+ctkchart

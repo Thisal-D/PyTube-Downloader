@@ -17,5 +17,6 @@
     "re_download_automatically": false,
     "reload_automatically": false,
     "update_delay": 0.5,
-    "window_geometry": "900x500+-7+0"
+    "window_geometry": "900x500+-7+0",
+    "display_download_speed_info": false
 }

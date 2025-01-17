@@ -34,7 +34,8 @@ class GeneralSettings:
         "update_delay": 0.5,
         "alerts": True,
         "window_geometry": "900x500-7+0",
-        "chunk_size": 2097152
+        "chunk_size": 2097152,
+        "display_download_speed_info": False
     }
     
     @staticmethod

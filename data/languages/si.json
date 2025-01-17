@@ -111,6 +111,7 @@
     "initializing_video_count_tracker": "වීඩියෝ ගණන හඹායනවා ආරම්භ කරමින්...",
     "initializing_theme_manager": "තේමා කළමනාකරු ආරම්භ කරමින්...",
     "initializing_loading_indicate_manager": "ලෝඩිං සංඥා කළමනාකරු ආරම්භ කරමින්...",
+    "initializing_download_speed_tracker": "බාගත වේගය අඟවනය ආරම්භකයි...",
     "initializing_widgets": "විකේතන ආරම්භ කරමින්...",
     "configuring_widget_sizes": "විකේතන ප්‍රමාණ සකසමින්...",
     "configuring_widget_texts": "විකේතන පාඨ සකසමින්...",
@@ -118,6 +119,10 @@
     "configuring_widget_fonts": "විකේතන අකුරු සකසමින්...",
     "configuring_widget_events": "විකේතන සිදුවීම් සකසමින්...",
     "configuring_keyboard_shortcuts": "යතුරුපුවරුවේ කෙටි මඟ සකසමින්...",
-    "checking_updates": "යාවත්කාලීන කිරීම් පරීක්ෂා කිරීම..."
+    "checking_updates": "යාවත්කාලීන කිරීම් පරීක්ෂා කිරීම...",
+    "peak": "වැඩිම",
+    "download_speed": "බාගත කිරීමේ වේගය",
+    "configuring_app_previous_state": "යෙදුමේ පෙර තත්වය සැකසෙමින්...",
+    "more": "තවත්"
 }
  

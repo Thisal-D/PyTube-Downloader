@@ -111,6 +111,7 @@
     "initializing_video_count_tracker": "Initializing video count tracker...",
     "initializing_theme_manager": "Initializing theme manager...",
     "initializing_loading_indicate_manager": "Initializing loading indicate manager...",
+    "initializing_download_speed_tracker": "Initializing Download Speed Tracker...",
     "initializing_widgets": "Initializing widgets...",
     "configuring_widget_sizes": "Configuring widget sizes...",
     "configuring_widget_texts": "Configuring widget texts...",
@@ -118,5 +119,9 @@
     "configuring_widget_fonts": "Configuring widget fonts...",
     "configuring_widget_events": "Configuring widget events...",
     "configuring_keyboard_shortcuts": "Configuring keyboard shortcuts...",
-    "checking_updates": "Checking updates..."
+    "checking_updates": "Checking updates...",
+    "peak": "Peak",
+    "download_speed": "Download Speed",
+    "configuring_app_previous_state": "Configuring app previous state...",
+    "more": "More"
 }

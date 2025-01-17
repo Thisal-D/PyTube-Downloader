@@ -1,4 +1,4 @@
-![Language](https://img.shields.io/badge/Language-English-blue) [![Chinese](https://img.shields.io/badge/Language-中文-red)](README_zh.md)
+[![Chinese](https://img.shields.io/badge/Language-中文-red)](README_zh.md)
 
 # PyTube Downloader 
 
@@ -6,10 +6,12 @@
 
 &nbsp; &nbsp;[![Download PyTube Downloader](https://img.shields.io/sourceforge/dm/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dw/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dt/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download)
 
-[Visit to Download .exe for Windows](https://sourceforge.net/p/pytube-downloader)
+&nbsp; &nbsp;![PyPI - License](https://img.shields.io/badge/license-MIT-blue)
+![LOC](https://tokei.rs/b1/github/Thisal-D/PyTube-Downloader?category=lines)
+
+[Visit to Download .exe for Windows](https://sourceforge.net/p/pytube-downloader) 
 
 ---
-
 
 **PyTube Downloader is a simple, user-friendly app that lets you easily download YouTube videos and entire playlists with one click. Choose from a variety of video and audio formats, including resolutions from 144p to 8K quality. It also supports simultaneous downloads, allowing you to save time and download multiple videos at once.**
 
