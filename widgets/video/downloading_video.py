@@ -104,6 +104,9 @@ class DownloadingVideo(Video):
         self.video_only_file_name: str = ""
         self.total_bytes_downloaded: int = 0
         self.converted_file_name: str = ""
+        
+        # download speed
+        self.total_download_time: int = 0
 
         super().__init__(
             root=root,
@@ -131,6 +134,7 @@ class DownloadingVideo(Video):
         """
         Start the video download process.
         """
+        self.total_download_time = 0
         self.set_downloading_progress()
         threading.Thread(target=self.configure_downloading, daemon=True).start()
         self.set_pause_btn()
@@ -291,7 +295,6 @@ class DownloadingVideo(Video):
                 stream = pytube_request.stream(download_stream.url)
                 while 1:
                     try:
-                        time_s = time.time()
                         if self.pause_requested:
                             if self.pause_resume_btn_command != "resume":
                                 self.pause_resume_btn.configure(command=self.resume_downloading)
@@ -303,10 +306,13 @@ class DownloadingVideo(Video):
                                 self.pause_resume_btn_command = "resume"
                             time.sleep(0.3)
                             continue
+                    
+                        time_s = time.time()
                         self.download_state = "downloading"
                         self.pause_resume_btn_command = "pause"
                         chunk = next(stream, None)
                         time_e = time.time()
+                        self.total_download_time += time_e - time_s
                         if chunk:
                             self.downloading_file.write(chunk)
                             self.net_speed_label.configure(
@@ -334,6 +340,9 @@ class DownloadingVideo(Video):
                                 self.total_bytes_downloaded -= self.bytes_downloaded
                                 self.set_downloading_failed()
                                 break
+                            
+                    
+                        
                     except Exception as error:
                         print(f"downloading_video.py L-332 : {error}")
                         self.total_bytes_downloaded -= self.bytes_downloaded

@@ -111,6 +111,7 @@
     "initializing_video_count_tracker": "初始化视频计数跟踪器...",
     "initializing_theme_manager": "初始化主题管理器...",
     "initializing_loading_indicate_manager": "初始化加载指示管理器...",
+    "initializing_download_speed_tracker": "正在初始化下载速度跟踪器...",
     "initializing_widgets": "初始化小部件...",
     "configuring_widget_sizes": "配置小部件大小...",
     "configuring_widget_texts": "配置小部件文本...",
@@ -118,5 +119,9 @@
     "configuring_widget_fonts": "配置小部件字体...",
     "configuring_widget_events": "配置小部件事件...",
     "configuring_keyboard_shortcuts": "配置键盘快捷键...",
-    "checking_updates": "检查更新..."
+    "checking_updates": "检查更新...",
+    "peak": "峰值",
+    "download_speed": "下载速度",
+    "configuring_app_previous_state": "配置应用程序的先前状态...",
+    "more": "更多"
 }

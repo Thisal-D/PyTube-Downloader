@@ -5,6 +5,7 @@ import threading
 import time
 import sys
 import webbrowser
+import ctkchart
 from typing import Literal
 import pyautogui
 from widgets import (
@@ -29,7 +30,8 @@ from services import (
     LanguageManager,
     HistoryManager,
     LoadingIndicateManager,
-    VideoCountTracker
+    VideoCountTracker,
+    DownloadSpeedTracker
 )
 from settings import (
     AppearanceSettings,
@@ -37,7 +39,8 @@ from settings import (
 )
 from utils import (
     FileUtility,
-    DataRetriveUtility
+    DataRetriveUtility,
+    ValueConvertUtility
 )
 
 
@@ -135,6 +138,16 @@ class App(ctk.CTk):
         self.root_geometry = ""
         self.is_maximized = False
         
+        self.net_speed_chart = None
+        self.net_speed_line = None
+        self.net_speed_label = None
+        self.net_speed_temp_label = None
+        self.net_speed_switch = None
+        self.net_speed_switch_state = None
+        
+        self.current_max_download_speed_bytes = 0.00001
+        self.current_download_speed_bytes = 0.00001
+        
     def set_initializing_status(self, status: str):
         def set_text(text: str):
             self.initializing_state_label.configure(text = text)
@@ -229,9 +242,7 @@ class App(ctk.CTk):
         self.set_initializing_status("initializing_video_convert_manager")
         VideoConvertManager.initialize(self.update_active_videos_count_status)
         self.set_initializing_status("initializing_video_count_tracker")
-
         VideoCountTracker.initialize(self.update_total_videos_count_status)
-
         self.set_initializing_status("initializing_theme_manager")
         ThemeManager.initialize()
         self.set_initializing_status("initializing_loading_indicate_manager")
@@ -240,6 +251,9 @@ class App(ctk.CTk):
         self.set_initializing_status("initializing_widgets")
         # Create the main widgets of the application
         self.create_widgets()
+        
+        self.set_initializing_status("initializing_download_speed_tracker")
+        DownloadSpeedTracker.initialize(self.update_download_speed_status)
         
         self.set_initializing_status("configuring_widget_sizes")
         # set widgets sizes
@@ -266,6 +280,9 @@ class App(ctk.CTk):
         self.set_initializing_status("configuring_keyboard_shortcuts")
         # bind shortcut keys
         self.bind_keyboard_shortcuts()
+        
+        self.set_initializing_status("configuring_app_previous_state")
+        self.configure_app_previous_state()
         # Reconfigure resizable state
         self.after(1, self.resizable, True, True)
         self.set_initializing_status("checking_updates")
@@ -279,6 +296,8 @@ class App(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.minimize_to_tray)
         self.geometry_changes_tracker()
         self.destroy_initializing_status_window()
+        
+        self.resizable(True, True)
         # Check app updates       
         self.run_update_check()
     
@@ -361,9 +380,47 @@ class App(ctk.CTk):
         )
 
         self.videos_status_count_label = ctk.CTkLabel(
-            text="Loading : 0 | Downloading : 0",
+            text="Loading : 0 | Downloading : 0 | Converting : 0",
+            master=self,
+            anchor="w"
+        )
+        
+        self.bottom_hr = ctk.CTkFrame(
             master=self
         )
+        self.net_speed_chart = ctkchart.CTkLineChart(
+            master=self, y_axis_values=(0, 100), 
+            x_axis_values=tuple([sec for sec in range(0, 120)]),
+            x_axis_data="S",
+            y_axis_data="MB/s",
+            x_axis_label_count=0,
+            y_axis_label_count=0,
+        )
+        self.net_speed_line = ctkchart.CTkLine(
+            master=self.net_speed_chart,
+            fill="enabled"
+        )
+        
+        self.net_speed_label = ctk.CTkLabel(
+            master=self,
+            text="Download Speed : 0 KB/s"
+        )
+        
+        self.net_speed_temp_label = ctk.CTkLabel(
+            master=self,
+            text="Download Speed : 0 KB/s"
+        )
+        self.net_speed_switch_state = ctk.BooleanVar(value=None)
+        self.net_speed_switch = ctk.CTkSwitch(
+            master=self,
+            text="More",
+            command=self.toggle_net_speed_switch,
+            onvalue=True,
+            offvalue=False,
+            variable=self.net_speed_switch_state
+        )
+        
+        self.confgiure_chart_y_axis_values()
 
         self.settings_panel = SettingPanel(
             master=self,
@@ -482,6 +539,49 @@ class App(ctk.CTk):
         self.place_forget_nav_frames(except_frame=frame_name)
         frame.place(y=90 * AppearanceSettings.settings["scale_r"], x=10)
         self.place_nav_label(frame_name)
+        
+    def configure_navigation_panels(self):
+        scale = AppearanceSettings.settings["scale_r"]
+        
+        root_height = self.winfo_height()
+        root_width = self.winfo_width()
+        
+        frame_height = root_height - (100 + 25) * scale
+
+        if GeneralSettings.settings["display_download_speed_info"]:
+            frame_height -= 90 * scale
+        frame_width = root_width - 40
+        self.added_content_scroll_frame.configure(height=frame_height, width=frame_width)
+        self.downloading_content_scroll_frame.configure(height=frame_height, width=frame_width)
+        self.downloaded_content_scroll_frame.configure(height=frame_height, width=frame_width)
+        self.history_content_frame.configure_widgets_size(height=frame_height, width=frame_width + 22)
+    
+    def show_net_speed_info(self):
+        scale = AppearanceSettings.settings["scale_r"]
+        
+        self.net_speed_temp_label.place_forget()
+        self.bottom_hr.place(rely=1, y=-100 * scale - (5 + 8 * scale))
+        self.net_speed_chart.place(x=10 + 300 * scale, rely=1, y=-100 * scale - 5)
+        self.net_speed_label.place(x=10, rely=1, y=-50 * scale)
+        
+        self.configure_navigation_panels()
+        
+    def hide_net_speed_info(self):
+        scale = AppearanceSettings.settings["scale_r"]
+        
+        self.bottom_hr.place_forget()
+        self.net_speed_chart.place_forget()
+        self.net_speed_label.place_forget()
+        self.net_speed_temp_label.place(relx=1, rely=1, anchor="se", y=-5, x=-150*scale)
+        self.configure_navigation_panels()
+        
+    def toggle_net_speed_switch(self):
+        GeneralSettings.settings["display_download_speed_info"] = self.net_speed_switch.get()
+        if self.net_speed_switch.get():
+            self.show_net_speed_info()
+        else:
+            self.hide_net_speed_info()
+        self.update_general_settings()
 
     def place_widgets(self) -> None:
         """
@@ -503,6 +603,8 @@ class App(ctk.CTk):
         self.place_nav_frame(self.added_content_scroll_frame, "added")
         self.videos_status_count_label.place(x=10, rely=1, y=-20 * scale)
         self.logo_label.place(relx=0.5, rely=0.5, anchor="center")
+        
+        self.net_speed_switch.place(relx=1, rely=1, anchor="se", y=-2, x=-5)
 
     def set_widgets_fonts(self) -> None:
         """
@@ -545,7 +647,17 @@ class App(ctk.CTk):
         self.context_menu.configure(font=("Segoe UI", 13 * scale, "bold"))
         self.videos_status_count_label.configure(font=("Segoe UI", 11 * scale, "normal"))
         self.logo_label.configure(font=("arial", 50 * scale, "normal"))
-
+        
+        self.net_speed_switch.configure(
+            font=("arial UI", 11 * scale, "bold")
+        )
+        self.net_speed_chart.configure(
+            axis_font_style=("arial", int(10 * scale), "normal"),
+            data_font_style=("arial", int(10 * scale), "bold")
+        )
+        self.net_speed_label.configure(font=("arial", 15 * scale, "bold"))
+        self.net_speed_temp_label.configure(font=("Segoe UI", 11 * scale, "normal"))
+        
     def set_widgets_sizes(self) -> None:
         """
         Sets the sizes for various GUI widgets.
@@ -577,7 +689,25 @@ class App(ctk.CTk):
             width=int(120 * AppearanceSettings.settings["scale_r"]),
             height=int(130 * AppearanceSettings.settings["scale_r"])
         )
-        self.videos_status_count_label.configure(height=int(15 * scale))
+        self.videos_status_count_label.configure(height=int(15 * scale), width=int(300 * scale))
+        
+        self.net_speed_switch.configure(
+            width=50 * scale,
+            height=20 * scale,
+            switch_width=32 * scale,
+            switch_height=16 * scale,
+        )
+        
+        self.net_speed_chart.configure(
+            axis_size=int(2*scale),
+            height=int(100 * scale)
+        )
+        self.net_speed_line.configure(
+            size=int(2 * scale)
+        )
+        self.bottom_hr.configure(height=int(2 * scale))
+        self.net_speed_label.configure(height=int(20 * scale))
+        self.net_speed_temp_label.configure(height=int(15 * scale), width=int(50 * scale))
 
     def configure_widgets_size(self) -> None:
         """
@@ -589,7 +719,6 @@ class App(ctk.CTk):
         """
         scale = AppearanceSettings.settings["scale_r"]
         root_width = self.winfo_width()
-        root_height = self.winfo_height()
         self.url_entry.configure(width=root_width - 250 * scale)
         
         history_button_width = int(100*scale)
@@ -615,13 +744,12 @@ class App(ctk.CTk):
             self.place_nav_label("downloading")
         elif self.downloaded_frame_info_label_placed:
             self.place_nav_label("downloaded")
-
-        frame_height = root_height - (100 + 15) * scale
-        frame_width = root_width - 40
-        self.added_content_scroll_frame.configure(height=frame_height, width=frame_width)
-        self.downloading_content_scroll_frame.configure(height=frame_height, width=frame_width)
-        self.downloaded_content_scroll_frame.configure(height=frame_height, width=frame_width)
-        self.history_content_frame.configure_widgets_size(height=frame_height, width=frame_width + 22)
+                
+        self.bottom_hr.configure(width=root_width)
+        chart_width = int(self.winfo_width() - (10 + 300 * scale + 10 + 100 * scale))
+        self.net_speed_chart.configure(width=chart_width)
+        self.confgiure_chart_x_axis_values()
+        self.configure_navigation_panels()
 
     def set_widgets_texts(self):
         self.url_entry.configure(
@@ -654,6 +782,18 @@ class App(ctk.CTk):
                  f" | "
                  f" {LanguageManager.data['converting']} : {VideoConvertManager.active_convert_count + 
                                                             VideoConvertManager.queued_convert_count}"
+        )
+        self.net_speed_label.configure(
+            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(self.current_download_speed_bytes, decimal_points=3)}/s"
+        )
+        
+        self.net_speed_temp_label.configure(
+            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(self.current_download_speed_bytes, decimal_points=3)}/s"
+        )
+        
+        self.net_speed_switch.configure(text=LanguageManager.data["more"])
+        self.net_speed_chart.configure(
+            y_axis_data=f"{LanguageManager.data['peak']} : {ValueConvertUtility.convert_size(self.current_max_download_speed_bytes, decimal_points=2)}/s"
         )
         
     def update_widgets_text(self):
@@ -702,6 +842,17 @@ class App(ctk.CTk):
         )
         self.logo_label.configure(
             text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
+        )
+     
+        self.net_speed_line.configure(
+            fill_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+            color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
+        )
+        
+        self.net_speed_switch.configure(
+            button_color=AppearanceSettings.settings["root"]["accent_color"]["normal"],
+            button_hover_color=AppearanceSettings.settings["root"]["accent_color"]["hover"],
+            progress_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
         )
 
     def set_widgets_colors(self) -> None:
@@ -793,7 +944,30 @@ class App(ctk.CTk):
         self.logo_frame.configure(
             fg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
         )
-
+    
+        self.net_speed_chart.configure(
+            fg_color=tuple(AppearanceSettings.settings["root"]["fg_color"]["normal"]),
+            bg_color=tuple(AppearanceSettings.settings["root"]["fg_color"]["normal"]),
+            axis_color=tuple(AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"]),
+            x_axis_font_color=tuple(AppearanceSettings.settings["root"]["text_color"]["normal"]),
+            y_axis_font_color=tuple(AppearanceSettings.settings["root"]["text_color"]["normal"]),
+            x_axis_data_font_color=tuple(AppearanceSettings.settings["root"]["text_color"]["normal"]),
+            y_axis_data_font_color=tuple(AppearanceSettings.settings["root"]["text_color"]["normal"])
+        )
+        
+        self.bottom_hr.configure(
+            fg_color=AppearanceSettings.settings["navigation_button"]["fg_color"]["normal"],
+            bg_color=AppearanceSettings.settings["root"]["fg_color"]["normal"]
+        )
+        
+        self.net_speed_label.configure(
+            text_color=AppearanceSettings.settings["root"]["text_color"]["normal"]
+        )
+        
+        self.net_speed_temp_label.configure(
+            text_color=AppearanceSettings.settings["root"]["text_color"]["normal"]
+        )
+        
     def bind_widgets_events(self) -> None:
         """
         Binds events to various GUI widgets for handling user interactions.
@@ -1298,6 +1472,17 @@ class App(ctk.CTk):
         self.bind("<Control-Shift-M>", minimize_to_tray_icon)
         self.bind("<Control-Shift-n>", minimize_to_tray_icon)
         self.bind("<Control-Shift-N>", minimize_to_tray_icon)
+        
+    def configure_app_previous_state(self) -> None:
+        """Configures the application to its previous state."""
+        if GeneralSettings.settings["display_download_speed_info"]:
+            self.net_speed_switch_state.set(True)
+            self.net_speed_switch.select()
+            self.show_net_speed_info()
+        else:
+            self.net_speed_switch_state.set(False)
+            self.net_speed_switch.deselect()
+            self.hide_net_speed_info()
 
     def show_app_logo(self) -> None:
         
@@ -1631,6 +1816,52 @@ class App(ctk.CTk):
         ).pack(fill="x", pady=2)
         
         self.scroll_frame_to_bottom(self.downloaded_content_scroll_frame)
+        
+    def update_download_speed_status(self, download_speed_bytes_per_sec: int) -> None:
+        if download_speed_bytes_per_sec > self.current_max_download_speed_bytes:
+            self.current_max_download_speed_bytes = download_speed_bytes_per_sec
+            self.confgiure_chart_y_axis_values()
+        else:
+            if len(self.net_speed_line.get_data()) > 100:
+                max_ = max(self.net_speed_line.get_data()[-100::])
+                if max_ < self.current_max_download_speed_bytes:
+                    if max_ == 0:
+                        max_ = 0.0001
+                    self.current_max_download_speed_bytes = max_
+                    self.confgiure_chart_y_axis_values()
+        
+        if len(self.net_speed_line.get_data()) > 3600:
+            self.net_speed_chart.clear_data()
+            
+        self.current_download_speed_bytes = download_speed_bytes_per_sec
+        
+        self.net_speed_label.configure(
+            text=f"{LanguageManager.data["download_speed"]} : {ValueConvertUtility.convert_size(download_speed_bytes_per_sec, decimal_points=3)}/s"
+        )
+        
+        self.net_speed_temp_label.configure(
+            text=f"{LanguageManager.data["download_speed"]} : {ValueConvertUtility.convert_size(download_speed_bytes_per_sec, decimal_points=3)}/s"
+        )
+        
+        self.net_speed_chart.show_data(line=self.net_speed_line, data=[download_speed_bytes_per_sec])    
+        
+    def confgiure_chart_y_axis_values(self):
+        converted_speed = ValueConvertUtility.convert_size(self.current_max_download_speed_bytes, decimal_points=2)
+        y_axis_data = f"{LanguageManager.data["peak"]} : {converted_speed}/s"
+       
+        self.net_speed_chart.configure(y_axis_data=y_axis_data, y_axis_values=(0, self.current_max_download_speed_bytes))
+        
+    def confgiure_chart_x_axis_values(self):
+        scale = AppearanceSettings.settings["scale_r"]
+        if self.net_speed_chart.cget("width") / 10 * scale >= 60:
+            x_axis_point_count = 60
+        else:
+            x_axis_point_count = 30
+        
+        
+        style_type= (int(scale * 4), int(6 * scale))
+        self.net_speed_chart.configure(x_axis_values=tuple([x for x in range(1, x_axis_point_count)]))
+        self.net_speed_line.configure(style_type=style_type)
 
     def open_context_menu(self, _event: tk.Event) -> None:
         """

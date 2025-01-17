@@ -40,7 +40,7 @@ class VideoCountTracker:
        
     @staticmethod
     def return_status():
-         VideoCountTracker.status_call_back_function(
+        VideoCountTracker.status_call_back_function(
             VideoCountTracker.total_added_video_count,
             VideoCountTracker.total_downloading_video_count,
             VideoCountTracker.total_downloaded_video_count

@@ -1,11 +1,13 @@
-![Language](https://img.shields.io/badge/Language-中文-red) [![English](https://img.shields.io/badge/Language-English-blue)](README.md)
+[![English](https://img.shields.io/badge/Language-English-blue)](README.md)
 
 # PyTube Downloader
-
 
 &nbsp; &nbsp;[![Download PyTube Downloader](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/pytube-downloader/files/latest/download)
 
 &nbsp; &nbsp;[![Download PyTube Downloader](https://img.shields.io/sourceforge/dm/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dw/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download) [![Download PyTube Downloader](https://img.shields.io/sourceforge/dt/pytube-downloader.svg)](https://sourceforge.net/projects/pytube-downloader/files/latest/download)
+
+&nbsp; &nbsp;![PyPI - License](https://img.shields.io/badge/license-MIT-blue)
+![LOC](https://tokei.rs/b1/github/Thisal-D/PyTube-Downloader?category=lines)
 
 [下载适用于 Windows 的 .exe](https://sourceforge.net/p/pytube-downloader)
 

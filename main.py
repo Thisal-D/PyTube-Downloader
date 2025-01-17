@@ -1,5 +1,4 @@
 from app import App
-import customtkinter as ctk
 from settings import (
     AppearanceSettings,
     GeneralSettings
@@ -21,6 +20,7 @@ try:
     # Initialize app.
     app = App()
     app.after(100, threading.Thread(target=app.initialize, daemon=True).start)
+    
     # just run the app        
     app.run()
 except Exception as error:

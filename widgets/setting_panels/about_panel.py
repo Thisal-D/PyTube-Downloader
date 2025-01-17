@@ -295,7 +295,7 @@ class AboutPanel(ctk.CTkFrame):
         self.version_title_label.configure(text=LanguageManager.data["version"])
         self.site_title_label.configure(text=LanguageManager.data["site"])
         self.contributors_title_label.configure(text=LanguageManager.data["contributors"])
-        print("self.contribute_data_retrieve_status :",self.contribute_data_retrieve_status)
+        # print("self.contribute_data_retrieve_status :",self.contribute_data_retrieve_status)
         if self.contribute_data_retrieve_status == "Failed":
             self.contributors_status_label.configure(text=LanguageManager.data["contribute_data_retrieve_failed"])
         elif self.contribute_data_retrieve_status is None:
