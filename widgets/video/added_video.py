@@ -25,6 +25,32 @@ from utils import (
 
 
 class AddedVideo(Video):
+    PYTUBE_CLIENTS: List[str] = [
+        "WEB",
+        "WEB_EMBED",
+        "WEB_MUSIC",
+        "WEB_CREATOR",
+        "WEB_SAFARI",
+        "MWEB",
+        "WEB_KIDS",
+        "ANDROID",
+        "ANDROID_EMBED",
+        "ANDROID_VR",
+        "ANDROID_MUSIC",
+        "ANDROID_CREATOR",
+        "ANDROID_TESTSUITE",
+        "ANDROID_PRODUCER",
+        "ANDROID_KIDS",
+        "IOS",
+        "IOS_EMBED",
+        "IOS_MUSIC",
+        "IOS_CREATOR",
+        "IOS_KIDS",
+        "TV",
+        "TV_EMBED",
+        "MEDIA_CONNECT"
+    ]
+    
     def __init__(
             self,
             root: ctk.CTk,
@@ -63,6 +89,7 @@ class AddedVideo(Video):
         self.mode: Literal["video", "playlist"] = mode
         # Track automatically reload count
         self.automatically_reload_count: int = 0
+        self.pytube_client_index: int = -1
         
         super().__init__(
             root=root,
@@ -207,8 +234,9 @@ class AddedVideo(Video):
         return AddedVideo.default_thumbnails
 
     def retrieve_video_data(self):
+        self.pytube_client_index += 1
         try:
-            self.video = pytube.YouTube(self.video_url)
+            self.video = pytube.YouTube(self.video_url, client=AddedVideo.PYTUBE_CLIENTS[self.pytube_client_index])
             self.video_title = str(self.video.title)
             self.channel = str(self.video.author)
             self.length = int(self.video.length)
@@ -227,15 +255,25 @@ class AddedVideo(Video):
             self.set_loading_completed()
             self.download_automatically()
             
-        except pytube.exceptions.BotDetection as error:
-            print(f"added_video.py L-231 : {error}")
-            self.load_video()
+        # except pytube.exceptions.BotDetection as error:
+        #     print(f"added_video.py L-231 : {error}")
+        #    self.load_video()
+        except pytube.exceptions.AgeRestrictedError as error:
+            self.pytube_client_index = -1
+            self.set_loading_failed()
+            
+        except pytube.exceptions.RegexMatchError as error:
+            self.pytube_client_index = -1
+            self.set_loading_failed()
         
         except Exception as error:
             print(f"added_video.py L-235 : {error}")
-            self.set_loading_failed()
+            if self.pytube_client_index + 1 < len(AddedVideo.PYTUBE_CLIENTS):
+                self.retrieve_video_data()
+            else:
+                self.pytube_client_index = -1
+                self.set_loading_failed()
            
-        
     def download_video(self):
         self.root.fade_effect()
         self.video_download_button_click_callback(self)
