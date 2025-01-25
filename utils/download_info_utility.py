@@ -20,22 +20,30 @@ class DownloadInfoUtility:
         audio = []
         
         for item in qualities_info:
-            if item['type'] == 'video':
-                videos.append(item)
-            elif item['type'] == 'audio':
-                audio.append(item)
+            print(item)
+        
+        for item in qualities_info:
+                if item['type'] == 'video':
+                    if "reso" in item.keys() and item['reso']  != 'None':
+                        videos.append(item)
+                elif item['type'] == 'audio':
+                    audio.append(item)
         
         # Sort videos manually based on resolution
         for i in range(len(videos)):
             for j in range(len(videos) - i - 1):
-                # Extract resolutions as integers
-                res1 = int(videos[j]['reso'].replace('p', '')) if 'reso' in videos[j] else 0
-                res2 = int(videos[j + 1]['reso'].replace('p', '')) if 'reso' in videos[j + 1] else 0
-                
-                # Swap if the current video's resolution is less than the next one
-                if res1 < res2:
-                    videos[j], videos[j + 1] = videos[j + 1], videos[j]
-        
+                try:
+                    # Extract resolutions as integers
+                    res1 = int(videos[j]['reso'].replace('p', '')) if 'reso' in videos[j] else 0
+                    res2 = int(videos[j + 1]['reso'].replace('p', '')) if 'reso' in videos[j + 1] else 0
+                    
+                    # Swap if the current video's resolution is less than the next one
+                    if res1 < res2:
+                        videos[j], videos[j + 1] = videos[j + 1], videos[j]
+                except Exception as error:
+                    print(f"download_info_utility.py L-44 : {error}")
+            
+       
         # Combine videos and audio, videos first
         return videos + audio
 
