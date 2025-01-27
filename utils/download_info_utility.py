@@ -20,12 +20,8 @@ class DownloadInfoUtility:
         audio = []
         
         for item in qualities_info:
-            print(item)
-        
-        for item in qualities_info:
                 if item['type'] == 'video':
-                    if "reso" in item.keys() and item['reso']  != 'None':
-                        videos.append(item)
+                    videos.append(item)
                 elif item['type'] == 'audio':
                     audio.append(item)
         
@@ -88,7 +84,7 @@ class DownloadInfoUtility:
                     try:
                         file_size = video_streams.get_by_itag(stream_type["itag"]).filesize
                         download_info = {"itag": stream_type["itag"], "type": "video", "reso": stream_type["res"], "size": file_size, "inbuilt_audio" : True}
-                        if stream_type["res"] not in supported_download_resos:
+                        if stream_type["res"] not in supported_download_resos and stream_type["res"] != 'None':
                             supported_download_types.append(download_info)
                             supported_download_resos.append(stream_type["res"])
                     except Exception as error:
@@ -100,7 +96,7 @@ class DownloadInfoUtility:
                 try:
                     file_size = video_streams.get_by_itag(stream_type["itag"]).filesize
                     download_info = {"itag": stream_type["itag"], "type": "video", "reso": stream_type["res"], "size": file_size + audio_stream_file_size, "inbuilt_audio" : False}
-                    if stream_type["res"] not in supported_download_resos:
+                    if stream_type["res"] not in supported_download_resos and stream_type["res"] != 'None':
                         supported_download_types.append(download_info)
                         supported_download_resos.append(stream_type["res"])
                 except Exception as error:
