@@ -755,14 +755,12 @@ class DownloadingVideo(Video):
 
         def on_mouse_enter_pause_resume_btn(_event):
             self.pause_resume_btn.configure(
-                fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"],
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["hover"]
             )
             # self.on_mouse_enter_self(event)
 
         def on_mouse_leave_pause_resume_btn(_event):
             self.pause_resume_btn.configure(
-                fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"],
                 text_color=AppearanceSettings.settings["root"]["accent_color"]["normal"]
             )
 
